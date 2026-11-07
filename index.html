@@ -146,6 +146,19 @@ ol.mean li { margin: 3px 0; }
 #tabs { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 30; display: flex; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
 #tabs a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 64px; color: var(--muted); font-size: 12px; }
 #tabs a.on { color: var(--accent); font-weight: 600; }
+#tabs a { font-size: 11px; }
+.bk-sub { color: var(--muted); font-size: 14px; margin: -2px 0 12px; }
+.lessons { display: grid; gap: 8px; }
+.lesson { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: center; text-align: left; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.lesson:hover { border-color: var(--accent); }
+.lesson .n { grid-row: 1 / span 2; font-weight: 700; color: var(--accent); min-width: 44px; font-size: 14px; }
+.lesson .t { font-weight: 600; }
+.lesson .s { color: var(--muted); font-size: 13px; }
+.pages { display: grid; gap: 10px; margin-top: 10px; }
+.pages figure { margin: 0; background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.pages img { display: block; width: 100%; height: auto; }
+.pages figcaption { font-size: 12px; color: var(--muted); padding: 4px 8px; background: var(--surface); }
+.lnav { display: flex; justify-content: space-between; gap: 10px; margin: 14px 0; }
 #tabs svg { stroke: currentColor; }
 .hero { background: var(--accent); border-radius: 28px; padding: 28px 24px 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 300px; margin-top: 12px; }
 .hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #dcefe9; }
@@ -249,6 +262,8 @@ const ICON = {
   mark: '<path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   find: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h6"/>',
+  scroll: '<path d="M12 6c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-14c-3-.5-6 0-8 1.5z"/><path d="M12 6v14"/>',
 };
 const view = document.getElementById('view'), tabs = document.getElementById('tabs'), sheet = document.getElementById('sheet'), appEl = document.getElementById('app');
 const go = (hash) => { location.hash = hash; };
@@ -978,7 +993,7 @@ function entryRow(e) {
 function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; } }), t('saved', '#saved', 'mark', 'Сақланганлар'), t('profile', '#profile', 'user', 'Профил'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; } }), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'), t('saved', '#saved', 'mark', 'Сақланган'), t('profile', '#profile', 'user', 'Профил'));
 }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
 
@@ -1121,6 +1136,58 @@ function renderProfile() {
     h('p', { class: 'foot' }, 'Прототип. Маълумот китобнинг 311-саҳифасидан, огласовкалар текширилмоқда.'));
 }
 
+// ---------- Сарф ва Наҳв: дарсликлар бетлари (расм) ----------
+// Бет рақамлари — PDF бетлари. Дарс тугаган бетда кейинги дарс бошланса, у бет иккала дарсда ҳам кўрсатилади.
+const BOOKS = {
+  sarf: { title: 'Сарф', full: 'Араб тили сарф фанидан дарслик («Жаноҳ ут-толиб»)', dir: 'books/sarf/', total: 76, lessons: [
+    ['Сўзбоши', '', 1], ['1-дарс', 'Калима ва вазн', 3], ['2-дарс', 'Аслий ва зоида ҳарфлар', 4], ['3-дарс', 'Исм, феъл ва ҳарф', 6],
+    ['4-дарс', 'Феъл', 7], ['5-дарс', 'Лозим ва мутаъаддий', 9], ['6-дарс', 'Феъл бинолари', 10], ['7-дарс', 'Сулосий мазийд ва рубоъий', 12],
+    ['Махсус дарс', 'Мазийд бобларининг маънолари', 15], ['8-дарс', 'Мажҳуллик нисбати', 18], ['9-дарс', 'Исм ва феъл турлари', 20],
+    ['10-дарс', 'Музореъ феълида уч ҳолат', 23], ['11-дарс', 'Етти феъл', 26], ['12-дарс', 'Ўзгариш сабаблари (идғом)', 28],
+    ['13-дарс', 'Таскин ва қалб қонунлари', 31], ['14-дарс', 'Ҳазф', 33], ['15-дарс', 'Ажваф', 35], ['16-дарс', 'Ноқис', 39],
+    ['17-дарс', 'Лафиф ва мултавий', 42], ['18-дарс', 'Музаккар ва муаннас', 45], ['19-дарс', 'Муфрад, тасния ва жамъ', 47],
+    ['20-дарс', 'Жамъ', 49], ['21-дарс', 'Жомид, масдар ва муштақ', 54], ['22-дарс', 'Исми фоил', 58], ['23-дарс', 'Исми мафъул', 60],
+    ['24-дарс', 'Сифати мушаббаҳа', 63], ['25-дарс', 'Исми тафзил', 64], ['26-дарс', 'Исми замон ва исми макон', 66],
+    ['27-дарс', 'Исми олат', 68], ['28-дарс', 'Исми тасғир', 69], ['29-дарс', 'Исми мансуб', 71], ['30-дарс', 'Сарфи кабир (катта тусланиш)', 73]],
+    // кейинги дарс бетнинг юқорисидан бошланадиган ҳолатлар (у бет олдинги дарсга қўшилмайди)
+    topStart: [3, 4, 18, 20, 58, 71] },
+  nahv: { title: 'Наҳв', full: '«Мабдаун наҳв» (Наҳв асослари), С. Бекпўлат', dir: 'books/nahv/', total: 100, lessons: [
+    ['Муқаддима', '', 1], ['1-§', 'Калом', 3], ['2-§', 'Мўъраб ва мабний', 4], ['3-§', 'Мўъраб феъллар', 6], ['4-§', 'Мўъраб исмлар', 8],
+    ['5-§', 'Мабний феъллар', 13], ['6-§', 'Мабний исмлар', 14], ['7-§', 'Наҳв', 15], ['8-§', 'Феълнинг насб ўринлари', 17],
+    ['9-§', 'Феълнинг жазм ўринлари', 19], ['10-§', 'Феълнинг рафъ ўринлари', 22], ['11-§', 'Исмнинг рафъ ўринлари', 25],
+    ['12-§', 'Фоъил', 26], ['13-§', 'Ноиби фоъил', 29], ['14-§', 'Мубтадо, хабар', 31], ['15-§', 'Кана ва унинг ахавотининг исми', 33],
+    ['16-§', 'Инна ва ахавотининг хабари', 36], ['17-§', 'Исмнинг насб ўринлари', 39], ['18-§', 'Мафъулум биҳ', 40],
+    ['19-§', 'Мафъулум мутлақ', 44], ['20-§', 'Мафъулул лиажлиҳи', 48], ['21-§', 'Мафъулун фийҳ', 50], ['22-§', 'Мафъулум маъаҳ', 51],
+    ['23-§', 'Мустасно', 53], ['24-§', 'Ҳол', 56], ['25-§', 'Тамйиз', 58], ['26-§', 'Мунодо', 61], ['27-§', '«Кана ва ахавоти»нинг хабари', 63],
+    ['28-§', 'Инна ва ахавотининг исми', 64], ['29-§', 'Исмнинг жар ўринлари', 66], ['30-§', 'Тавобеъ', 70], ['31-§', 'Наът', 71],
+    ['32-§', 'Атф', 74], ['33-§', 'Тавкид', 76], ['34-§', 'Бадал', 79], ['35-§', 'Ҳарфлар', 83], ['36-§', 'Адад ва маъдуд (сон ва саналмиш)', 87]],
+    topStart: [3, 6, 29, 36, 44, 61, 70] } };
+function lessonPages(b, i) {
+  const L = b.lessons, s = L[i][2], nx = L[i + 1] ? L[i + 1][2] : b.total + 1;
+  const end = (L[i + 1] && !b.topStart.includes(nx)) ? nx : nx - 1;
+  const out = []; for (let p = s; p <= Math.max(s, end); p++) out.push(p); return out;
+}
+function renderBook(key) {
+  const b = BOOKS[key];
+  page(key, h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, b.title)),
+    h('p', { class: 'bk-sub' }, b.full),
+    h('div', { class: 'lessons' }, b.lessons.map((l, i) => { const ps = lessonPages(b, i);
+      return h('button', { class: 'lesson', onclick: () => go(`${key}-${i}`) }, h('span', { class: 'n' }, l[0]), h('span', { class: 't' }, l[1] || l[0]),
+        h('span', { class: 's' }, ps.length > 1 ? `${ps[0]}–${ps[ps.length - 1]}-бетлар` : `${ps[0]}-бет`)); })));
+}
+function renderLesson(key, i) {
+  const b = BOOKS[key], l = b.lessons[i]; if (!l) return go(key);
+  const nav = h('div', { class: 'lnav' },
+    i > 0 ? h('button', { class: 'link', onclick: () => go(`${key}-${i - 1}`) }, '← ' + b.lessons[i - 1][0]) : h('span', {}),
+    b.lessons[i + 1] ? h('button', { class: 'link', onclick: () => go(`${key}-${i + 1}`) }, b.lessons[i + 1][0] + ' →') : h('span', {}));
+  page(key, h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go(key) }, '← ' + b.title)),
+    h('h1', { style: 'margin:4px 0 0;font-size:22px' }, `${l[0]}${l[1] ? ': ' + l[1] : ''}`), h('p', { class: 'bk-sub' }, b.full),
+    h('p', { class: 'bk-sub' }, 'Бетни катта қилиб кўриш учун расмни босинг.'),
+    h('div', { class: 'pages' }, lessonPages(b, i).map(p => h('figure', {},
+      h('a', { href: b.dir + String(p).padStart(3, '0') + '.jpg', target: '_blank', rel: 'noopener' }, h('img', { src: b.dir + String(p).padStart(3, '0') + '.jpg', alt: `${b.title}, ${p}-бет`, loading: 'lazy', width: '992', height: '1404' })),
+      h('figcaption', {}, `${p}-бет`)))), nav);
+}
+
 // ---------- маршрут ----------
 function route() {
   const hsh = location.hash.replace(/^#/, '');
@@ -1128,6 +1195,7 @@ function route() {
   if (/^w[123]$/.test(hsh)) return welcome(+hsh[1]);
   const m = hsh.match(/^e-(.+)$/); const e = m && DATA.find(x => hashOf(x) === 'e-' + m[1]);
   if (e) return renderEntry(e);
+  const bm = hsh.match(/^(sarf|nahv)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'saved') return renderSaved();
   if (hsh === 'profile') return renderProfile();
   query = hsh === 'home' ? query : ''; return renderHome();
