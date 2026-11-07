@@ -1,6 +1,6 @@
 // ANNAIM service worker: луғатни телефонга сақлайди, интернетсиз ҳам очилади.
 // Версия make_web.py томонидан ҳар йиғишда алмаштирилади.
-const VERSION = '20261107-230110-826f0036';
+const VERSION = '20261107-221918-381cdf7d';
 const CACHE = 'annaim-' + VERSION;
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 
