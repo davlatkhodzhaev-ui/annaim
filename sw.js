@@ -1,8 +1,8 @@
 // ANNAIM service worker: луғатни телефонга сақлайди, интернетсиз ҳам очилади.
 // Версия make_web.py томонидан ҳар йиғишда алмаштирилади.
-const VERSION = '20261107-231330-ae2632ca';
+const VERSION = '20261109-201833-3a7040ab';
 const CACHE = 'annaim-' + VERSION;
-const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
+const CORE = ['./', './index.html', './data1.js', './data2.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
