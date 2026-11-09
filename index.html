@@ -13,14 +13,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>ANNAIM Луғат</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Comfortaa:wght@500;700&display=swap">
 <style>
 /* Layout: one phone-width column. Welcome (3 steps), Home with search, an entry laid out as in the book,
    a bottom sheet for the tapped Arabic word, Saved, Profile. Tab bar fixed to the bottom of the column. */
 :root {
   --bg: #f2f5f3; --surface: #ffffff; --ink: #15211d; --muted: #4b5a55; --line: #d9e1dd;
   --accent: #0e6b5a; --accent-ink: #ffffff; --accent-soft: #dcefe9; --accent-deep: #0b5547; --dot: #b8c7c1;
-  --warn: #8a5a00; --warn-soft: #fbefd2;
+  --warn: #8a5a00; --warn-soft: #fbefd2; --gold: #9a6a00;
   --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-ar: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif;
 }
@@ -28,13 +28,13 @@
   :root:not([data-theme="light"]) {
     --bg: #0e1512; --surface: #16201c; --ink: #e6efeb; --muted: #94a69f; --line: #26342f;
     --accent: #5cc9ae; --accent-ink: #0b1511; --accent-soft: #17302a; --accent-deep: #8fe0cb; --dot: #35463f;
-    --warn: #f0c36a; --warn-soft: #33290f; color-scheme: dark;
+    --warn: #f0c36a; --warn-soft: #33290f; --gold: #e6bd4f; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0e1512; --surface: #16201c; --ink: #e6efeb; --muted: #94a69f; --line: #26342f;
   --accent: #5cc9ae; --accent-ink: #0b1511; --accent-soft: #17302a; --accent-deep: #8fe0cb; --dot: #35463f;
-  --warn: #f0c36a; --warn-soft: #33290f; color-scheme: dark;
+  --warn: #f0c36a; --warn-soft: #33290f; --gold: #e6bd4f; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }
@@ -62,8 +62,12 @@ a { text-decoration: none; }
 .wotd .w { font-family: var(--font-ar); font-size: calc(26px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); grid-column: 2; grid-row: 1 / span 2; }
 .more { margin-top: 14px; } .more > summary { cursor: pointer; color: var(--muted, #888); font-size: 14px; padding: 10px 2px; list-style: none; } .more > summary::before { content: '▸ '; } .more[open] > summary::before { content: '▾ '; } .more > .list { margin-top: 8px; }
 .letters { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; direction: rtl; }
-.letter { width: 100%; aspect-ratio: 1; min-height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-family: var(--font-ar); font-size: 22px; }
-.letter.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-deep); }
+.letter { width: 100%; aspect-ratio: 1; min-height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-family: var(--font-ar); font-size: 22px; color: var(--gold); }
+.quad { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.quad .geo { color: var(--gold); font-family: "Comfortaa", var(--font-ui); font-weight: 700; font-size: 13px; margin-top: 0; height: auto; min-height: 56px; padding: 8px 10px; text-align: center; }
+.geo { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; margin-top: 10px; height: 46px; padding: 0 10px; line-height: 1.15; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: 13.5px; }
+.geo:hover { border-color: var(--accent); } .geo .fl { font-size: 17px; letter-spacing: 2px; }
+.letter.on { background: var(--accent-soft); border-color: var(--accent); color: var(--gold); }
 .group { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; }
 .row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 10px 16px; min-height: 52px; width: 100%; text-align: left; background: none; border: 0; }
 .row + .row { border-top: 1px solid var(--line); }
@@ -79,6 +83,7 @@ button.row:hover { background: var(--bg); }
 .card .root { font-family: var(--font-ar); font-size: calc(30px * var(--ars, 1)); line-height: 1.5; direction: rtl; grid-column: 2; grid-row: 1 / span 2; color: var(--accent); }
 .card .gloss { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .card .meta { font-size: 13px; color: var(--muted); }
+.bar[hidden] { display: none; }
 .bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 0; }
 .link { background: none; border: 0; color: var(--accent); padding: 8px 0; min-height: 44px; font-weight: 500; }
 .mark { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
@@ -89,8 +94,9 @@ button.row:hover { background: var(--bg); }
 .book { margin: 0; padding: 10px 0; border-top: 1px solid var(--line); font-size: 17px; line-height: 2.2; }
 .book.sub { padding-left: 18px; }
 .arr { unicode-bidi: isolate; font-family: var(--font-ar); font-size: calc(27px * var(--ars, 1)); line-height: 1.4; }
-.aw { font: inherit; background: none; border: 0; border-bottom: 1.5px dotted var(--accent); color: var(--ink); padding: 0 2px; margin: 0; border-radius: 4px; }
-.aw:hover, .aw.on { background: var(--accent-soft); border-bottom-style: solid; }
+.aw { font: inherit; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 1px 0 var(--line); color: var(--ink); padding: 0 8px; margin: 1px 2px; border-radius: 9px; cursor: pointer; }
+.aw:hover, .aw.on { background: var(--accent-soft); border-color: var(--accent); }
+.aw:active { transform: translateY(1px); box-shadow: none; }
 .badge { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); margin-left: 6px; vertical-align: middle; }
 .cont { margin-top: 14px; font-size: 13px; color: var(--muted); font-style: italic; }
 .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface); border-top: 1px solid var(--line); border-radius: 16px 16px 0 0;
@@ -151,6 +157,21 @@ ol.mean li { margin: 3px 0; }
 .lessons { display: grid; gap: 8px; }
 .lesson { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: center; text-align: left; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
 .lesson:hover { border-color: var(--accent); }
+.rule { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; padding: 12px 0; border-top: 1px solid var(--line); }
+.rule .rn { font-weight: 700; color: var(--accent); min-width: 1.6em; }
+.rule p { margin: 0; line-height: 1.75; }
+.rule .arr { font-size: calc(22px * var(--ars, 1)); }
+.abrow { display: grid; grid-template-columns: minmax(84px, 34%) 1fr; gap: 12px; padding: 10px 16px; align-items: baseline; }
+.abrow + .abrow, .lrow + .lrow { border-top: 1px solid var(--line); }
+.abrow .ab { font-weight: 600; color: var(--accent); overflow-wrap: anywhere; }
+.lrow { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 8px 16px; min-height: 52px; }
+.lrow .u { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; } .lrow .u small { display: block; color: var(--muted); font-size: 12px; }
+.lrow .a { font-family: var(--font-ar); font-size: calc(24px * var(--ars, 1)); line-height: 1.5; direction: rtl; text-align: right; color: var(--accent); flex: 0 1 auto; max-width: 62%; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; min-height: 84px; padding: 8px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.tile:hover { border-color: var(--accent); }
+.tile .n { font-weight: 700; color: var(--accent); font-size: 15px; line-height: 1.1; }
+.tile .t { font-size: 12px; line-height: 1.2; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .lesson .n { grid-row: 1 / span 2; font-weight: 700; color: var(--accent); min-width: 44px; font-size: 14px; }
 .lesson .t { font-weight: 600; }
 .lesson .s { color: var(--muted); font-size: 13px; }
@@ -197,6 +218,7 @@ p.s { margin: 0; color: var(--muted); }
 
 <script src="data1.js"></script>
 <script src="data2.js"></script>
+<script src="extra.js"></script>
 <script>
 const DATA = window.ANNAIM_DATA || [];
 
@@ -265,6 +287,7 @@ const ICON = {
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   find: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
   book: '<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h6"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>',
   scroll: '<path d="M12 6c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-14c-3-.5-6 0-8 1.5z"/><path d="M12 6v14"/>',
 };
 const view = document.getElementById('view'), tabs = document.getElementById('tabs'), sheet = document.getElementById('sheet'), appEl = document.getElementById('app');
@@ -995,12 +1018,12 @@ function entryRow(e) {
 function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; } }), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'), t('saved', '#saved', 'mark', 'Сақланган'), t('profile', '#profile', 'user', 'Профил'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('guide', '#guide', 'info', 'Қўлланма'), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'), t('profile', '#profile', 'user', 'Профил'));
 }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
 
 // ---------- танишув экранлари ----------
-const dots = (n) => h('div', { class: 'dots', 'aria-hidden': 'true' }, [1, 2, 3].map(i => h('i', { class: i === n ? 'on' : '' })));
+const dots = (n) => h('div', { class: 'dots', 'aria-hidden': 'true' }, [1, 2, 3, 4].map(i => h('i', { class: i === n ? 'on' : '' })));
 function finishWelcome() { S.seen = true; save(); go('home'); }
 function welcome(n) {
   const skip = h('button', { class: 'link', onclick: finishWelcome }, 'Ўтказиб юбориш');
@@ -1021,6 +1044,15 @@ function welcome(n) {
     h('h1', { class: 't' }, 'Сўзни босинг, таржимаси пастда'),
     h('p', { class: 's' }, 'Ҳар бир арабча сўзни босинг: маънолари, масдари ва мисоллари пастдан чиқади.'),
     dots(2), h('button', { class: 'btn', onclick: () => go('w3') }, 'Давом этиш'));
+  if (n === 3) return page(null, bar,
+    h('h1', { class: 't', style: 'margin-top:8px' }, 'Луғатдан ташқари ҳам кўп нарса бор'),
+    h('div', { class: 'group', style: 'margin:14px 0' }, [
+      ['Феълнинг тусланиши', 'Феълни очиб, унинг шаклларини кўринг: мозий, музореъ, амр ва бошқалар. Жадваллар «Жаноҳ ут-толиб» дарслиги бўйича ясалган.'],
+      ['Сарф ва Наҳв', 'Икки дарслик дарс-дарс, китоб саҳифалари билан.'],
+      ['Қўлланма ва иловалар', 'Луғатдан фойдаланиш қоидалари, шартли қисқартмалар ва китоб охиридаги рўйхатлар.'],
+      ['Сақлаб қўйиш', 'Мақолада белги тугмасини босинг, у Профилда сақланади.']
+    ].map(([t, d], i) => h('div', { style: 'padding:12px 16px;' + (i ? 'border-top:1px solid var(--line)' : '') }, h('div', { style: 'font-weight:600' }, t), h('div', { style: 'font-size:14px;color:var(--muted);margin-top:2px' }, d)))),
+    dots(3), h('button', { class: 'btn', onclick: () => go('w4') }, 'Давом этиш'));
   return page(null, bar,
     h('div', { class: 'panel' },
       h('div', { class: 'search', style: 'margin:0;border-color:var(--accent)' }, svg(ICON.find, 20), h('span', {}, 'хул')),
@@ -1028,7 +1060,7 @@ function welcome(n) {
       h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px' }, ['ў ≈ у', 'қ ≈ к', 'ғ ≈ г', 'ҳ ≈ х'].map(x => h('span', { class: 'pill' }, x)))),
     h('h1', { class: 't' }, 'Ўзбекча ёзсангиз ҳам топилади'),
     h('p', { class: 's' }, 'Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзса бўлади. Огласовкасиз ёзилган арабча сўз ҳам топилади.'),
-    dots(3), h('button', { class: 'btn', onclick: finishWelcome }, 'Бошлаш'));
+    dots(4), h('button', { class: 'btn', onclick: finishWelcome }, 'Бошлаш'));
 }
 
 // ---------- бош экран ----------
@@ -1069,23 +1101,22 @@ function renderHome() {
           : h('div', { class: 'empty' }, letter ? 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.' : 'Ҳеч нарса топилмади. Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзиб кўринг.'));
       return;
     }
-    const w = wordOfDay();
     body.replaceChildren(
-      h('button', { class: 'wotd', onclick: () => openEntry(w.e, w.f) },
-        h('span', { class: 'k' }, 'КУН СЎЗИ'), h('span', { class: 'w', lang: 'ar' }, dA(w.f.arabic_word)),
-        h('span', {}, w.f.translations[0].meaning)),
       h('div', { class: 'lbl' }, 'Ҳарфлар бўйича'),
       h('div', { class: 'letters' }, LETTERS.map(l => h('button', { class: 'letter', lang: 'ar', onclick: () => { letter = l; fillAll(); } }, l))),
-      '');
+      h('div', { class: 'quad' },
+        h('button', { class: 'geo', onclick: () => go('geo'), 'aria-label': 'Географик номлар' }, h('span', { class: 'fl', 'aria-hidden': 'true' }, '🇸🇦'), h('span', {}, 'Географик номлар')),
+        ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))));
   };
-  const fillAll = () => { input.value = query; clearBtn.hidden = !(query || letter); fill(); };
+  const fillAll = () => { input.value = query; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); };
+  const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
   const clearBtn = h('button', { class: 'link', style: 'padding:0;min-height:44px', hidden: true, onclick: () => { query = ''; letter = ''; fillAll(); input.focus(); } }, 'Тозалаш');
-  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = !(query || letter); fill(); });
+  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('span', { class: 'ar', lang: 'ar' }, 'النعيم'), h('b', {}, 'ANNAIM')),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('span', { class: 'ar', lang: 'ar' }, 'النعيم')),
       h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22))),
-    h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
-  clearBtn.hidden = !(query || letter); fill();
+    backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
+  clearBtn.hidden = backBar.hidden = !(query || letter); fill();
 }
 
 // ---------- мақола ----------
@@ -1110,7 +1141,7 @@ function renderEntry(e) {
 // ---------- сақланганлар ва профил ----------
 function renderSaved() {
   const items = S.saved.map(byId).filter(Boolean);
-  page('saved', h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
+  page('profile', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('profile') }, '← Профил')), h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
     items.length ? h('div', { class: 'group', style: 'margin-top:8px' }, items.map(entryRow))
       : h('div', { class: 'empty' }, 'Ҳали ҳеч нарса сақланмади. Мақолани очиб, юқоридаги белги тугмасини босинг.'));
 }
@@ -1135,7 +1166,49 @@ function renderProfile() {
       h('div', { class: 'set' }, h('span', {}, 'Арабча шрифт'), seg([[0.85, 'Кичик'], [1, 'Ўртача'], [1.2, 'Катта']], S.size, v => { S.size = v; save(); applyPrefs(); renderProfile(); }))),
     h('div', { style: 'display:grid;gap:10px;margin-top:20px' },
       h('button', { class: 'btn line', onclick: () => go('w1') }, 'Танишув экранларини қайта кўрсатиш')),
-    h('p', { class: 'foot' }, 'Прототип. Маълумот китобнинг 311-саҳифасидан, огласовкалар текширилмоқда.'));
+    h('p', { class: 'foot' }, 'Прототип. Маълумот китобдан киритилган, текширув давом этмоқда.'));
+}
+
+// ---------- Қўлланма, иловалар, географик номлар (китоб матни) ----------
+const EX = window.ANNAIM_EXTRA || { geo: [], rules: [], abbr: [], lists: [] };
+const arText = (a, sep) => Array.isArray(a) ? a.join(sep || '، ') : (a || '');
+function exRow(uz, ar, note) {
+  const ref = note === '=';
+  return h('div', { class: 'lrow' }, h('div', { class: 'u' }, uz || '', note && !ref ? h('small', {}, note) : ''), h('div', { class: 'a', lang: 'ar' }, dA(arText(ar, ref ? ' = ' : '، '))));
+}
+const backTo = (to, text) => h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go(to) }, '← ' + text));
+function renderRules() {
+  const title = EX.rules.find(r => r.n === 0);
+  page('guide', backTo('guide', 'Қўлланма'),
+    h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, title ? title.parts.map(p => p.s).join(' ') : 'Луғатдан фойдаланиш ҳақида'),
+    h('div', {}, EX.rules.filter(r => r.n > 0).map(r => h('div', { class: 'rule' }, h('span', { class: 'rn' }, r.n + '.'),
+      h('p', {}, r.parts.flatMap(p => [p.t === 'ar' ? h('span', { class: 'arr', lang: 'ar', dir: 'rtl' }, dA(p.s)) : p.s, ' ']))))));
+}
+function renderAbbr() {
+  page('guide', backTo('guide', 'Қўлланма'), h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, 'Шартли қисқартмалар'),
+    h('div', { class: 'group' }, EX.abbr.map(r => h('div', { class: 'abrow' }, h('span', { class: 'ab' }, r.abbr), h('span', {}, r.meaning)))));
+}
+const EXTRA_SECTIONS = ['muannas', 'ikki_jins', 'nisbiy'];
+function renderExtra(i) {
+  const sec = EXTRA_SECTIONS[i], l = BOOKS.extra.lessons[i]; if (!sec) return go('home');
+  const rows = EX.lists.filter(r => r.section === sec);
+  page('home', backTo('home', 'Бош'), h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, l[1]),
+    h('div', { class: 'count' }, `${rows.length} та`), h('div', { class: 'group' }, rows.map(r => exRow(r.uz, r.ar, r.note))));
+}
+function renderGeo() {
+  const q = h('input', { id: 'gq', type: 'search', inputmode: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Ном ёки арабча ёзилиши', 'aria-label': 'Қидириш' });
+  const list = h('div', { class: 'group' }), count = h('div', { class: 'count' });
+  const idx = EX.geo.map(r => ({ r, u: normUz(r.uz), a: normAr(arText(r.ar, ' ')) }));
+  const fill = () => {
+    const t = q.value.trim(), ar = HAS_AR.test(t), key = ar ? normAr(t) : normUz(t);
+    const rows = !key ? idx : idx.filter(x => (ar ? x.a : x.u).includes(key));
+    count.textContent = `${rows.length} та`;
+    list.replaceChildren(...rows.map(x => exRow(x.r.uz, x.r.ar, x.r.note)));
+  };
+  q.addEventListener('input', fill);
+  page('home', backTo('home', 'Бош'), h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, 'Географик номлар'),
+    h('div', { class: 'search' }, svg(ICON.find, 20), q), count, list);
+  fill();
 }
 
 // ---------- Сарф ва Наҳв: дарсликлар бетлари (расм) ----------
@@ -1163,8 +1236,17 @@ const BOOKS = {
     ['23-§', 'Мустасно', 53], ['24-§', 'Ҳол', 56], ['25-§', 'Тамйиз', 58], ['26-§', 'Мунодо', 61], ['27-§', '«Кана ва ахавоти»нинг хабари', 63],
     ['28-§', 'Инна ва ахавотининг исми', 64], ['29-§', 'Исмнинг жар ўринлари', 66], ['30-§', 'Тавобеъ', 70], ['31-§', 'Наът', 71],
     ['32-§', 'Атф', 74], ['33-§', 'Тавкид', 76], ['34-§', 'Бадал', 79], ['35-§', 'Ҳарфлар', 83], ['36-§', 'Адад ва маъдуд (сон ва саналмиш)', 87]],
-    topStart: [3, 6, 29, 36, 44, 61, 70] } };
+    topStart: [3, 6, 29, 36, 44, 61, 70] },
+  // Қўлланма ва иловалар: китобнинг боши ва охиридаги саҳифалар (PDF 7, 8, 966, 967, 968). 4-элемент — кўрсатиладиган расмлар, 5-элемент — китобдаги бет рақами
+  guide: { title: 'Қўлланма', full: 'Китобдан фойдаланиш (Ан-Найм луғати)', dir: 'books/guide/', total: 5, topStart: [],
+    cap: { 1: '4-бет', 2: '5-бет', 3: '956-бет', 4: '957-бет', 5: '958-бет' }, lessons: [
+    ['Бошида', 'Луғатдан фойдаланиш', 1, [1, 2], '4–5-бетлар'], ['Охирида', 'Шартли қисқартмалар', 5, [5], '958-бет']] },
+  extra: { title: 'Иловалар', full: 'Луғат охиридаги рўйхатлар', dir: 'books/guide/', total: 5, topStart: [],
+    cap: { 1: '4-бет', 2: '5-бет', 3: '956-бет', 4: '957-бет', 5: '958-бет' }, lessons: [
+    ['956', 'Музаккар шаклли муаннас сўзлар', 3, [3], '956-бет'], ['957', 'Иккала жинсда қўлланиладиган отлар', 4, [4], '957-бет'],
+    ['957', 'Айрим сўз ва иборалардан ҳосил қилинган нисбий сифатлар', 4, [4, 5], '957–958-бетлар']] } };
 function lessonPages(b, i) {
+  if (b.lessons[i][3]) return b.lessons[i][3];
   const L = b.lessons, s = L[i][2], nx = L[i + 1] ? L[i + 1][2] : b.total + 1;
   const end = (L[i + 1] && !b.topStart.includes(nx)) ? nx : nx - 1;
   const out = []; for (let p = s; p <= Math.max(s, end); p++) out.push(p); return out;
@@ -1173,32 +1255,34 @@ function renderBook(key) {
   const b = BOOKS[key];
   page(key, h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, b.title)),
     h('p', { class: 'bk-sub' }, b.full),
-    h('div', { class: 'lessons' }, b.lessons.map((l, i) => { const ps = lessonPages(b, i);
-      return h('button', { class: 'lesson', onclick: () => go(`${key}-${i}`) }, h('span', { class: 'n' }, l[0]), h('span', { class: 't' }, l[1] || l[0]),
-        h('span', { class: 's' }, ps.length > 1 ? `${ps[0]}–${ps[ps.length - 1]}-бетлар` : `${ps[0]}-бет`)); })));
+    h('div', { class: 'tiles' }, b.lessons.map((l, i) =>
+      h('button', { class: 'tile', onclick: () => go(`${key}-${i}`) }, h('span', { class: 'n' }, l[0]), h('span', { class: 't' }, l[1] || '')))));
 }
 function renderLesson(key, i) {
   const b = BOOKS[key], l = b.lessons[i]; if (!l) return go(key);
   const nav = h('div', { class: 'lnav' },
     i > 0 ? h('button', { class: 'link', onclick: () => go(`${key}-${i - 1}`) }, '← ' + b.lessons[i - 1][0]) : h('span', {}),
     b.lessons[i + 1] ? h('button', { class: 'link', onclick: () => go(`${key}-${i + 1}`) }, b.lessons[i + 1][0] + ' →') : h('span', {}));
-  page(key, h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go(key) }, '← ' + b.title)),
+  page(key, h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go(key === 'extra' ? 'home' : key) }, key === 'extra' ? '← Бош' : '← ' + b.title)),
     h('h1', { style: 'margin:4px 0 0;font-size:22px' }, `${l[0]}${l[1] ? ': ' + l[1] : ''}`), h('p', { class: 'bk-sub' }, b.full),
     h('p', { class: 'bk-sub' }, 'Бетни катта қилиб кўриш учун расмни босинг.'),
     h('div', { class: 'pages' }, lessonPages(b, i).map(p => h('figure', {},
-      h('a', { href: b.dir + String(p).padStart(3, '0') + '.jpg', target: '_blank', rel: 'noopener' }, h('img', { src: b.dir + String(p).padStart(3, '0') + '.jpg', alt: `${b.title}, ${p}-бет`, loading: 'lazy', width: '992', height: '1404' })),
-      h('figcaption', {}, `${p}-бет`)))), nav);
+      h('a', { href: b.dir + String(p).padStart(3, '0') + '.jpg', target: '_blank', rel: 'noopener' }, h('img', { src: b.dir + String(p).padStart(3, '0') + '.jpg', alt: `${b.title}, ${(b.cap && b.cap[p]) || p + '-бет'}`, loading: 'lazy', width: '992', height: '1404' })),
+      h('figcaption', {}, (b.cap && b.cap[p]) || `${p}-бет`)))), nav);
 }
 
 // ---------- маршрут ----------
 function route() {
   const hsh = location.hash.replace(/^#/, '');
-  if (!S.seen && !/^w[123]$/.test(hsh)) return go('w1');
-  if (/^w[123]$/.test(hsh)) return welcome(+hsh[1]);
+  if (!S.seen && !/^w[1234]$/.test(hsh)) return go('w1');
+  if (/^w[1234]$/.test(hsh)) return welcome(+hsh[1]);
   const m = hsh.match(/^e-(.+)$/); const e = m && DATA.find(x => hashOf(x) === 'e-' + m[1]);
   if (e) return renderEntry(e);
-  const bm = hsh.match(/^(sarf|nahv)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
+  const gm = hsh.match(/^(guide|extra)-(\d+)$/);
+  if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
+  const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'saved') return renderSaved();
+  if (hsh === 'geo') return renderGeo();
   if (hsh === 'profile') return renderProfile();
   query = hsh === 'home' ? query : ''; return renderHome();
 }
