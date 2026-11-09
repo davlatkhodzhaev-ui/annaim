@@ -253,6 +253,10 @@ DATA.forEach(e => {
   });
   e._ar = normAr(ar.join(' ')); e._uz = normUz(uz.join(' | ')); e._root = normAr(e.root_search || '');
   e._utr = uzWords(uzTr.join(' | ')); e._uex = uzWords(uzEx.join(' | '));
+  // сегментлар: таржима «,» ва «;» бўйича бўлаклар; аниқ мослик учун
+  const segs = (arr) => '|' + arr.flatMap(m => String(m || '').split(/[;,]/)).map(x => normUz(x).replace(/[^a-zа-я0-9]+/g, ' ').trim()).filter(Boolean).join('|') + '|';
+  const d0 = e.derivatives[0] || {}, tr0 = (d0.translations || []).map(t => t.meaning);
+  e._s0 = segs(tr0.slice(0, 1)); e._sM = segs(tr0); e._sA = segs(uzTr);
   // сўз бўйича аниқ мослик учун: ҳар бир шакл, кўплик ва вариант алоҳида сўз
   e._raw = new Set(); e._words = new Set();
   e.derivatives.forEach(f => [f.arabic_word, f.verbal_noun, f.plural_form, f.collective_form, ...(f.alt_forms || []).map(a => a && (a.arabic_word || a))]
@@ -270,11 +274,12 @@ function search(text) {
     const score = (e) => e._raw.has(t) ? 5 : e._words.has(n) ? 4 : e._root === n ? 3 : [...e._words].some(w => w.startsWith(n)) ? 2 : 1;
     return DATA.filter(e => e._ar.includes(n)).map((e, i) => [e, score(e), i]).sort((a, b) => b[1] - a[1] || a[2] - b[2]).map(x => { x[0]._score = x[1]; return x[0]; });
   }
-  // тартиб: таржимада тўлиқ сўз > таржимада сўз боши > мисолда тўлиқ сўз > мисолда сўз боши; сўз ўртасидаги мослик чиқмайди
+  // тартиб: асосий феълнинг биринчи таржимасида аниқ мослик > асосий феълда > бошқа шаклларда > таржимада тўлиқ сўз > таржимада сўз боши > мисолда тўлиқ сўз > мисолда сўз боши; сўз ўртасидаги мослик чиқмайди
   const q = normUz(t).replace(/[^a-zа-я0-9]+/g, ' ').trim(); if (!q) return [];
   const st = ' ' + q, ex = ' ' + q + ' ';
-  const sc = (e) => e._utr.includes(ex) ? 4 : e._utr.includes(st) ? 3 : e._uex.includes(ex) ? 2 : e._uex.includes(st) ? 1 : 0;
-  return DATA.map((e, i) => [e, sc(e), i]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1] || a[2] - b[2]).map(x => x[0]);
+  const sg = '|' + q + '|';
+  const sc = (e) => e._s0.includes(sg) ? 8 : e._sM.includes(sg) ? 7 : e._sA.includes(sg) ? 6 : e._utr.includes(ex) ? 4 : e._utr.includes(st) ? 3 : e._uex.includes(ex) ? 2 : e._uex.includes(st) ? 1 : 0;
+  return DATA.map((e, i) => [e, sc(e), i]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1] || b[0].derivatives.length - a[0].derivatives.length || a[2] - b[2]).map(x => x[0]);
 }
 
 // ---------- DOM ----------
