@@ -187,6 +187,10 @@ ol.mean li { margin: 3px 0; }
 .hist .hclr { font-size: 13px; padding: 0; min-height: 32px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--ink); }
+.brand { align-items: center; gap: 8px; }
+.round { position: relative; color: var(--accent); cursor: pointer; }
+.round.star { color: var(--gold); }
+.round .cnt { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: var(--surface); font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; }
 .brand .logo { height: 44px; width: auto; display: block; }
 .hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #ecd27c; }
 .hero .a { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 150px; line-height: 1.3; direction: rtl; text-align: right; color: #f2f5f3; }
@@ -377,6 +381,9 @@ function h(tag, props, ...kids) {
 }
 const svg = (d, w = 24) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('width', w); s.setAttribute('height', w); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '1.9'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = d; return s; };
 const ICON = {
+  star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
   home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
   mark: '<path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
@@ -1218,7 +1225,12 @@ function renderHome() {
     clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card')) pushHist(query); }, 1800); });
   input.addEventListener('change', () => { if (query.trim()) pushHist(query); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: '../icons/logo-kanz-sm.png', alt: 'كنز' })),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: '../icons/logo-kanz-sm.png', alt: 'كنز' }),
+        h('a', { class: 'round star', href: '#saved', 'aria-label': 'Сақланганлар' }, svg(ICON.star, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
+        (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          const b = h('button', { class: 'round', 'aria-label': 'Ёруғ ёки қоронғи' });
+          const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.moon, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
+          b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })()),
       h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
@@ -1246,7 +1258,7 @@ function renderEntry(e) {
 // ---------- сақланганлар ва профил ----------
 function renderSaved() {
   const items = S.saved.map(byId).filter(Boolean);
-  page('profile', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('profile') }, '← Профил')), h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
+  page('profile', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => (history.length > 1 ? history.back() : go('home')) }, '← Орқага')), h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
     items.length ? h('div', { class: 'group', style: 'margin-top:8px' }, items.map(entryRow))
       : h('div', { class: 'empty' }, 'Ҳали ҳеч нарса сақланмади. Мақолани очиб, юқоридаги белги тугмасини босинг.'));
 }
