@@ -188,6 +188,7 @@ ol.mean li { margin: 3px 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--ink); }
 .brand { align-items: center; gap: 8px; }
+.acts { display: flex; align-items: center; gap: 8px; }
 .round { position: relative; color: var(--accent); cursor: pointer; }
 .round.star { color: var(--gold); }
 .round .cnt { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: var(--surface); font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; }
@@ -1120,7 +1121,7 @@ function entryRow(e) {
 function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('guide', '#guide', 'info', 'Қўлланма'), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'), t('profile', '#profile', 'user', 'Профил'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('guide', '#guide', 'info', 'Қўлланма'), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'));
 }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
 
@@ -1225,13 +1226,14 @@ function renderHome() {
     clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card')) pushHist(query); }, 1800); });
   input.addEventListener('change', () => { if (query.trim()) pushHist(query); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: '../icons/logo-kanz-sm.png', alt: 'كنز' }),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: '../icons/logo-kanz-sm.png', alt: 'كنز' })),
+      h('div', { class: 'acts' },
         h('a', { class: 'round star', href: '#saved', 'aria-label': 'Сақланганлар' }, svg(ICON.star, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
         (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           const b = h('button', { class: 'round', 'aria-label': 'Ёруғ ёки қоронғи' });
           const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.moon, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
-          b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })()),
-      h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22))),
+          b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })(),
+        h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22)))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
 }
@@ -1271,6 +1273,7 @@ function renderProfile() {
   const saved = S.saved.map(byId).filter(Boolean).slice(0, 3);
   const sw = h('button', { class: 'sw', role: 'switch', 'aria-checked': String(S.harakat), 'aria-label': 'Огласовкаларни кўрсатиш', onclick: () => { S.harakat = !S.harakat; save(); renderProfile(); } });
   page('profile',
+    h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
     h('div', { class: 'me' }, h('div', { class: 'av' }, svg(ICON.user, 30)),
       h('div', {}, h('div', { style: 'font-size:22px;font-weight:600;line-height:1.2' }, 'Меҳмон'), h('div', { style: 'font-size:14px;color:var(--muted)' }, 'Сақланганлар шу қурилмада сақланади'))),
     h('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, h('div', { class: 'lbl' }, 'Сақланганлар'), h('a', { class: 'link', href: '#saved', style: 'display:flex;align-items:center;font-size:14px' }, 'Барчаси')),
