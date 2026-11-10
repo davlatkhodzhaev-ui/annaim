@@ -192,6 +192,10 @@ ol.mean li { margin: 3px 0; }
 .round { position: relative; color: var(--accent); cursor: pointer; }
 .round.star { color: var(--gold); }
 .round .cnt { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: var(--surface); font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; }
+.bobs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+.bob { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; color: var(--gold); }
+.bob b { font-size: 17px; font-family: 'Comfortaa', var(--font-ui); }
+.bob small { font-size: 11px; color: var(--muted); }
 .brand .logo { height: 44px; width: auto; display: block; }
 .hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #ecd27c; }
 .hero .a { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 150px; line-height: 1.3; direction: rtl; text-align: right; color: #f2f5f3; }
@@ -349,7 +353,7 @@ function verbCard(x) {
   return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
     h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers),
     h('span', { class: 'root', lang: 'ar' }, x.ar),
-    h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} боб) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
+    h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
 // ---------- қидирув тарихи ----------
 function pushHist(q) { q = (q || '').trim(); if (q.length < 2) return; S.hist = [q, ...(S.hist || []).filter(x => x.toLowerCase() !== q.toLowerCase())].slice(0, 12); save(); }
@@ -1216,7 +1220,12 @@ function renderHome() {
       h('div', { class: 'letters' }, LETTERS.map(l => h('button', { class: 'letter', lang: 'ar', onclick: () => { letter = l; fillAll(); } }, l))),
       h('div', { class: 'quad' },
         h('button', { class: 'geo', onclick: () => go('geo'), 'aria-label': 'Географик номлар' }, h('span', { class: 'fl', 'aria-hidden': 'true' }, '🇸🇦'), h('span', {}, 'Географик номлар')),
-        ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))));
+        ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))),
+      h('div', { class: 'quad' },
+        h('button', { class: 'geo', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар')),
+        h('button', { class: 'geo', onclick: () => go('tasrif') }, h('span', {}, 'Феълни туслаш'))),
+      h('div', { class: 'lbl', style: 'margin-top:18px' }, 'Феъл шакллари'),
+      h('div', { class: 'bobs' }, SFORMS.map(k => h('button', { class: 'bob', onclick: () => go('bob-' + k) }, h('b', {}, k), h('small', {}, String(sformCount()[k] || 0))))));
   };
   const fillAll = () => { input.value = query; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); };
   const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
@@ -1392,6 +1401,55 @@ function renderLesson(key, i) {
 }
 
 // ---------- маршрут ----------
+// ---------- феъл шакллари (I–X) ва «Феълни туслаш» ----------
+const SFORMS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+let SFC = null;
+function sformCount() { if (SFC) return SFC; SFC = {}; DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type === 'verb' && f.sarf_form) SFC[f.sarf_form] = (SFC[f.sarf_form] || 0) + 1; })); return SFC; }
+function verbItem(e, f, onclick) {
+  const m = ((f.translations || [])[0] || {}).meaning || (f.equivalent_to ? '= ' + f.equivalent_to.join(', ') : '—');
+  return h('button', { class: 'card', onclick }, h('span', { class: 'gloss' }, m), h('span', { class: 'root', lang: 'ar' }, f.arabic_word),
+    h('span', { class: 'meta' }, `${f.sarf_form ? f.sarf_form + ' шакл · ' : ''}${rootOf(e)} · стр. ${e.source_page}`));
+}
+function openTasrif(e, f) { openSheet(f, e); requestAnimationFrame(() => {
+  const ds = [...document.querySelectorAll('#sheet details.tsr-box')].filter(d => /^(Тусланиши|Етти феъл|Фақат мажҳул)/.test((d.querySelector('summary') || {}).textContent || ''));
+  ds.forEach(d => { d.open = true; }); if (ds[0]) ds[0].scrollIntoView({ block: 'start' }); }); }
+function renderBob(k) {
+  const all = []; DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type === 'verb' && f.sarf_form === k) all.push({ e, f }); }));
+  const list = h('div', { class: 'list' }); let n = 0;
+  const more = h('button', { class: 'btn', style: 'margin:12px 0' }, 'Яна кўрсатиш');
+  const add = () => { all.slice(n, n + 60).forEach(x => list.append(verbItem(x.e, x.f, () => openTasrif(x.e, x.f)))); n += 60; more.hidden = n >= all.length; };
+  more.addEventListener('click', add);
+  page('home', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
+    h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, `${k} шакл феъллари`)),
+    h('p', { class: 'count' }, `${all.length} та феъл, китоб тартибида. Феълни боссангиз, туслаш жадвали очилади.`), list, more);
+  add();
+}
+let tq = '';
+function renderTasrif() {
+  const input = h('input', { id: 'tq', type: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Феъл: كَتَبَ, ёзмоқ, yozmoq', value: tq, 'aria-label': 'Феъл' });
+  const out = h('div', {});
+  const fill = () => {
+    const t = tq.trim(); if (!t) { out.replaceChildren(h('p', { class: 'count' }, 'Арабча феълни ёки ўзбекча «-моқ» шаклини ёзинг. Топилган феълни боссангиз, етти феъл жадвали очилади.')); return; }
+    let hits = [];
+    if (HAS_AR.test(t)) hits = wordHits(t).filter(x => x.f.form_type === 'verb').map(x => ({ e: x.e, f: x.f }));
+    else {
+      const q = normUz(isLat(t) ? latCyr(t) : t).replace(/[^a-zа-я ]+/g, ' ').trim(); const seen = new Set();
+      DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type !== 'verb') return;
+        let ps = []; try { ps = uzParts(f); } catch (x) {}
+        if (ps.some(x => normUz(x.p) === q) && !seen.has(f)) { seen.add(f); hits.push({ e, f }); } }));
+      if (!hits.length) verbHits(isLat(t) ? latCyr(t) : t).forEach(x => { if (!seen.has(x.f)) { seen.add(x.f); hits.push({ e: x.e, f: x.f }); } });
+    }
+    if (!HAS_AR.test(t)) { const rk = new Map(); search(isLat(t) ? latCyr(t) : t).forEach((x, i) => rk.set(x, i)); const R = (x) => rk.has(x.e) ? rk.get(x.e) : 1e9;
+      const q0 = normUz(isLat(t) ? latCyr(t) : t).replace(/[^a-zа-я ]+/g, ' ').trim(); const P = (x) => { try { const ps = uzParts(x.f); return ps.length && normUz(ps[0].p) === q0 ? 0 : 1; } catch (z) { return 1; } };
+      hits.sort((a, b) => P(a) - P(b) || R(a) - R(b) || a.e.derivatives.indexOf(a.f) - b.e.derivatives.indexOf(b.f)); }
+    out.replaceChildren(h('div', { class: 'count' }, hits.length ? `${hits.length} та феъл` : 'Топилмади'), h('div', { class: 'list' }, hits.slice(0, 50).map(x => verbItem(x.e, x.f, () => openTasrif(x.e, x.f)))));
+  };
+  input.addEventListener('input', () => { tq = input.value; fill(); });
+  page('home', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
+    h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Феълни туслаш')),
+    h('div', { class: 'search' }, svg(ICON.find, 20), input), out);
+  fill(); setTimeout(() => input.focus(), 50);
+}
 function route() {
   const hsh = location.hash.replace(/^#/, '');
   if (!S.seen && !/^w[1234]$/.test(hsh)) return go('w1');
@@ -1403,6 +1461,8 @@ function route() {
   const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'saved') return renderSaved();
   if (hsh === 'geo') return renderGeo();
+  if (hsh === 'tasrif') return renderTasrif();
+  const bb = hsh.match(/^bob-([IVX]+)$/); if (bb) return renderBob(bb[1]);
   if (hsh === 'profile') return renderProfile();
   query = hsh === 'home' ? query : ''; return renderHome();
 }
