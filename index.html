@@ -7,12 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ANNAIM">
-<meta name="description" content="«Ан-Найм» арабча-ўзбекча луғати">
+<meta name="apple-mobile-web-app-title" content="Kanz">
+<meta name="description" content="Kanz: «Ан-Найм» арабча-ўзбекча луғати">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>ANNAIM Луғат</title>
+<title>Kanz Луғат</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Comfortaa:wght@500;700&display=swap">
 <style>
 /* Layout: one phone-width column. Welcome (3 steps), Home with search, an entry laid out as in the book,
@@ -1042,7 +1042,7 @@ function welcome(n) {
   const back = n > 1 ? h('button', { class: 'link', onclick: () => go('w' + (n - 1)) }, '← Орқага') : h('span', {});
   const bar = h('div', { class: 'bar' }, back, skip);
   if (n === 1) return page(null, bar,
-    h('div', { class: 'hero' }, h('small', {}, 'ANNAIM'), h('div', { class: 'a', lang: 'ar' }, 'النعيم')),
+    h('div', { class: 'hero' }, h('small', {}, 'KANZ'), h('div', { class: 'a', lang: 'ar' }, 'كنز')),
     h('h1', { class: 't' }, 'Арабча-ўзбекча луғат'),
     h('p', { class: 's' }, 'Китобдаги ҳар бир сўз, огласовкалари билан, бир босишда сизнинг чўнтагингизда.'),
     dots(1), h('button', { class: 'btn', onclick: () => go('w2') }, 'Давом этиш'));
@@ -1125,7 +1125,7 @@ function renderHome() {
   const clearBtn = h('button', { class: 'link', style: 'padding:0;min-height:44px', hidden: true, onclick: () => { query = ''; letter = ''; fillAll(); input.focus(); } }, 'Тозалаш');
   input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('span', { class: 'ar', lang: 'ar' }, 'النعيم')),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('span', { class: 'ar', lang: 'ar' }, 'كنز')),
       h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
