@@ -182,6 +182,9 @@ ol.mean li { margin: 3px 0; }
 .lnav { display: flex; justify-content: space-between; gap: 10px; margin: 14px 0; }
 #tabs svg { stroke: currentColor; }
 .hero { background: var(--accent); border-radius: 28px; padding: 28px 24px 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 300px; margin-top: 12px; }
+.hero.cover { padding: 0; min-height: 0; background: #1b2340; overflow: hidden; display: block; }
+.hero.cover img { width: 100%; height: auto; display: block; }
+.brand .logo { height: 84px; width: auto; display: block; }
 .hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #dcefe9; }
 .hero .a { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 150px; line-height: 1.3; direction: rtl; text-align: right; color: #f2f5f3; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px 18px; display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
@@ -1042,7 +1045,7 @@ function welcome(n) {
   const back = n > 1 ? h('button', { class: 'link', onclick: () => go('w' + (n - 1)) }, '← Орқага') : h('span', {});
   const bar = h('div', { class: 'bar' }, back, skip);
   if (n === 1) return page(null, bar,
-    h('div', { class: 'hero' }, h('small', {}, 'KANZ'), h('div', { class: 'a', lang: 'ar' }, 'كنز')),
+    h('div', { class: 'hero cover' }, h('img', { src: 'icons/kanz-cover.jpg', alt: 'كنز — KANZ, арабча-ўзбекча луғат' })),
     h('h1', { class: 't' }, 'Арабча-ўзбекча луғат'),
     h('p', { class: 's' }, 'Китобдаги ҳар бир сўз, огласовкалари билан, бир босишда сизнинг чўнтагингизда.'),
     dots(1), h('button', { class: 'btn', onclick: () => go('w2') }, 'Давом этиш'));
@@ -1125,7 +1128,7 @@ function renderHome() {
   const clearBtn = h('button', { class: 'link', style: 'padding:0;min-height:44px', hidden: true, onclick: () => { query = ''; letter = ''; fillAll(); input.focus(); } }, 'Тозалаш');
   input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('span', { class: 'ar', lang: 'ar' }, 'كنز')),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: 'icons/logo-kanz-sm.png', alt: 'كنز' })),
       h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
