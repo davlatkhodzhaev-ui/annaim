@@ -1222,10 +1222,7 @@ function renderHome() {
         h('button', { class: 'geo', onclick: () => go('geo'), 'aria-label': 'Географик номлар' }, h('span', { class: 'fl', 'aria-hidden': 'true' }, '🇸🇦'), h('span', {}, 'Географик номлар')),
         ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))),
       h('div', { class: 'quad' },
-        h('button', { class: 'geo', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар')),
-        h('button', { class: 'geo', onclick: () => go('tasrif') }, h('span', {}, 'Феълни туслаш'))),
-      h('div', { class: 'lbl', style: 'margin-top:18px' }, 'Феъл шакллари'),
-      h('div', { class: 'bobs' }, SFORMS.map(k => h('button', { class: 'bob', onclick: () => go('bob-' + k) }, h('b', {}, k), h('small', {}, String(sformCount()[k] || 0))))));
+        h('button', { class: 'geo', style: 'grid-column:1 / -1', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар'))));
   };
   const fillAll = () => { input.value = query; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); };
   const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
