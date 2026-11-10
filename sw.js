@@ -1,6 +1,6 @@
 // ANNAIM service worker: луғатни телефонга сақлайди, интернетсиз ҳам очилади.
 // Версия make_web.py томонидан ҳар йиғишда алмаштирилади.
-const VERSION = '20261111-kanz4';
+const VERSION = '20261111-kanz5';
 const CACHE = 'annaim-' + VERSION;
 const CORE = ['./', './index.html', './data1.js', './data2.js', './extra.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo-kanz-sm.png', './icons/kanz-cover.jpg'];
 
@@ -22,6 +22,8 @@ self.addEventListener('fetch', (e) => {
     return;
   }
   if (url.origin !== location.origin) return;
+  // test/ папкаси: тест нусхаси, кэшланмайди
+  if (url.pathname.includes('/test/')) return;
   // Саҳифа ва файллар: аввал кэшдан (тез, интернетсиз), кэшда бўлмаса тармоқдан.
   // Янги версия sw.js ўзгарганда ўрнатилади ва кейинги очишда кўринади.
   const key = req.mode === 'navigate' ? './index.html' : req;
