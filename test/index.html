@@ -196,6 +196,8 @@ ol.mean li { margin: 3px 0; }
 .bob { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; color: var(--gold); }
 .bob b { font-size: 17px; font-family: 'Comfortaa', var(--font-ui); }
 .bob small { font-size: 11px; color: var(--muted); }
+.lvid { margin: 12px 0 18px; }
+.lvid video { display: block; width: 100%; max-width: 360px; max-height: 78vh; margin: 0 auto; border-radius: 14px; background: #000; aspect-ratio: 9 / 16; }
 .brand .logo { height: 44px; width: auto; display: block; }
 .hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #ecd27c; }
 .hero .a { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 150px; line-height: 1.3; direction: rtl; text-align: right; color: #f2f5f3; }
@@ -1433,6 +1435,12 @@ function renderBook(key) {
     h('div', { class: 'tiles' }, b.lessons.map((l, i) =>
       h('button', { class: 'tile', onclick: () => go(`${key}-${i}`) }, h('span', { class: 'n' }, l[0]), h('span', { class: 't' }, l[1] || '')))));
 }
+// дарс видеолари: фақат «▶» босилганда юкланади (preload="none")
+const VIDEOS = { 'sarf-1': { src: '../videos/sarf_01.mp4', poster: '../videos/sarf_01.jpg' }, 'sarf-11': { src: '../videos/sarf_10.mp4', poster: '../videos/sarf_10.jpg' } };
+function lessonVideo(key, i) {
+  const v = VIDEOS[key + '-' + i]; if (!v) return '';
+  return h('div', { class: 'lvid' }, h('video', { controls: '', preload: 'none', playsinline: '', poster: v.poster, src: v.src }), h('p', { class: 'bk-sub' }, 'Видео дарс. Кўриш учун ▶ ни босинг (интернет керак).'));
+}
 function renderLesson(key, i) {
   const b = BOOKS[key], l = b.lessons[i]; if (!l) return go(key);
   const nav = h('div', { class: 'lnav' },
@@ -1440,6 +1448,7 @@ function renderLesson(key, i) {
     b.lessons[i + 1] ? h('button', { class: 'link', onclick: () => go(`${key}-${i + 1}`) }, b.lessons[i + 1][0] + ' →') : h('span', {}));
   page(key, h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go(key === 'extra' ? 'home' : key) }, key === 'extra' ? '← Бош' : '← ' + b.title)),
     h('h1', { style: 'margin:4px 0 0;font-size:22px' }, `${l[0]}${l[1] ? ': ' + l[1] : ''}`), h('p', { class: 'bk-sub' }, b.full),
+    lessonVideo(key, i),
     h('p', { class: 'bk-sub' }, 'Бетни катта қилиб кўриш учун расмни босинг.'),
     h('div', { class: 'pages' }, lessonPages(b, i).map(p => h('figure', {},
       h('a', { href: b.dir + String(p).padStart(3, '0') + '.jpg', target: '_blank', rel: 'noopener' }, h('img', { src: b.dir + String(p).padStart(3, '0') + '.jpg', alt: `${b.title}, ${(b.cap && b.cap[p]) || p + '-бет'}`, loading: 'lazy', width: '992', height: '1404' })),
