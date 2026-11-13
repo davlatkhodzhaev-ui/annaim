@@ -216,6 +216,25 @@ p.s { margin: 0; color: var(--muted); }
 .me .av { width: 64px; height: 64px; border-radius: 32px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; }
 .set { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; min-height: 56px; }
 .set + .set { border-top: 1px solid var(--line); }
+.day { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 4px 0 12px; }
+.day .k { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.day .w { font-family: var(--font-ar); font-size: calc(38px * var(--ars, 1)); line-height: 1.6; direction: rtl; text-align: right; color: var(--accent); }
+.day .m { font-size: 16px; }
+.day .x { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 15px; color: var(--muted); }
+.day .x .p { font-family: var(--font-ar); font-size: calc(24px * var(--ars, 1)); line-height: 1.7; direction: rtl; text-align: right; color: var(--ink); }
+.qz-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); margin: 6px 0 10px; }
+.qz-bar { height: 6px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; margin-bottom: 18px; }
+.qz-bar i { display: block; height: 100%; background: var(--gold); }
+.qz-q { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px; text-align: center; margin-bottom: 14px; }
+.qz-q .t { font-size: 15px; color: var(--muted); }
+.qz-q .w { font-family: var(--font-ar); font-size: calc(46px * var(--ars, 1)); line-height: 1.7; direction: rtl; color: var(--accent); }
+.qz-q .g { font-size: 16px; }
+.opt { display: block; width: 100%; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; min-height: 52px; font-size: 16px; margin-bottom: 10px; }
+.opt.ar { font-family: var(--font-ar); font-size: calc(30px * var(--ars, 1)); line-height: 1.6; direction: rtl; text-align: center; }
+.opt.ok { border-color: #2e7d4f; background: rgba(46, 125, 79, .14); }
+.opt.no { border-color: #b3423a; background: rgba(179, 66, 58, .12); }
+.qz-end { text-align: center; padding: 30px 0 18px; }
+.qz-end .n { font-size: 54px; font-weight: 600; color: var(--gold); line-height: 1.1; }
 .set.col { flex-direction: column; align-items: flex-start; gap: 8px; }
 .set.col .seg { flex-wrap: wrap; }
 .set.col .seg button { border-left: 0 !important; }
@@ -1181,8 +1200,8 @@ function wordHits(t) {
     const extra = [[f.verbal_noun, 'масдари'], [f.plural_form, 'кўплиги'], [f.collective_form, 'жамловчиси']].filter(x => x[0]).flatMap(([x, l]) => String(x).split(/[,،;=]|ёки/).map(y => [y.trim(), l]));
     let sc = 0, via = '';
     if (own.includes(t)) sc = 5; else if (own.some(x => normAr(x) === n)) sc = 4;
-    else { const hit = extra.find(([y]) => y === t || normAr(y) === n); if (hit) { sc = 3; via = hit[1]; } }
-    if (sc >= 4) {   // асосий сўз ва ҳар бир «ёки» шакл — алоҳида натижа
+    else { const hit = extra.find(([y]) => y === t) || extra.find(([y]) => normAr(y) === n); if (hit) { sc = (hit[0] === t && /[\u064B-\u0652]/.test(t)) ? 4.5 : 3; via = hit[1]; } }
+    if (sc >= 4 && !via) {   // асосий сўз ва ҳар бир «ёки» шакл — алоҳида натижа
       const main = String(f.arabic_word || '').split(/[,،;=]|ёки/).map(x => x.trim());
       if (main.includes(t)) out.push({ e, f, sc: 5, via }); else if (main.some(x => normAr(x) === n)) out.push({ e, f, sc: 4, via });
       (f.alt_forms || []).forEach(a => { if (!a || !a.arabic_word) return; const ex = a.arabic_word === t; if (ex || normAr(a.arabic_word) === n) out.push({ e, f: altView(f, a.arabic_word), sc: ex ? 5 : 4, via }); });
@@ -1194,7 +1213,7 @@ function wordHits(t) {
 function wordCard(x) {
   const m = ((x.f.translations || [])[0] || {}).meaning || (x.f.equivalent_to ? '= ' + x.f.equivalent_to.join(', ') : '—');
   return h('button', { class: 'card', onclick: () => openAt(x.e, x.f) },
-    h('span', { class: 'gloss' }, (x.via ? `(${x.f.arabic_word} — ${x.via}) ` : '') + m), h('span', { class: 'root', lang: 'ar' }, x.f.arabic_word),
+    h('span', { class: 'gloss' }, (x.via ? `${x.f.arabic_word} сўзининг ${x.via} · ` : '') + m), h('span', { class: 'root', lang: 'ar' }, x.f.arabic_word),
     h('span', { class: 'meta' }, `${x.f.form_type === 'verb' && x.f.sarf_form ? x.f.sarf_form + ' шакл · ' : ''}${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
 let pendingAt = null;
@@ -1299,7 +1318,8 @@ function openSheet(f, e, btn) {
     derivedBlock(f, e),
     tasghirBlock(f, e),
     (f.translations || []).length ? h('ol', { class: 'mean' }, f.translations.map(t => h('li', {}, t.meaning)))
-      : (f.equivalent_to ? h('p', {}, '= ' + f.equivalent_to.join(', ') + ' боб билан бир хил') : ''),
+      : (f.equivalent_to ? h('p', {}, '= ' + f.equivalent_to.join(', ') + (f.equivalent_to.every(r => /^[IVX]+/.test(String(r).trim())) ? ' боб билан бир хил' : '')) : ''),
+    refsBlock(f, e),
     exs.length ? h('h3', {}, 'Мисоллар') : '',
     exs.length ? h('div', { class: 'exs' }, exs.map(x => h('div', { class: 'ex' }, h('div', { class: 'p' }, ...textToNodes(x.phrase, f, e)), h('div', {}, (x.sense ? `${x.sense}) ` : '') + (x.translation || '…'))))) : '',
     others.length ? h('h3', {}, 'Шу ўзакнинг бошқа шакллари') : '',
@@ -1407,7 +1427,7 @@ function renderHome() {
             h('div', { class: 'count' }, `${items.length} та мақола`), h('div', { class: 'list' }, cards(items))];
           const nqa = HAS_AR.test(query) ? normAr(query) : '';
           const rawq = arRaw(query), marked = !!nqa && nqa.length < rawq.length;
-          const exactW = wh.some(x => marked ? arRaw(x.f.arabic_word) === rawq : normAr(x.f.arabic_word) === nqa);
+          const exactW = wh.some(x => x.sc === 4.5 || (marked ? arRaw(x.f.arabic_word) === rawq : normAr(x.f.arabic_word) === nqa));
           const ah = (!letter && nqa) ? arFormHits(query) : [];
           const ahSec = ah.length ? [h('div', { class: 'lbl' }, `Феъл шакллари (${ah.length})`), h('div', { class: 'list' }, ah.slice(0, 20).map(arFormCard))] : [];
           if (ah.length && !exactW) return [...ahSec,
@@ -1432,6 +1452,8 @@ function renderHome() {
     body.replaceChildren(
       hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
         h('div', { class: 'chips' }, hist.map(x => h('button', { class: 'chip', onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
+      dayCard(),
+      h('button', { class: 'btn line', style: 'margin-bottom:16px', onclick: () => { QZ = null; go('quiz'); } }, 'Тезкор тест · 10 савол'),
       h('div', { class: 'lbl' }, 'Ҳарфлар бўйича'),
       h('div', { class: 'letters' }, LETTERS.map(l => h('button', { class: 'letter', lang: 'ar', onclick: () => { letter = l; fillAll(); } }, l))),
       h('div', { class: 'quad' },
@@ -1490,6 +1512,88 @@ function seg(options, current, onPick) {
   const wrap = h('div', { class: 'seg', role: 'group' });
   options.forEach(([val, label]) => wrap.append(h('button', { 'aria-pressed': String(current === val), onclick: () => { onPick(val); } }, label)));
   return wrap;
+}
+// ---------- кун сўзи (китобдан мисоли билан) ----------
+let DAYPOOL = null;
+function dayPick() {
+  if (!DAYPOOL) { DAYPOOL = []; DATA.forEach(e => e.derivatives.forEach(f => {
+    if (f.uncertain || !f.arabic_word || /[,،\ufffd]|ёки/.test(f.arabic_word)) return;
+    const m = String(((f.translations || [])[0] || {}).meaning || '').trim(); if (m.length < 3 || /^=|\ufffd/.test(m)) return;
+    const x = (f.examples || []).find(z => z.translation && /[\u0600-\u06FF]/.test(z.phrase || '') && !/\ufffd/.test(z.phrase + z.translation) && !/~[\u064B-\u0652\u0640]|\u0640|\.\.\./.test(z.phrase)); if (!x) return;
+    DAYPOOL.push({ e, f, m, x }); })); }
+  if (!DAYPOOL.length) return null;
+  const d = new Date(); const day = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) + d.getFullYear() * 366;
+  return DAYPOOL[(day * 7919) % DAYPOOL.length];
+}
+function dayCard() {
+  const p = dayPick(); if (!p) return '';
+  return h('button', { class: 'day', onclick: () => openAt(p.e, p.f) },
+    h('div', { class: 'k' }, 'Кун сўзи'), h('div', { class: 'w', lang: 'ar' }, p.f.arabic_word), h('div', { class: 'm' }, p.m),
+    h('div', { class: 'x' }, h('div', { class: 'k' }, 'Китобдан мисол'), h('div', { class: 'p', lang: 'ar' }, p.x.phrase.replace(/~/g, '\u200f~\u200f')), h('div', {}, p.x.translation)));
+}
+// ---------- «=» ва «қар.» ишоралари: босиладиган ҳавола ----------
+function refsBlock(f, e) {
+  const seen = new Set(), out = [];
+  const push = (w, lab) => { w = String(w || '').trim(); if (!w || seen.has(w)) return; seen.add(w); const t = lookup(w, e); if (!t || t.f === f || (t.f._of || t.f) === f) return;
+    out.push(h('button', { class: 'rel', onclick: () => openSheet(t.f, t.e, null) }, h('span', { class: 'l' }, lab), h('span', { class: 'g' }, ((t.f.translations || [])[0] || {}).meaning || ''), h('span', { class: 'w', lang: 'ar' }, dA(t.f.arabic_word)))); };
+  (f.equivalent_to || []).forEach(r => String(r).split(/[,،]/).forEach(w => { if (/[\u0600-\u06FF]/.test(w)) push(w, '='); }));
+  (f.translations || []).forEach(t => { const m = String(t.meaning || ''); let g; const R = /(қар\.|сол\.|=)\s*([\u0600-\u06FF\u064B-\u0652]+)/g; while ((g = R.exec(m))) push(g[2], g[1] === '=' ? '=' : g[1]); });
+  return out.length ? [h('h3', {}, 'Боғлиқ сўзлар'), h('div', { class: 'rels' }, out)] : '';
+}
+// ---------- тезкор тест (саволлар луғатнинг ўзидан) ----------
+let QP = null, QZ = null;
+const shuf = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function quizPool() {
+  if (QP) return QP; QP = { w: [], v: [] };
+  DATA.forEach(e => e.derivatives.forEach(f => {
+    if (f.uncertain || !f.arabic_word) return; const w = f.arabic_word;
+    if (/[,،~\ufffd]|ёки/.test(w) || !/[\u064B-\u0652]/.test(w)) return;
+    const t = (f.translations || [])[0]; if (!t || t.label) return; const m = String(t.meaning || '').trim();
+    if (m.length < 3 || m.length > 42 || /[\u0600-\u06FF=~\ufffd(]/.test(m) || /^(қар|сол|шунингдек)/.test(m)) return;
+    QP.w.push({ e, f, m });
+    if (f.form_type === 'verb' && f.sarf_form === 'I' && /^[аиу]$/.test(String(f.vocaliz || '').trim())) QP.v.push({ e, f, m });
+  }));
+  return QP;
+}
+function quizMake() {
+  const P = quizPool(), qs = []; let guard = 0;
+  while (qs.filter(q => q.kind === 'v').length < 4 && guard++ < 400) {
+    const it = P.v[Math.floor(Math.random() * P.v.length)]; if (!it || qs.some(q => q.it === it)) continue;
+    let tl = []; try { tl = tasrifList(it.f); } catch (x) {} if (tl.length !== 1 || tl[0].type !== 'солим') continue;
+    const ok = tl[0].muzore[0][0], L = splitLetters(ok); if (L.length !== 4) continue;
+    const opts = [FA, KA, DA].map(v => { const B = cl(L); B[2] = setV(B[2], v); return joinL(B); });
+    qs.push({ kind: 'v', it, ok, opts: shuf(opts) });
+  }
+  guard = 0;
+  while (qs.length < 10 && guard++ < 400) {
+    const it = P.w[Math.floor(Math.random() * P.w.length)]; if (!it || qs.some(q => q.it === it)) continue;
+    const same = P.w.filter(x => x.f.form_type === it.f.form_type && x.m !== it.m); const wrong = [];
+    let g2 = 0; while (wrong.length < 3 && g2++ < 60) { const c = same[Math.floor(Math.random() * same.length)]; if (c && !wrong.includes(c.m)) wrong.push(c.m); }
+    if (wrong.length < 3) continue;
+    qs.push({ kind: 'w', it, ok: it.m, opts: shuf([it.m, ...wrong]) });
+  }
+  return { qs: shuf(qs), i: 0, score: 0, pick: null };
+}
+function renderQuiz() {
+  if (!QZ) QZ = quizMake();
+  const bar = h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => { QZ = null; go('home'); } }, '← Бош саҳифа'));
+  if (QZ.i >= QZ.qs.length) {
+    const n = QZ.score, t = QZ.qs.length;
+    return page('home', bar, h('div', { class: 'qz-end' }, h('div', { class: 'n' }, `${n} / ${t}`), h('p', { style: 'font-size:17px' }, n === t ? 'Баракалла, ҳаммаси тўғри!' : n >= t * 0.7 ? 'Яхши натижа.' : 'Яна бир уриниб кўринг.')),
+      h('div', { style: 'display:grid;gap:10px' }, h('button', { class: 'btn', onclick: () => { QZ = quizMake(); renderQuiz(); } }, 'Яна 10 та савол'), h('button', { class: 'btn line', onclick: () => { QZ = null; go('home'); } }, 'Бош саҳифа')));
+  }
+  const q = QZ.qs[QZ.i], done = QZ.pick != null;
+  const opt = (o) => h('button', { class: 'opt' + (q.kind === 'v' ? ' ar' : '') + (done ? (o === q.ok ? ' ok' : (o === QZ.pick ? ' no' : '')) : ''), lang: q.kind === 'v' ? 'ar' : null, disabled: done ? '' : null,
+    onclick: () => { if (QZ.pick != null) return; QZ.pick = o; if (o === q.ok) QZ.score++; renderQuiz(); } }, o);
+  page('home', bar,
+    h('div', { class: 'qz-top' }, h('span', {}, `Савол ${QZ.i + 1} / ${QZ.qs.length}`), h('span', {}, `Тўғри: ${QZ.score}`)),
+    h('div', { class: 'qz-bar' }, h('i', { style: `width:${Math.round(QZ.i / QZ.qs.length * 100)}%` })),
+    h('div', { class: 'qz-q' }, h('div', { class: 't' }, q.kind === 'v' ? 'Бу феълнинг музореъси қайси?' : 'Бу сўзнинг маъноси қайси?'), h('div', { class: 'w', lang: 'ar' }, q.it.f.arabic_word), q.kind === 'v' ? h('div', { class: 'g' }, q.it.m) : ''),
+    q.opts.map(opt),
+    done ? h('div', { style: 'display:grid;gap:10px;margin-top:8px' },
+      h('p', { style: 'margin:0;font-size:14px;color:var(--muted)' }, `Луғатда: ${rootOf(q.it.e)} мақоласи, стр. ${q.it.e.source_page}`),
+      h('button', { class: 'btn', onclick: () => { QZ.i++; QZ.pick = null; renderQuiz(); } }, QZ.i + 1 < QZ.qs.length ? 'Кейингиси' : 'Натижа'),
+      h('button', { class: 'btn line', onclick: () => openAt(q.it.e, q.it.f) }, 'Луғатда очиш')) : '');
 }
 function renderProfile() {
   const saved = S.saved.map(byId).filter(Boolean).slice(0, 3);
@@ -1691,6 +1795,7 @@ function route() {
   if (hsh === 'tasrif') return renderTasrif();
   const bb = hsh.match(/^bob-([IVX]+)$/); if (bb) return renderBob(bb[1]);
   if (hsh === 'profile') return renderProfile();
+  if (hsh === 'quiz') return renderQuiz();
   query = hsh === 'home' ? query : ''; return renderHome();
 }
 document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeSheet(); });
