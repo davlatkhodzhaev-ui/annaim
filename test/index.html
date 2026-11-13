@@ -1312,6 +1312,14 @@ function wordOfDay() {
   const d = new Date(); const day = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5);
   return pool[day % pool.length];
 }
+// узун рўйхат бўлиб кўрсатилади: телефон қотиб қолмаслиги учун
+function cards(items) {
+  const first = items.slice(0, 60).map(entryCard); if (items.length <= 60) return first;
+  let n = 60; const btn = h('button', { class: 'btn line', style: 'margin:12px 0' }, `Яна кўрсатиш (${items.length - 60})`);
+  btn.addEventListener('click', () => { items.slice(n, n + 120).forEach(x => btn.before(entryCard(x))); n += 120; if (n >= items.length) btn.remove(); else btn.textContent = `Яна кўрсатиш (${items.length - n})`; });
+  return [...first, btn];
+}
+let fillTimer = 0;
 function results() {
   if (letter) { const L = DATA.filter(e => normAr(e.root_search || '')[0] === normAr(letter)[0]); // ҳарф мақоласи доим биринчи
     return [...L.filter(e => String(e.id).startsWith('letter_')), ...L.filter(e => !String(e.id).startsWith('letter_'))]; }
@@ -1332,7 +1340,7 @@ function renderHome() {
           const qv = isLat(query) ? latCyr(query) : query;
           const vh = (!letter && !HAS_AR.test(query)) ? verbHits(qv) : [];
           if (vh.length) return [h('div', { class: 'lbl' }, `Феъл шакллари (${vh.length})`), h('div', { class: 'list' }, vh.slice(0, 20).map(verbCard)),
-            h('div', { class: 'count' }, `${items.length} та мақола`), h('div', { class: 'list' }, items.map(entryCard))];
+            h('div', { class: 'count' }, `${items.length} та мақола`), h('div', { class: 'list' }, cards(items))];
           const nqa = HAS_AR.test(query) ? normAr(query) : '';
           const rawq = arRaw(query), marked = !!nqa && nqa.length < rawq.length;
           const exactW = wh.some(x => marked ? arRaw(x.f.arabic_word) === rawq : normAr(x.f.arabic_word) === nqa);
@@ -1340,17 +1348,17 @@ function renderHome() {
           const ahSec = ah.length ? [h('div', { class: 'lbl' }, `Феъл шакллари (${ah.length})`), h('div', { class: 'list' }, ah.slice(0, 20).map(arFormCard))] : [];
           if (ah.length && !exactW) return [...ahSec,
             wh.length ? h('details', { class: 'more' }, h('summary', {}, `Сўзлар (${wh.length})`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard))) : '',
-            items.length ? h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, items.map(entryCard))) : ''];
+            items.length ? h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items))) : ''];
           if (ah.length && exactW) return [h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)), ...ahSec,
-            h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, items.map(entryCard)))];
+            h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items)))];
           if (wh.length) return [h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)),
-            h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, items.map(entryCard)))];
+            h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items)))];
           const lim = items.some(e => e._score >= 3) ? 3 : 2;
           const top = (!letter && HAS_AR.test(query)) ? items.filter(e => e._score >= lim) : items;
           const rest = top === items ? [] : items.filter(e => e._score < lim);
-          if (!top.length) return [h('div', { class: 'count' }, items.length ? `${items.length} та мақола` : ''), items.length ? h('div', { class: 'list' }, items.map(entryCard)) : ''];
-          return [h('div', { class: 'count' }, `${top.length} та мақола`), h('div', { class: 'list' }, top.map(entryCard)),
-            rest.length ? h('details', { class: 'more' }, h('summary', {}, `Бошқа натижалар (${rest.length})`), h('div', { class: 'list' }, rest.map(entryCard))) : ''];
+          if (!top.length) return [h('div', { class: 'count' }, items.length ? `${items.length} та мақола` : ''), items.length ? h('div', { class: 'list' }, cards(items)) : ''];
+          return [h('div', { class: 'count' }, `${top.length} та мақола`), h('div', { class: 'list' }, cards(top)),
+            rest.length ? h('details', { class: 'more' }, h('summary', {}, `Бошқа натижалар (${rest.length})`), h('div', { class: 'list' }, cards(rest))) : ''];
         })(),
         items.length ? ''
           : h('div', { class: 'empty' }, letter ? 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.' : 'Ҳеч нарса топилмади. Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзиб кўринг.'));
@@ -1372,7 +1380,7 @@ function renderHome() {
   const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
   const clearBtn = h('button', { class: 'link', style: 'padding:0;min-height:44px', hidden: true, onclick: () => { query = ''; letter = ''; fillAll(); input.focus(); } }, 'Тозалаш');
   let ht = null;
-  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); fill();
+  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); clearTimeout(fillTimer); fillTimer = setTimeout(fill, query.trim() ? 260 : 0);
     clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card')) pushHist(query); }, 1800); });
   input.addEventListener('change', () => { if (query.trim()) pushHist(query); });
   page('home',
