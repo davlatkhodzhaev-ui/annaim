@@ -559,6 +559,7 @@ function naqJazm(M, z) {
   const mf = z === 4 ? FA + 'يْ' : KA + 'ي', du = z === 1 ? KA + 'يَا' : z === 4 ? FA + 'يَا' : DA + 'وَا', mp = z === 4 ? FA + 'وْا' : DA + 'وا', fp = z === 1 ? KA + 'ينَ' : z === 4 ? FA + 'يْنَ' : DA + 'ونَ';
   return grid({ gm: M('ي') + v, gf: M('ت') + v, mm: M('ت') + v, mf: M('ت') + mf, s1: M('أ') + v, gm2: M('ي') + du, gf2: M('ت') + du, m2: M('ت') + du, p1: M('ن') + v, gmp: M('ي') + mp, gfp: M('ي') + fp, mmp: M('ت') + mp, mfp: M('ت') + fp });
 }
+const naqNasb = (g) => mapK(g, (c, k) => BARE.includes(k) ? c.replace(/([يو])$/, '$1' + FA) : (k === 'gmp' || k === 'mmp') ? c.replace(/وْنَ$/, 'وْا').replace(/ونَ$/, 'وا') : nasbCell(c, k));
 const GUTT = /[ءأؤئهعحغخ]/;
 // қавсда ҳарф ўрнига музореънинг ўзи босилган бўлса (يَوْشُكُ): айн ҳаракати ўша босилган сўздан олинади
 function arVoc(sv) {
@@ -655,9 +656,9 @@ function conj1(f, voc, word, madiV, pm) {
       const R = 'اُ' + F + SU + A; amr = [[R + DA, R + KA + 'ي'], [R + DA + 'وَا', ''], [R + DA + 'وا', R + DA + 'ونَ']];
     }
     const Y = F + DA + A + KA;
-    const x = { nasb: null, jazm: naqJazm(M, zk === 6 ? 2 : zk),
+    const x = { nasb: naqNasb(muzore), note: 'Насб (لَنْ) жадвали дарсликда йўқ, луғат муаллифи кўрсатмаси бўйича қўшилди.', jazm: naqJazm(M, zk === 6 ? 2 : zk),
       mMozi: grid({ gm: Y + 'يَ', gf: Y + 'يَتْ', mm: Y + 'يتَ', mf: Y + 'يتِ', s1: Y + 'يتُ', gm2: Y + 'يَا', gf2: Y + 'يَتَا', m2: Y + 'يتُمَا', p1: Y + 'ينَا', gmp: F + DA + A + DA + 'وا', gfp: Y + 'ينَ', mmp: Y + 'يتُمْ', mfp: Y + 'يتُنَّ' }),
-      mRaf: naqRaf(Mm, 4), mNasb: null, mJazm: naqJazm(Mm, 4) };
+      mRaf: naqRaf(Mm, 4), mNasb: naqNasb(naqRaf(Mm, 4)), mJazm: naqJazm(Mm, 4) };
     return { x, bob: kind, type, pages, mozi, muzore, amr };
   }
   // ---- маҳмуз ул-айн ва ул-лом: солим вазни + ҳамза ёзилиши (муаллиф розилиги билан) ----
