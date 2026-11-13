@@ -1452,8 +1452,6 @@ function renderHome() {
     body.replaceChildren(
       hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
         h('div', { class: 'chips' }, hist.map(x => h('button', { class: 'chip', onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
-      dayCard(),
-      h('button', { class: 'btn line', style: 'margin-bottom:16px', onclick: () => { QZ = null; go('quiz'); } }, 'Тезкор тест · 10 савол'),
       h('div', { class: 'lbl' }, 'Ҳарфлар бўйича'),
       h('div', { class: 'letters' }, LETTERS.map(l => h('button', { class: 'letter', lang: 'ar', onclick: () => { letter = l; fillAll(); } }, l))),
       h('div', { class: 'quad' },
@@ -1795,7 +1793,6 @@ function route() {
   if (hsh === 'tasrif') return renderTasrif();
   const bb = hsh.match(/^bob-([IVX]+)$/); if (bb) return renderBob(bb[1]);
   if (hsh === 'profile') return renderProfile();
-  if (hsh === 'quiz') return renderQuiz();
   query = hsh === 'home' ? query : ''; return renderHome();
 }
 document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeSheet(); });
