@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <title>Kanz Тест (янги қидирув ва ранглар)</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Comfortaa:wght@500;700&family=Amiri:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Comfortaa:wght@500;700&family=Amiri:wght@400;700&family=Inter:wght@400;500;600&family=Noto+Sans:wght@400;500;600&family=PT+Sans:wght@400;700&family=Roboto:wght@400;500&family=Noto+Sans+Arabic:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&display=swap">
 <style>
 /* Layout: one phone-width column. Welcome (3 steps), Home with search, an entry laid out as in the book,
    a bottom sheet for the tapped Arabic word, Saved, Profile. Tab bar fixed to the bottom of the column. */
@@ -216,6 +216,10 @@ p.s { margin: 0; color: var(--muted); }
 .me .av { width: 64px; height: 64px; border-radius: 32px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; }
 .set { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; min-height: 56px; }
 .set + .set { border-top: 1px solid var(--line); }
+.set.col { flex-direction: column; align-items: flex-start; gap: 8px; }
+.set.col .seg { flex-wrap: wrap; }
+.set.col .seg button { border-left: 0 !important; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .seg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .seg button { border: 0; background: transparent; padding: 7px 11px; min-height: 40px; font-size: 14px; }
 .seg button + button { border-left: 1px solid var(--line); }
@@ -242,7 +246,15 @@ const DATA = window.ANNAIM_DATA || [];
 
 // ---------- сақлаш (қурилмада) ----------
 const KEY = 'kanz-test-v1';
-const DEF = { seen: false, saved: [], recent: [], hist: [], harakat: true, size: 1, theme: 'system' };
+const DEF = { seen: false, saved: [], recent: [], hist: [], harakat: true, size: 1, theme: 'system', pal: 'A', far: 'naskh', fui: 'plex' };
+// дизайн синови: ранглар (ёруғ мавзу учун) ва шрифтлар
+const PALS = { O: '', A: '--bg:#F6F1E6;--surface:#FFFDF7;--ink:#1B2440;--muted:#666A78;--line:#E4DCC8;--accent:#1B2440;--accent-ink:#F0D68A;--accent-soft:#ECE7D8;--accent-deep:#121830;--dot:#CFC6AE;--gold:#9A7414;',
+  B: '--bg:#F2EAD8;--surface:#FBF6EA;--ink:#33291F;--muted:#746858;--line:#E0D4BB;--accent:#5A3E1B;--accent-ink:#FBF1D6;--accent-soft:#EADFC6;--accent-deep:#3E2A10;--dot:#CDBF9F;--gold:#8C6414;',
+  C: '--bg:#EFF2EA;--surface:#FCFDF9;--ink:#1C2A24;--muted:#5E6B63;--line:#DBE2D4;--accent:#1F5A46;--accent-ink:#F4E3A6;--accent-soft:#E1EADF;--accent-deep:#143D30;--dot:#C2CDBF;--gold:#8F7420;' };
+const FAR = { naskh: '"Noto Naskh Arabic", "Geeza Pro", serif', amiri: '"Amiri", "Geeza Pro", serif', sans: '"Noto Sans Arabic", "Geeza Pro", sans-serif', plex: '"IBM Plex Sans Arabic", "Geeza Pro", sans-serif', kufi: '"Noto Kufi Arabic", "Geeza Pro", sans-serif' };
+const FUI = { plex: '"IBM Plex Sans", system-ui, sans-serif', inter: '"Inter", system-ui, sans-serif', noto: '"Noto Sans", system-ui, sans-serif', pt: '"PT Sans", system-ui, sans-serif', roboto: '"Roboto", system-ui, sans-serif' };
+const isDark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+const logoSrc = () => '../icons/kanz-mark-' + (isDark() ? 'gold' : 'ink') + '.png';
 let S = { ...DEF };
 try { S = { ...DEF, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -250,6 +262,9 @@ function applyPrefs() {
   const r = document.documentElement;
   if (S.theme === 'system') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', S.theme);
   r.style.setProperty('--ars', String(S.size));
+  let st = document.getElementById('dsg'); if (!st) { st = document.createElement('style'); st.id = 'dsg'; document.head.append(st); }
+  st.textContent = ':root,:root[data-theme]{' + (isDark() ? '' : (PALS[S.pal] || '')) + '--font-ar:' + (FAR[S.far] || FAR.naskh) + ';--font-ui:' + (FUI[S.fui] || FUI.plex) + '}';
+  document.querySelectorAll('.brand .logo').forEach(i => { i.src = logoSrc(); });
 }
 
 // ---------- қидирув ҳелперлари ----------
@@ -1433,7 +1448,7 @@ function renderHome() {
     clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card')) pushHist(query); }, 1800); });
   input.addEventListener('change', () => { if (query.trim()) pushHist(query); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: '../icons/logo-kanz-sm.png', alt: 'كنز' })),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
       h('div', { class: 'acts' },
         h('a', { class: 'round star', href: '#saved', 'aria-label': 'Сақланганлар' }, svg(ICON.star, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
         (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
@@ -1491,6 +1506,13 @@ function renderProfile() {
       h('div', { class: 'set' }, h('span', {}, 'Огласовкалар'), sw),
       h('div', { class: 'set' }, h('span', {}, 'Мавзу'), seg([['system', 'Тизим'], ['light', 'Ёруғ'], ['dark', 'Қоронғи']], S.theme, v => { S.theme = v; save(); applyPrefs(); renderProfile(); })),
       h('div', { class: 'set' }, h('span', {}, 'Арабча шрифт'), seg([[0.85, 'Кичик'], [1, 'Ўртача'], [1.2, 'Катта']], S.size, v => { S.size = v; save(); applyPrefs(); renderProfile(); }))),
+    h('div', { class: 'lbl' }, 'Дизайн синови'),
+    h('div', { class: 'group' },
+      h('div', { class: 'set col' }, h('span', {}, 'Ранглар (ёруғ мавзуда)'), seg([['A', 'Фил суяги'], ['B', 'Қоғоз'], ['C', 'Зайтун'], ['O', 'Эски']], S.pal, v => { S.pal = v; save(); applyPrefs(); renderProfile(); })),
+      h('div', { class: 'set col' }, h('span', {}, 'Арабча ёзув'), seg([['naskh', 'Насх'], ['amiri', 'Амирий'], ['sans', 'Текис 1'], ['plex', 'Текис 2'], ['kufi', 'Куфий']], S.far, v => { S.far = v; save(); applyPrefs(); renderProfile(); }),
+        h('div', { style: 'font-family:var(--font-ar);font-size:30px;line-height:1.9;direction:rtl;align-self:stretch;text-align:center' }, 'كَتَبَ يَكْتُبُ · مُهَنْدِسٌ')),
+      h('div', { class: 'set col' }, h('span', {}, 'Ўзбекча ёзув'), seg([['plex', 'Plex'], ['inter', 'Inter'], ['noto', 'Noto'], ['pt', 'PT Sans'], ['roboto', 'Roboto']], S.fui, v => { S.fui = v; save(); applyPrefs(); renderProfile(); }),
+        h('div', { style: 'font-size:16px;color:var(--muted)' }, 'ёзмоқ, тузмоқ; ўқимоқ; ҳалок бўлмоқ, қувмоқ, ғойиб бўлмоқ'))),
     h('div', { style: 'display:grid;gap:10px;margin-top:20px' },
       h('button', { class: 'btn line', onclick: () => go('w1') }, 'Танишув экранларини қайта кўрсатиш')),
     h('p', { class: 'foot' }, 'Прототип. Маълумот китобдан киритилган, текширув давом этмоқда.'));
