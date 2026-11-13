@@ -469,16 +469,16 @@ function verbText(f) {
   let s = `${f.sarf_form} ${f.arabic_word}`;
   if (f.vocaliz) s += ` (${f.vocaliz})`;
   (f.alt_forms || []).forEach(a => { s += ` ёки ${a.arabic_word}` + (a.vocaliz ? ` (${a.vocaliz})` : ''); });
-  if (f.verbal_noun) s += ` ${f.verbal_noun}`;
+  if (f.verbal_noun) s += ` \u200e${f.verbal_noun}`;
   if (f.equivalent_to) s += ` = ${f.equivalent_to.join(', ')}`;
-  const m = meaningsText(f); return m ? s + ' ' + m : s;
+  const m = meaningsText(f); return m ? s + ' \u200e' + m : s;
 }
 function derivedText(f) {
   let s = f.arabic_word;
   (f.alt_forms || []).forEach(a => { s += `, ${a.arabic_word}`; });
   if (f.plural_form) s += ` кўп. ${f.plural_form}`;
   if (f.collective_form) s += ` жам. ${f.collective_form}`; else if (f.tag) s += ` ${f.tag}`;
-  const m = meaningsText(f); return m ? s + ' ' + m : s;
+  const m = meaningsText(f); return m ? s + ' \u200e' + m : s;
 }
 const A_CH = '\\u0600-\\u06FF\\u0750-\\u077F\\uFB50-\\uFDFF\\uFE70-\\uFEFF';
 const AR_RUN = new RegExp(`(?:~\\s*)?[${A_CH}]+(?:[\\s,~]+[${A_CH}]+)*(?:\\s*~)?`, 'g');
@@ -1167,9 +1167,25 @@ function scrollToForm(f) {
 // ================= фақат мажҳулда ишлатиладиган феъллар (أُبِنَ каби) =================
 // 18-бет: сулосий мужаррад мажҳули олти бобда ҳам бир хил (فُعِلَ — يُفْعَلُ), рубоъий: دُحْرِجَ — يُدَحْرَجُ;
 // музоъаф мажҳули 29-бет (رُدَّ — يُرَدُّ), ноқис мажҳули 40-бет (دُعِيَ — يُدْعَى).
+let F2M = null;
 function majOnlyOf(f) {
   if (f.form_type !== 'verb') return null;
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); const L0 = splitLetters(w);
+  // ажваф, фақат мажҳул: إِيفَ = أُوِفَ (таскин 3 + қалб 4; قُوِلَ → قِيلَ каби, 31–32, 35–36-бетлар)
+  if (L0.length === 3 && (f.sarf_form || 'I') === 'I' && !f.vocaliz && L0[0].includes(KA) && L0[1][0] === 'ي' && !vOf(L0[1]) && L0[2].includes(FA) && !L0[2].includes(SH)) {
+    if (!F2M) { F2M = new WeakMap(); DATA.forEach(e => e.derivatives.forEach(x => F2M.set(x, e))); }
+    const e = F2M.get(f), r = e ? (e.root_search || '').replace(/[\u064B-\u0652\s()]/g, '') : '';
+    const sv = r.length === 3 ? (r[1] === 'و' ? DA : r[1] === 'ي' ? KA : null) : null; if (!sv) return null;
+    const F = HZ.test(L0[0][0]) ? '§' : L0[0][0], Lm = L0[2][0]; if (WK.test(F + Lm) || HZ.test(Lm) || /[نت]/.test(Lm)) return null;
+    if (r[2] !== Lm || (F === '§' ? !HZ.test(r[0]) : r[0] !== F)) return null;   // мақола ўзаги шу сўзники бўлиши шарт
+    const fx2 = (g) => g.map(r2 => r2.map(c => c && hamzaSeat(c)));
+    const Ml = (q) => q + DA + F + FA + 'ا' + Lm, Ms = (q) => q + DA + F + FA + Lm + SU + 'نَ', Sj = (q) => q + DA + F + FA + Lm + SU;
+    const R = fx2(rafShape(Ml, Ms)), Nn = fx2(mapK(rafShape(Ml, Ms), nasbCell));
+    const J = fx2(grid({ gm: Sj('ي'), gf: Sj('ت'), mm: Sj('ت'), mf: Ml('ت') + KA + 'ي', s1: Sj('أ'), gm2: Ml('ي') + FA + 'ا', gf2: Ml('ت') + FA + 'ا', m2: Ml('ت') + FA + 'ا', p1: Sj('ن'), gmp: Ml('ي') + DA + 'وا', gfp: Ms('ي'), mmp: Ml('ت') + DA + 'وا', mfp: Ms('ت') }));
+    return { only: true, type: (sv === DA ? 'ажваф (вовлик)' : 'ажваф (ёлик)') + ', фақат мажҳул ишлатилади', pages: '31–32, 35–36', majhul: [
+      ['Мозий мажҳули', fx2(moziShape(F + KA + 'ي' + Lm, F + sv + Lm + SU))], ['Музореъ мажҳули', R], ['Нафий феъли мажҳули', pfx(R, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(Nn, 'لَنْ ')],
+      ['Жаҳд феъли мажҳули', pfx(J, 'لَمْ ')], ['Амр феъли мажҳули', pfx(J, 'لِ')], ['Наҳий феъли мажҳули', pfx(J, 'لَا ')]] };
+  }
   if (!L0.length || !L0[0].includes(DA)) return null;
   const sf = f.sarf_form || 'I', hz = (l) => HZ.test(l[0]) ? ['§', ...l.slice(1)] : l.slice();
   const L = L0.map(hz), n = L.length, ch = (i) => L[i][0];

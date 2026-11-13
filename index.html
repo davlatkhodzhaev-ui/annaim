@@ -326,16 +326,16 @@ function verbText(f) {
   let s = `${f.sarf_form} ${f.arabic_word}`;
   if (f.vocaliz) s += ` (${f.vocaliz})`;
   (f.alt_forms || []).forEach(a => { s += ` ёки ${a.arabic_word}` + (a.vocaliz ? ` (${a.vocaliz})` : ''); });
-  if (f.verbal_noun) s += ` ${f.verbal_noun}`;
+  if (f.verbal_noun) s += ` \u200e${f.verbal_noun}`;
   if (f.equivalent_to) s += ` = ${f.equivalent_to.join(', ')}`;
-  const m = meaningsText(f); return m ? s + ' ' + m : s;
+  const m = meaningsText(f); return m ? s + ' \u200e' + m : s;
 }
 function derivedText(f) {
   let s = f.arabic_word;
   (f.alt_forms || []).forEach(a => { s += `, ${a.arabic_word}`; });
   if (f.plural_form) s += ` кўп. ${f.plural_form}`;
   if (f.collective_form) s += ` жам. ${f.collective_form}`; else if (f.tag) s += ` ${f.tag}`;
-  const m = meaningsText(f); return m ? s + ' ' + m : s;
+  const m = meaningsText(f); return m ? s + ' \u200e' + m : s;
 }
 const A_CH = '\\u0600-\\u06FF\\u0750-\\u077F\\uFB50-\\uFDFF\\uFE70-\\uFEFF';
 const AR_RUN = new RegExp(`(?:~\\s*)?[${A_CH}]+(?:[\\s,~]+[${A_CH}]+)*(?:\\s*~)?`, 'g');
