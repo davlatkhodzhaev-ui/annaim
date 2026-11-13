@@ -566,7 +566,7 @@ function arVoc(sv) {
   for (let i = L.length - 2; i >= 1; i--) { const v = vOf(L[i]); if (v) return v === FA ? 'а' : v === KA ? 'и' : 'у'; }
   return null;
 }
-function conj1(f, voc, word, madiV) {
+function conj1(f, voc, word, madiV, pm) {
   const mv = VOW[voc]; if (!mv) return null;
   const w = (word || (f.arabic_word || '').split(/[,،]|ёки/)[0]).trim(); const L = splitLetters(w); const B = L.map(l => l[0]);
   const pre = { y: 'ي', t: 'ت', a: 'أ', n: 'ن' };
@@ -635,7 +635,7 @@ function conj1(f, voc, word, madiV) {
     if (mlt) { type = 'мултавий'; pages = '39–41, 43–44'; }
     if (F === '§') { type += ' + маҳмуз ул-фо'; pages += ', 32'; }
     const mk = kind === 3 ? (Lm === 'ا' ? 2 : 1) : kind === 5 ? 4 : kind, zk = kind === 3 ? 4 : kind === 5 ? 1 : kind;
-    const drop = mlt && zk === 1;                                 // 43-бет: вов мисоллардагидек ҳазф қилинади
+    const drop = mlt && (pm ? splitLetters(pm).length === 3 : zk === 1);                                 // 43-бет: вов мисоллардагидек ҳазф қилинади
     if (drop) M = (p) => p + FA + A;
     const Mm = (p) => p + DA + (mlt ? 'و' : F + SU) + A;          // мажҳул: يُرْمَى، يُوقَى
     let mozi;
@@ -685,7 +685,8 @@ function conj1(f, voc, word, madiV) {
   const P = Fm + FA + A + pv + Lm, Pk = P + SU;
   const mozi = grid({ gm: P + FA, gf: P + FA + 'تْ', mm: Pk + 'تَ', mf: Pk + 'تِ', s1: Pk + 'تُ', gm2: P + FA + 'ا', gf2: P + FA + 'تَا', m2: Pk + 'تُمَا', p1: Pk + 'نَا', gmp: P + DA + 'وا', gfp: Pk + 'نَ', mmp: Pk + 'تُمْ', mfp: Pk + 'تُنَّ' });
   // 33–34-бетлар: вов фақат ундан кейин касра (ҳақиқий: 1, 5-боб; тақдирий: 3-бобда бўғиз ҳарфи бўлса) келганда ҳазф қилинади
-  const drop = type === 'мисол (вовлик)' && (bob === 1 || bob === 5 || (bob === 3 && GUTT.test(A + Lm)));
+  let drop = type === 'мисол (вовлик)' && (bob === 1 || bob === 5 || (bob === 3 && GUTT.test(A + Lm)));
+  if (pm && type === 'мисол (вовлик)') { drop = splitLetters(pm).length === 3; pages += '; музореъ луғатда босилганидек'; }  // луғатда босилган музореъ устун
   const stem = (p) => drop ? p + FA + A + mv + Lm : p + FA + Fm + SU + A + mv + Lm;
   const s1 = type === 'маҳмуз ул-фо' ? 'آ' + A + mv + Lm : stem('أ');      // 32-бет, 10-қоида: آمُرُ
   const muzore = grid({ gm: stem('ي') + DA, gf: stem('ت') + DA, mm: stem('ت') + DA, mf: stem('ت') + KA + 'ينَ', s1: s1 + DA, gm2: stem('ي') + FA + 'انِ', gf2: stem('ت') + FA + 'انِ', m2: stem('ت') + FA + 'انِ', p1: stem('ن') + DA, gmp: stem('ي') + DA + 'ونَ', gfp: stem('ي') + SU + 'نَ', mmp: stem('ت') + DA + 'ونَ', mfp: stem('ت') + SU + 'نَ' });
@@ -724,10 +725,11 @@ function hamzaSeat(s) {
 function tasrifList(f) {
   if (!f || f.form_type !== 'verb' || f.sarf_form !== 'I' || !f.vocaliz) return [];
   let vz = String(f.vocaliz).replace(/\\/g, '/').replace(/\./g, ',');
-  if (/[\u0621-\u064A]/.test(vz)) { vz = arVoc(vz) || ''; if (!vz) return []; }
+  const pms = /[\u0621-\u064A]/.test(vz) ? [...new Set(vz.match(/[\u0621-\u0652]+/g))] : null;
   const words = (f.arabic_word || '').split(/[,،]|ёки/).map(x => x.trim()).filter(Boolean);
   const fx = (g) => g.map(r => r.map(c => c && c.split(' ёки ').map(hamzaSeat).join(' ёки ')));
   const out = [], add = (t, label) => { if (!t || out.some(o => o.voc === label)) return; t.mozi = fx(t.mozi); t.muzore = fx(t.muzore); t.amr = fx(t.amr); if (t.x) ['nasb', 'jazm', 'mMozi', 'mRaf', 'mNasb', 'mJazm'].forEach(k => { if (t.x[k]) t.x[k] = fx(t.x[k]); }); t.voc = label; out.push(t); };
+  if (pms) { pms.forEach(m => { const v = arVoc(m); if (v) add(conj1(f, v, words[0], null, m), m); }); return out; }
   const L0 = splitLetters(words[0] || '');
   if (L0.length === 2 && L0[1].includes(SH)) {
     // иккиланган феъл: 12-қоида бўйича жуфтлар (мозий/музореъ); «а/у, и» = мозий а, музореъ у ёки и
