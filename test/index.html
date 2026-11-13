@@ -534,6 +534,38 @@ const hasM = (l, m) => l.includes(m), vOf = (l) => l.find(m => m === FA || m ===
 const SFX_C = ['تَ', 'تِ', 'تُ', 'تُمَا', 'نَا', 'نَ', 'تُمْ', 'تُنَّ']; // ундош билан бошланадиган шахс қўшимчалари
 function grid(m) { // m: {gm, gf, mm, mf, s1, gm2, gf2, m2, p1, gmp, gfp, mmp, mfp}
   return [[m.gm, m.gf, m.mm, m.mf, m.s1], [m.gm2, m.gf2, m.m2, '', m.p1], [m.gmp, m.gfp, m.mmp, m.mfp, '']]; }
+const KEYG = [['gm', 'gf', 'mm', 'mf', 's1'], ['gm2', 'gf2', 'm2', '', 'p1'], ['gmp', 'gfp', 'mmp', 'mfp', '']];
+const mapK = (g, fn) => g.map((r, i) => r.map((c, j) => c ? fn(c, KEYG[i][j]) : c));
+const BARE = ['gm', 'gf', 'mm', 's1', 'p1'];
+// 26–28-бетлар: насбда охирги замма фатҳага айланади, эъроб нуни тушади; муаннас жамъи ўзгармайди
+function nasbCell(c, k) {
+  if (BARE.includes(k)) return c.replace(/ُ$/, FA);
+  if (k === 'mf') return c.replace(/نَ$/, '');
+  if (k === 'gm2' || k === 'gf2' || k === 'm2') return c.replace(/نِ$/, '');
+  if (k === 'gmp' || k === 'mmp') return c.replace(/ونَ$/, 'وا');
+  return c;
+}
+const jazmCell = (c, k) => BARE.includes(k) ? c.replace(/ُ$/, SU) : nasbCell(c, k);
+const rafShape = (st, fpl) => grid({ gm: st('ي') + DA, gf: st('ت') + DA, mm: st('ت') + DA, mf: st('ت') + KA + 'ينَ', s1: st('أ') + DA, gm2: st('ي') + FA + 'انِ', gf2: st('ت') + FA + 'انِ', m2: st('ت') + FA + 'انِ', p1: st('ن') + DA, gmp: st('ي') + DA + 'ونَ', gfp: fpl('ي'), mmp: st('ت') + DA + 'ونَ', mfp: fpl('ت') });
+const moziShape = (lg, sh) => grid({ gm: lg + FA, gf: lg + FA + 'تْ', mm: sh + 'تَ', mf: sh + 'تِ', s1: sh + 'تُ', gm2: lg + FA + 'ا', gf2: lg + FA + 'تَا', m2: sh + 'تُمَا', p1: sh + 'نَا', gmp: lg + DA + 'وا', gfp: sh + 'نَ', mmp: sh + 'تُمْ', mfp: sh + 'تُنَّ' });
+// ноқис (39–41-бетлар): музореъ ва жаҳд, охирги унли бўйича (1: ي, 2: و, 4: ى)
+function naqRaf(M, z) {
+  if (z === 1) return grid({ gm: M('ي') + KA + 'ي', gf: M('ت') + KA + 'ي', mm: M('ت') + KA + 'ي', mf: M('ت') + KA + 'ينَ', s1: M('أ') + KA + 'ي', gm2: M('ي') + KA + 'يَانِ', gf2: M('ت') + KA + 'يَانِ', m2: M('ت') + KA + 'يَانِ', p1: M('ن') + KA + 'ي', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + KA + 'ينَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + KA + 'ينَ' });
+  if (z === 4) return grid({ gm: M('ي') + FA + 'ى', gf: M('ت') + FA + 'ى', mm: M('ت') + FA + 'ى', mf: M('ت') + FA + 'يْنَ', s1: M('أ') + FA + 'ى', gm2: M('ي') + FA + 'يَانِ', gf2: M('ت') + FA + 'يَانِ', m2: M('ت') + FA + 'يَانِ', p1: M('ن') + FA + 'ى', gmp: M('ي') + FA + 'وْنَ', gfp: M('ي') + FA + 'يْنَ', mmp: M('ت') + FA + 'وْنَ', mfp: M('ت') + FA + 'يْنَ' });
+  return grid({ gm: M('ي') + DA + 'و', gf: M('ت') + DA + 'و', mm: M('ت') + DA + 'و', mf: M('ت') + KA + 'ينَ', s1: M('أ') + DA + 'و', gm2: M('ي') + DA + 'وَانِ', gf2: M('ت') + DA + 'وَانِ', m2: M('ت') + DA + 'وَانِ', p1: M('ن') + DA + 'و', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + DA + 'ونَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + DA + 'ونَ' });
+}
+function naqJazm(M, z) {
+  const v = z === 1 ? KA : z === 4 ? FA : DA;
+  const mf = z === 4 ? FA + 'يْ' : KA + 'ي', du = z === 1 ? KA + 'يَا' : z === 4 ? FA + 'يَا' : DA + 'وَا', mp = z === 4 ? FA + 'وْا' : DA + 'وا', fp = z === 1 ? KA + 'ينَ' : z === 4 ? FA + 'يْنَ' : DA + 'ونَ';
+  return grid({ gm: M('ي') + v, gf: M('ت') + v, mm: M('ت') + v, mf: M('ت') + mf, s1: M('أ') + v, gm2: M('ي') + du, gf2: M('ت') + du, m2: M('ت') + du, p1: M('ن') + v, gmp: M('ي') + mp, gfp: M('ي') + fp, mmp: M('ت') + mp, mfp: M('ت') + fp });
+}
+const GUTT = /[ءأؤئهعحغخ]/;
+// қавсда ҳарф ўрнига музореънинг ўзи босилган бўлса (يَوْشُكُ): айн ҳаракати ўша босилган сўздан олинади
+function arVoc(sv) {
+  const L = splitLetters(String(sv).replace(/[()\s]/g, ''));
+  for (let i = L.length - 2; i >= 1; i--) { const v = vOf(L[i]); if (v) return v === FA ? 'а' : v === KA ? 'и' : 'у'; }
+  return null;
+}
 function conj1(f, voc, word, madiV) {
   const mv = VOW[voc]; if (!mv) return null;
   const w = (word || (f.arabic_word || '').split(/[,،]|ёки/)[0]).trim(); const L = splitLetters(w); const B = L.map(l => l[0]);
@@ -546,7 +578,10 @@ function conj1(f, voc, word, madiV) {
     const mg = F + FA + A + SH, un = F + FA + A + pv + A + SU, H = mv === DA ? 'اُ' : 'اِ';
     const mz = (p) => p + FA + F + mv + A + SH, mzU = (p) => p + FA + F + SU + A + mv + A + SU + 'نَ';
     const ar = F + mv + A + SH;
-    return { bob, type: F === '§' ? 'музоъаф + маҳмуз ул-фо' : 'музоъаф', pages: F === '§' ? '29–30, 32' : '29–30',
+    const zRaf = rafShape((p) => mz(p), mzU), mRaf = rafShape((p) => p + DA + F + FA + A + SH, (p) => p + DA + F + SU + A + FA + A + SU + 'نَ');
+    const x = { nasb: mapK(zRaf, nasbCell), jazm: mapK(zRaf, nasbCell), mMozi: moziShape(F + DA + A + SH, F + DA + A + KA + A + SU), mRaf, mNasb: mapK(mRaf, nasbCell), mJazm: mapK(mRaf, nasbCell),
+      note: 'Жазмда идғом фатҳа билан берилди (29-бетдаги амр жадвалидагидек: لِيَرُدَّ); 30-бетга кўра идғомсиз (لَمْ يَرْدُدْ) ҳам жоиз.' };
+    return { x, bob, type: F === '§' ? 'музоъаф + маҳмуз ул-фо' : 'музоъаф', pages: F === '§' ? '29–30, 32' : '29–30',
       mozi: grid({ gm: mg + FA, gf: mg + FA + 'تْ', mm: un + 'تَ', mf: un + 'تِ', s1: un + 'تُ', gm2: mg + FA + 'ا', gf2: mg + FA + 'تَا', m2: un + 'تُمَا', p1: un + 'نَا', gmp: mg + DA + 'وا', gfp: un + 'نَ', mmp: un + 'تُمْ', mfp: un + 'تُنَّ' }),
       muzore: grid({ gm: mz('ي') + DA, gf: mz('ت') + DA, mm: mz('ت') + DA, mf: mz('ت') + KA + 'ينَ', s1: mz('أ') + DA, gm2: mz('ي') + FA + 'انِ', gf2: mz('ت') + FA + 'انِ', m2: mz('ت') + FA + 'انِ', p1: mz('ن') + DA, gmp: mz('ي') + DA + 'ونَ', gfp: mzU('ي'), mmp: mz('ت') + DA + 'ونَ', mfp: mzU('ت') }),
       amr: [[ar + FA + ' ёки ' + H + F + SU + A + mv + A + SU, ar + KA + 'ي'], [ar + FA + 'ا', ''], [ar + DA + 'وا', H + F + SU + A + mv + A + SU + 'نَ']] };
@@ -562,7 +597,10 @@ function conj1(f, voc, word, madiV) {
     const mg = F + FA + 'ا' + Lm, sh = F + sv + Lm + SU;
     const ml = (p) => p + FA + F + lv + Lm, ms = (p) => p + FA + F + av + Lm + SU + 'نَ';
     const tz = voc === 'у' ? 'ажваф (вовлик)' : voc === 'и' ? 'ажваф (ёлик)' : 'ажваф';
-    return { bob, type: tz + (F === '§' ? ' + маҳмуз ул-фо' : Lm === '§' ? ' + маҳмуз ул-лом' : ''), pages: F === '§' ? '35–37, 32' : Lm === '§' ? '35–37, 28' : '35–37',
+    const jzG = (l, sj, fp) => grid({ gm: sj('ي'), gf: sj('ت'), mm: sj('ت'), mf: l('ت') + KA + 'ي', s1: sj('أ'), gm2: l('ي') + FA + 'ا', gf2: l('ت') + FA + 'ا', m2: l('ت') + FA + 'ا', p1: sj('ن'), gmp: l('ي') + DA + 'وا', gfp: fp('ي'), mmp: l('ت') + DA + 'وا', mfp: fp('ت') });
+    const zRaf = rafShape(ml, ms), Ml = (p) => p + DA + F + FA + 'ا' + Lm, Ms = (p) => p + DA + F + FA + Lm + SU + 'نَ', mRaf = rafShape(Ml, Ms);
+    const x = { nasb: mapK(zRaf, nasbCell), jazm: jzG(ml, (p) => p + FA + F + av + Lm + SU, ms), mMozi: moziShape(F + KA + 'ي' + Lm, sh), mRaf, mNasb: mapK(mRaf, nasbCell), mJazm: jzG(Ml, (p) => p + DA + F + FA + Lm + SU, Ms) };
+    return { x, bob, type: tz + (F === '§' ? ' + маҳмуз ул-фо' : Lm === '§' ? ' + маҳмуз ул-лом' : ''), pages: F === '§' ? '35–37, 32' : Lm === '§' ? '35–37, 28' : '35–37',
       mozi: grid({ gm: mg + FA, gf: mg + FA + 'تْ', mm: sh + 'تَ', mf: sh + 'تِ', s1: sh + 'تُ', gm2: mg + FA + 'ا', gf2: mg + FA + 'تَا', m2: sh + 'تُمَا', p1: sh + 'نَا', gmp: mg + DA + 'وا', gfp: sh + 'نَ', mmp: sh + 'تُمْ', mfp: sh + 'تُنَّ' }),
       muzore: grid({ gm: ml('ي') + DA, gf: ml('ت') + DA, mm: ml('ت') + DA, mf: ml('ت') + KA + 'ينَ', s1: ml('أ') + DA, gm2: ml('ي') + FA + 'انِ', gf2: ml('ت') + FA + 'انِ', m2: ml('ت') + FA + 'انِ', p1: ml('ن') + DA, gmp: ml('ي') + DA + 'ونَ', gfp: ms('ي'), mmp: ml('ت') + DA + 'ونَ', mfp: ms('ت') }),
       amr: [[F + av + Lm + SU, F + lv + Lm + KA + 'ي'], [F + lv + Lm + FA + 'ا', ''], [F + lv + Lm + DA + 'وا', F + av + Lm + SU + 'نَ']] };
@@ -580,18 +618,26 @@ function conj1(f, voc, word, madiV) {
   }
   const F = (HZ.test(F0) && /[اىيو]/.test(Lm)) ? '§' : F0;
   // ---- ноқис ва лафиф: رَمَى، دَعَا، رَضِيَ، رَخُوَ ----
-  if (/[اىيو]/.test(Lm) && !HZ.test(A) && !WK.test(F)) {
-    const X = F + FA + A, M = (p) => p + FA + F + SU + A;
+  if (/[اىيو]/.test(Lm) && !HZ.test(A) && (!WK.test(F) || F === 'و')) {
+    const mlt = F === 'و';                                         // мултавий (43–44-бетлар): وَقَى يَقِي
+    const X = F + FA + A; let M = (p) => p + FA + F + SU + A;
     let kind = null;
     if (pv === FA && voc === 'а' && (Lm === 'ى' || Lm === 'ا')) kind = 3; // 3-боб: мозий 1/2-боб каби, музореъ 4-боб каби (39–41, қалб: 31–32)
     if (Lm === 'ى' && pv === FA && voc === 'и') kind = 1;
     else if (Lm === 'ا' && pv === FA && voc === 'у') kind = 2;
     else if ((Lm === 'ي' || Lm === 'ى') && pv === KA && voc === 'а') kind = 4;
     else if (Lm === 'و' && pv === DA && voc === 'у') kind = 6;
+    else if (mlt && (Lm === 'ي' || Lm === 'ى') && pv === KA && voc === 'и') kind = 5;   // وَلِيَ يَلِي (44-бет, 47-машқ)
     if (!kind) return null;
+    if (mlt && ![1, 4, 5].includes(kind)) return null;
+    if (mlt && /[وي]/.test(A)) return null;
     let pages = /[وي]/.test(A) ? '39–41, 43' : '39–41', type = /[وي]/.test(A) ? 'лафиф' : 'ноқис';
+    if (mlt) { type = 'мултавий'; pages = '39–41, 43–44'; }
     if (F === '§') { type += ' + маҳмуз ул-фо'; pages += ', 32'; }
-    const mk = kind === 3 ? (Lm === 'ا' ? 2 : 1) : kind, zk = kind === 3 ? 4 : kind;
+    const mk = kind === 3 ? (Lm === 'ا' ? 2 : 1) : kind === 5 ? 4 : kind, zk = kind === 3 ? 4 : kind === 5 ? 1 : kind;
+    const drop = mlt && zk === 1;                                 // 43-бет: вов мисоллардагидек ҳазф қилинади
+    if (drop) M = (p) => p + FA + A;
+    const Mm = (p) => p + DA + (mlt ? 'و' : F + SU) + A;          // мажҳул: يُرْمَى، يُوقَى
     let mozi;
     if (mk === 1) mozi = grid({ gm: X + FA + 'ى', gf: X + FA + 'تْ', mm: X + FA + 'يْتَ', mf: X + FA + 'يْتِ', s1: X + FA + 'يْتُ', gm2: X + FA + 'يَا', gf2: X + FA + 'تَا', m2: X + FA + 'يْتُمَا', p1: X + FA + 'يْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'يْنَ', mmp: X + FA + 'يْتُمْ', mfp: X + FA + 'يْتُنَّ' });
     else if (mk === 2) mozi = grid({ gm: X + FA + 'ا', gf: X + FA + 'تْ', mm: X + FA + 'وْتَ', mf: X + FA + 'وْتِ', s1: X + FA + 'وْتُ', gm2: X + FA + 'وَا', gf2: X + FA + 'تَا', m2: X + FA + 'وْتُمَا', p1: X + FA + 'وْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'وْنَ', mmp: X + FA + 'وْتُمْ', mfp: X + FA + 'وْتُنَّ' });
@@ -600,15 +646,19 @@ function conj1(f, voc, word, madiV) {
     let muzore, amr;
     if (zk === 1) {
       muzore = grid({ gm: M('ي') + KA + 'ي', gf: M('ت') + KA + 'ي', mm: M('ت') + KA + 'ي', mf: M('ت') + KA + 'ينَ', s1: M('أ') + KA + 'ي', gm2: M('ي') + KA + 'يَانِ', gf2: M('ت') + KA + 'يَانِ', m2: M('ت') + KA + 'يَانِ', p1: M('ن') + KA + 'ي', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + KA + 'ينَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + KA + 'ينَ' });
-      const R = 'اِ' + F + SU + A; amr = [[R + KA, R + KA + 'ي'], [R + KA + 'يَا', ''], [R + DA + 'وا', R + KA + 'ينَ']];
+      const R = drop ? A : 'اِ' + F + SU + A; amr = [[R + KA, R + KA + 'ي'], [R + KA + 'يَا', ''], [R + DA + 'وا', R + KA + 'ينَ']];
     } else if (zk === 4) {
       muzore = grid({ gm: M('ي') + FA + 'ى', gf: M('ت') + FA + 'ى', mm: M('ت') + FA + 'ى', mf: M('ت') + FA + 'يْنَ', s1: M('أ') + FA + 'ى', gm2: M('ي') + FA + 'يَانِ', gf2: M('ت') + FA + 'يَانِ', m2: M('ت') + FA + 'يَانِ', p1: M('ن') + FA + 'ى', gmp: M('ي') + FA + 'وْنَ', gfp: M('ي') + FA + 'يْنَ', mmp: M('ت') + FA + 'وْنَ', mfp: M('ت') + FA + 'يْنَ' });
-      const R = 'اِ' + F + SU + A; amr = [[R + FA, R + FA + 'يْ'], [R + FA + 'يَا', ''], [R + FA + 'وْا', R + FA + 'يْنَ']];
+      const R = mlt ? 'اِي' + A : 'اِ' + F + SU + A; amr = [[R + FA, R + FA + 'يْ'], [R + FA + 'يَا', ''], [R + FA + 'وْا', R + FA + 'يْنَ']];
     } else {
       muzore = grid({ gm: M('ي') + DA + 'و', gf: M('ت') + DA + 'و', mm: M('ت') + DA + 'و', mf: M('ت') + KA + 'ينَ', s1: M('أ') + DA + 'و', gm2: M('ي') + DA + 'وَانِ', gf2: M('ت') + DA + 'وَانِ', m2: M('ت') + DA + 'وَانِ', p1: M('ن') + DA + 'و', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + DA + 'ونَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + DA + 'ونَ' });
       const R = 'اُ' + F + SU + A; amr = [[R + DA, R + KA + 'ي'], [R + DA + 'وَا', ''], [R + DA + 'وا', R + DA + 'ونَ']];
     }
-    return { bob: kind, type, pages, mozi, muzore, amr };
+    const Y = F + DA + A + KA;
+    const x = { nasb: null, jazm: naqJazm(M, zk === 6 ? 2 : zk),
+      mMozi: grid({ gm: Y + 'يَ', gf: Y + 'يَتْ', mm: Y + 'يتَ', mf: Y + 'يتِ', s1: Y + 'يتُ', gm2: Y + 'يَا', gf2: Y + 'يَتَا', m2: Y + 'يتُمَا', p1: Y + 'ينَا', gmp: F + DA + A + DA + 'وا', gfp: Y + 'ينَ', mmp: Y + 'يتُمْ', mfp: Y + 'يتُنَّ' }),
+      mRaf: naqRaf(Mm, 4), mNasb: null, mJazm: naqJazm(Mm, 4) };
+    return { x, bob: kind, type, pages, mozi, muzore, amr };
   }
   // ---- маҳмуз ул-айн ва ул-лом: солим вазни + ҳамза ёзилиши (муаллиф розилиги билан) ----
   if (HZ.test(A) !== HZ.test(Lm) && !HZ.test(F) && !WK.test(F) && !WK.test(A + Lm) && pv) {
@@ -628,12 +678,14 @@ function conj1(f, voc, word, madiV) {
   let type = 'солим', pages = '7–8, 11';
   if (qalbsiz) { type = 'ажваф (қалб қилинмайди)'; pages = '33, 11'; }
   else if (HZ.test(F)) { type = 'маҳмуз ул-фо'; pages = '32–33'; }
-  else if (F === 'و') { type = 'мисол (вовлик)'; pages = '33–34'; if (![1, 3, 4, 5].includes(bob)) return null; }
+  else if (F === 'و') { type = 'мисол (вовлик)'; pages = '33–34'; }
+  else if (F === 'ي') { type = 'мисол (ёлик)'; pages = '34'; }
   else if (WK.test(F)) return null;
   const Fm = HZ.test(F) ? 'أ' : F;
   const P = Fm + FA + A + pv + Lm, Pk = P + SU;
   const mozi = grid({ gm: P + FA, gf: P + FA + 'تْ', mm: Pk + 'تَ', mf: Pk + 'تِ', s1: Pk + 'تُ', gm2: P + FA + 'ا', gf2: P + FA + 'تَا', m2: Pk + 'تُمَا', p1: Pk + 'نَا', gmp: P + DA + 'وا', gfp: Pk + 'نَ', mmp: Pk + 'تُمْ', mfp: Pk + 'تُنَّ' });
-  const drop = type.startsWith('мисол') && bob !== 4; // 33–34-бетлар: вов ҳазф
+  // 33–34-бетлар: вов фақат ундан кейин касра (ҳақиқий: 1, 5-боб; тақдирий: 3-бобда бўғиз ҳарфи бўлса) келганда ҳазф қилинади
+  const drop = type === 'мисол (вовлик)' && (bob === 1 || bob === 5 || (bob === 3 && GUTT.test(A + Lm)));
   const stem = (p) => drop ? p + FA + A + mv + Lm : p + FA + Fm + SU + A + mv + Lm;
   const s1 = type === 'маҳмуз ул-фо' ? 'آ' + A + mv + Lm : stem('أ');      // 32-бет, 10-қоида: آمُرُ
   const muzore = grid({ gm: stem('ي') + DA, gf: stem('ت') + DA, mm: stem('ت') + DA, mf: stem('ت') + KA + 'ينَ', s1: s1 + DA, gm2: stem('ي') + FA + 'انِ', gf2: stem('ت') + FA + 'انِ', m2: stem('ت') + FA + 'انِ', p1: stem('ن') + DA, gmp: stem('ي') + DA + 'ونَ', gfp: stem('ي') + SU + 'نَ', mmp: stem('ت') + DA + 'ونَ', mfp: stem('ت') + SU + 'نَ' });
@@ -641,7 +693,7 @@ function conj1(f, voc, word, madiV) {
   let R;
   if (drop) R = A + mv + Lm;                                                       // عِدْ
   else if (type === 'маҳмуз ул-фо') R = (pv === FA && mv === DA && ['خذ', 'كل', 'مر'].includes(A + Lm)) ? A + mv + Lm : H + (mv === DA ? 'و' : 'ي') + A + mv + Lm; // خُذْ، كُلْ، مُرْ / اُومُلْ
-  else if (type.startsWith('мисол')) R = 'اِي' + A + mv + Lm;                     // اِيجَلْ
+  else if (type.startsWith('мисол')) R = (mv === DA ? 'اُو' : 'اِي') + A + mv + Lm;   // اِيجَلْ ; 34-бет: اُوقُظْ
   else R = H + F + SU + A + mv + Lm;
   const amr = [[R + SU, R + KA + 'ي'], [R + FA + 'ا', ''], [R + DA + 'وا', R + SU + 'نَ']];
   if (type === 'маҳмуз ул-фо' && R === A + mv + Lm) amr[0][0] += ' ёки ' + H + 'ؤْ' + A + mv + Lm + SU; // 33-бет: اُؤْمُرْ – مُرْ
@@ -671,10 +723,11 @@ function hamzaSeat(s) {
 }
 function tasrifList(f) {
   if (!f || f.form_type !== 'verb' || f.sarf_form !== 'I' || !f.vocaliz) return [];
-  const vz = String(f.vocaliz).replace(/\\/g, '/').replace(/\./g, ',');
+  let vz = String(f.vocaliz).replace(/\\/g, '/').replace(/\./g, ',');
+  if (/[\u0621-\u064A]/.test(vz)) { vz = arVoc(vz) || ''; if (!vz) return []; }
   const words = (f.arabic_word || '').split(/[,،]|ёки/).map(x => x.trim()).filter(Boolean);
   const fx = (g) => g.map(r => r.map(c => c && c.split(' ёки ').map(hamzaSeat).join(' ёки ')));
-  const out = [], add = (t, label) => { if (!t || out.some(o => o.voc === label)) return; t.mozi = fx(t.mozi); t.muzore = fx(t.muzore); t.amr = fx(t.amr); t.voc = label; out.push(t); };
+  const out = [], add = (t, label) => { if (!t || out.some(o => o.voc === label)) return; t.mozi = fx(t.mozi); t.muzore = fx(t.muzore); t.amr = fx(t.amr); if (t.x) ['nasb', 'jazm', 'mMozi', 'mRaf', 'mNasb', 'mJazm'].forEach(k => { if (t.x[k]) t.x[k] = fx(t.x[k]); }); t.voc = label; out.push(t); };
   const L0 = splitLetters(words[0] || '');
   if (L0.length === 2 && L0[1].includes(SH)) {
     // иккиланган феъл: 12-қоида бўйича жуфтлар (мозий/музореъ); «а/у, и» = мозий а, музореъ у ёки и
@@ -797,9 +850,35 @@ function amrMalum(st) {
   const l = (c) => 'لِ' + c;
   return [[l(J[0][0]), l(J[0][1]), lomsiz.mm, lomsiz.mf, l(J[0][4])], [l(J[1][0]), l(J[1][1]), lomsiz.m2, '', l(J[1][4])], [l(J[2][0]), l(J[2][1]), lomsiz.mmp, lomsiz.mfp, '']];
 }
+// мисол ва маҳмуз ул-фо: охири саҳиҳ, шунинг учун умумий қолип (26–28-бет) + ўз қоидаси (32–34-бетлар)
+function stemsWeak(f) {
+  const t = tasrifOf(f); if (!t) return null;
+  const mis = t.type.startsWith('мисол'), mfo = t.type === 'маҳмуз ул-фо'; if (!mis && !mfo) return null;
+  const L = splitLetters(t.mozi[0][0]); const M = splitLetters(t.muzore[0][0]);
+  const B = M.slice(1); B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
+  const st = { bob: t.bob, madi: L, muzB: B, pre: FA, H: 'اِ', amrI: t.amr, type: `сулосий мужаррад, ${t.bob}-боб, ${t.type}`, pages: t.pages + ', 18, 26–28' };
+  if (mis) st.majMuzB = [['و'], [L[1][0], FA], [L[2][0]]];                    // 33–34-бет: يُوعَدُ، يُوسَرُ
+  if (mfo) st.fix = (c) => c.replace(/أَأْ/g, 'آ').replace(/أُأْ/g, 'أُو').replace(/ُأْ/g, 'ُؤْ');   // 32-бет: آمُرُ، يُؤْمَرُ، أُومَرُ
+  return st;
+}
+function amr5(J, a) { const l = (c) => c ? 'لِ' + c : c;
+  return [[l(J[0][0]), l(J[0][1]), a[0][0], a[0][1], l(J[0][4])], [l(J[1][0]), l(J[1][1]), a[1][0], '', l(J[1][4])], [l(J[2][0]), l(J[2][1]), a[2][0], a[2][1], '']]; }
+// музоъаф, ажваф, ноқис, лафиф, мултавий: жадваллар conj1 да китобдаги намуналар бўйича тўлиқ ясалган
+function sevenX(t) {
+  const x = t.x, E = [];
+  return { bob: t.bob, type: `сулосий мужаррад, ${t.bob}-боб, ${t.type}`, pages: t.pages + ', 18, 26–28', xnote: (x.note || '') + (x.nasb ? '' : ' Китобда бу тур учун насб (لَنْ) жадвали берилмаган, шунинг учун у қўйилмади.'),
+    malum: [['Феъли мозий', t.mozi], ['Феъли музореъ (рафъ ҳолида)', t.muzore], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(t.muzore, 'لَا ')],
+      ['لَنْ билан манфий музореъ (насб ҳолида)', x.nasb ? pfx(x.nasb, 'لَنْ ') : E], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(x.jazm, 'لَمْ ')],
+      ['Феъли амр (жазм ҳолида)', amr5(x.jazm, t.amr)], ['Феъли наҳий (жазм ҳолида)', pfx(x.jazm, 'لَا ')]],
+    majhul: [['Мозий мажҳули', x.mMozi], ['Музореъ мажҳули', x.mRaf], ['Нафий феъли мажҳули', pfx(x.mRaf, 'لَا ')],
+      ['لَنْ билан манфий музореъ мажҳули', x.mNasb ? pfx(x.mNasb, 'لَنْ ') : E], ['Жаҳд феъли мажҳули', pfx(x.mJazm, 'لَمْ ')],
+      ['Амр феъли мажҳули', pfx(x.mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(x.mJazm, 'لَا ')]] };
+}
 function sevenOf(f) {
-  const st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null)); if (!st) return null;
-  const mB = majB(st.muzB);
+  let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
+  if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
+  if (!st) return null;
+  const mB = st.majMuzB || majB(st.muzB);
   const malum = [
     ['Феъли мозий', madiGrid(st.madi)],
     ['Феъли музореъ (рафъ ҳолида)', muzGrid(st.muzB, st.pre, 'raf')],
@@ -816,6 +895,7 @@ function sevenOf(f) {
     ['Жаҳд феъли мажҳули', pfx(muzGrid(mB, DA, 'jazm'), 'لَمْ ')],
     ['Амр феъли мажҳули', pfx(muzGrid(mB, DA, 'jazm'), 'لِ')],
     ['Наҳий феъли мажҳули', pfx(muzGrid(mB, DA, 'jazm'), 'لَا ')]];
+  if (st.fix) [malum, majhul].forEach(T => T.forEach(tb => { tb[1] = tb[1].map(r => r.map(c => c ? st.fix(c) : c)); }));
   return { ...st, malum, majhul };
 }
 function sevenBlock(f) {
@@ -824,12 +904,12 @@ function sevenBlock(f) {
   const box = h('div', {});
   const show = (which) => {
     const u = uzVerb(f), st = u && (which === 'malum' || s.only ? u.s : u.pas), U = st ? uzSeven(which === 'malum' || s.only ? u.pre : u.pasPre, st) : [];
-    box.replaceChildren(...(which === 'malum' ? s.malum : s.majhul).map(([t, g], i) => [h('h4', {}, t), tasrifTable(g, C5, N, U[i])]).flat());
+    box.replaceChildren(...(which === 'malum' ? s.malum : s.majhul).map(([t, g], i) => g.length ? [h('h4', {}, t), tasrifTable(g, C5, N, U[i])] : []).flat());
     bm.classList.toggle('on', which === 'malum'); bj.classList.toggle('on', which === 'majhul'); };
   const bm = h('button', { class: 'seg', onclick: () => show('malum') }, 'Маълум'), bj = h('button', { class: 'seg', onclick: () => show('majhul') }, 'Мажҳул');
   const el = h('details', { class: 'tsr-box' }, h('summary', {}, 'Етти феъл (маълум ва мажҳул)'),
     h('p', { class: 'tsr-note' }, `Тури: ${s.type}.` + (s.approx ? ' Маҳмуз ул-ломнинг мажҳул жадвали китобда йўқ: ҳамза ёзилиши 28 ва 32-бетлар бўйича қўйилди, муаллим билан текширинг.' : '') + (s.cfg ? ` Масдар вазни: ` : ''), s.cfg ? h('span', { lang: 'ar', class: 'arw' }, s.cfg.masdar) : '',
-      `. «Жаноҳ ут-толиб», ${s.pages}-бетлар бўйича ясалган. Лозим (ўтимсиз) феъллардан мажҳул ясалмайди (19-бет).`,
+      `${s.cfg ? '. ' : ' '}«Жаноҳ ут-толиб», ${s.pages}-бетлар бўйича ясалган.${s.xnote ? ' ' + s.xnote : ''} Лозим (ўтимсиз) феъллардан мажҳул ясалмайди (19-бет).`,
       (() => { const u = uzVerb(f); if (!u) return ' Луғатда бу феълнинг «-моқ» шаклидаги таржимаси йўқ, шунинг учун ўзбекчаси қўйилмади.';
         return ` Таржима луғатдаги «${u.src}» маъносидан${u.via ? ` (${u.via} сўзидан олинди)` : ''}, китобдаги жадваллар (26–28-бет) намунасида ясалган.` +
           (!u.pas ? ' Бу феълнинг ўтимли маъноси йўқ, шунинг учун мажҳулнинг ўзбекчаси қўйилмади.' : u.pasOther ? ` Мажҳулнинг ўзбекчаси ўтимли «${u.pasSrc}» маъноси бўйича.` : ''); })()),
