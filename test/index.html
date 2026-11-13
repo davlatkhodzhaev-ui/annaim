@@ -456,7 +456,7 @@ function meaningsText(f) {
   const pos = (x) => x.after_index != null ? x.after_index : (x.sense != null ? x.sense : null);
   const idxs = new Set(trs.map(t => t.index));
   const head = exs.filter(x => pos(x) === 0).map(exStr);
-  let out = trs.map((t, k) => { let s = t.meaning;
+  let out = trs.map((t, k) => { let s = (t.label ? t.label + ' ' : '') + t.meaning;
     // бир хил рақам икки марта босилган бўлса (китобдагидек), мисоллар охиргисидан кейин
     const last = trs.map(z => z.index).lastIndexOf(t.index) === k;
     if (last) exs.filter(x => pos(x) === t.index).forEach(x => { s += (s ? '; ' : '') + exStr(x); });

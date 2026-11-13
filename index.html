@@ -318,7 +318,7 @@ function lookup(word, cur) { const pick = (a) => a && (a.find(x => x.e === cur) 
 function meaningsText(f) {
   const trs = f.translations || [], exs = f.examples || [];
   const exStr = (x) => x.translation ? `${x.phrase} ${x.translation}` : x.phrase;
-  let out = trs.map(t => { let s = t.meaning; exs.filter(x => x.sense === t.index).forEach(x => { s += '; ' + exStr(x); }); return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
+  let out = trs.map(t => { let s = (t.label ? t.label + ' ' : '') + t.meaning; exs.filter(x => x.sense === t.index).forEach(x => { s += '; ' + exStr(x); }); return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
   exs.filter(x => x.sense == null).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
   return out;
 }
