@@ -1176,9 +1176,9 @@ function majOnlyOf(f) {
     if (!F2M) { F2M = new WeakMap(); DATA.forEach(e => e.derivatives.forEach(x => F2M.set(x, e))); }
     const e = F2M.get(f), r = e ? (e.root_search || '').replace(/[\u064B-\u0652\s()]/g, '') : '';
     const sv = r.length === 3 ? (r[1] === 'و' ? DA : r[1] === 'ي' ? KA : null) : null; if (!sv) return null;
-    const F = HZ.test(L0[0][0]) ? '§' : L0[0][0], Lm = L0[2][0]; if (WK.test(F + Lm) || HZ.test(Lm) || /[نت]/.test(Lm)) return null;
+    const F = HZ.test(L0[0][0]) ? '§' : L0[0][0], Lm = L0[2][0]; if (WK.test(F + Lm) || HZ.test(Lm) || Lm === 'ت') return null;
     if (r[2] !== Lm || (F === '§' ? !HZ.test(r[0]) : r[0] !== F)) return null;   // мақола ўзаги шу сўзники бўлиши шарт
-    const fx2 = (g) => g.map(r2 => r2.map(c => c && hamzaSeat(c)));
+    const fx2 = (g) => g.map(r2 => r2.map(c => c && hamzaSeat(Lm === 'ن' ? c.replace(/نْنَ/g, 'نَّ') : c)));
     const Ml = (q) => q + DA + F + FA + 'ا' + Lm, Ms = (q) => q + DA + F + FA + Lm + SU + 'نَ', Sj = (q) => q + DA + F + FA + Lm + SU;
     const R = fx2(rafShape(Ml, Ms)), Nn = fx2(mapK(rafShape(Ml, Ms), nasbCell));
     const J = fx2(grid({ gm: Sj('ي'), gf: Sj('ت'), mm: Sj('ت'), mf: Ml('ت') + KA + 'ي', s1: Sj('أ'), gm2: Ml('ي') + FA + 'ا', gf2: Ml('ت') + FA + 'ا', m2: Ml('ت') + FA + 'ا', p1: Sj('ن'), gmp: Ml('ي') + DA + 'وا', gfp: Ms('ي'), mmp: Ml('ت') + DA + 'وا', mfp: Ms('ت') }));
