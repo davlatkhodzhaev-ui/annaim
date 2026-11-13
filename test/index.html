@@ -670,6 +670,16 @@ function conj1(f, voc, word, madiV, pm) {
       mRaf: naqRaf(Mm, 4), mNasb: naqNasb(naqRaf(Mm, 4)), mJazm: naqJazm(Mm, 4) };
     return { x, bob: kind, type, pages, mozi, muzore, amr };
   }
+  // ---- мисол + маҳмуз ул-лом, музореъ луғатда босилган: وَطِئَ – يَطَأُ (муаллиф: икки қоида бўйича) ----
+  if (F === 'و' && HZ.test(Lm) && !HZ.test(A) && !WK.test(A) && pv && pm) {
+    const bob = BOBS[pv + '|' + voc] || 0, drop = splitLetters(pm).length === 3;
+    const P = 'و' + FA + A + pv + '§', Pk = P + SU, st = (q) => drop ? q + FA + A + mv + '§' : q + FA + 'وْ' + A + mv + '§', R = drop ? A + mv + '§' : (mv === DA ? 'اُو' : 'اِي') + A + mv + '§';
+    const fixw = (g) => g.map(r => r.map(c => c && hamzaSeat(c)));
+    return { bob, type: 'маҳмуз ул-лом + мисол (вовлик)', pages: '32, 33–34; музореъ луғатда босилганидек',
+      mozi: fixw(grid({ gm: P + FA, gf: P + FA + 'تْ', mm: Pk + 'تَ', mf: Pk + 'تِ', s1: Pk + 'تُ', gm2: P + FA + 'ا', gf2: P + FA + 'تَا', m2: Pk + 'تُمَا', p1: Pk + 'نَا', gmp: P + DA + 'وا', gfp: Pk + 'نَ', mmp: Pk + 'تُمْ', mfp: Pk + 'تُنَّ' })),
+      muzore: fixw(grid({ gm: st('ي') + DA, gf: st('ت') + DA, mm: st('ت') + DA, mf: st('ت') + KA + 'ينَ', s1: st('أ') + DA, gm2: st('ي') + FA + 'انِ', gf2: st('ت') + FA + 'انِ', m2: st('ت') + FA + 'انِ', p1: st('ن') + DA, gmp: st('ي') + DA + 'ونَ', gfp: st('ي') + SU + 'نَ', mmp: st('ت') + DA + 'ونَ', mfp: st('ت') + SU + 'نَ' })),
+      amr: fixw([[R + SU, R + KA + 'ي'], [R + FA + 'ا', ''], [R + DA + 'وا', R + SU + 'نَ']]) };
+  }
   // ---- маҳмуз ул-айн ва ул-лом: солим вазни + ҳамза ёзилиши (муаллиф розилиги билан) ----
   if (HZ.test(A) !== HZ.test(Lm) && !HZ.test(F) && !WK.test(F) && !WK.test(A + Lm) && pv) {
     const bob = BOBS[pv + '|' + voc]; if (!bob) return null;
