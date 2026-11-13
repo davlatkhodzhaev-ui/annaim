@@ -455,14 +455,14 @@ function meaningsText(f) {
   // after_index: мисол китобда қайси рақамли маънодан кейин туради (0 = биринчи маънодан олдин, null = номаълум → охирида)
   const pos = (x) => x.after_index != null ? x.after_index : (x.sense != null ? x.sense : null);
   const idxs = new Set(trs.map(t => t.index));
-  const head = exs.filter(x => pos(x) === 0).map(exStr);
+  const num = trs.length > 1; const head = num ? exs.filter(x => pos(x) === 0).map(exStr) : [];
   let out = trs.map((t, k) => { let s = (t.label ? t.label + ' ' : '') + t.meaning;
     // бир хил рақам икки марта босилган бўлса (китобдагидек), мисоллар охиргисидан кейин
     const last = trs.map(z => z.index).lastIndexOf(t.index) === k;
     if (last) exs.filter(x => pos(x) === t.index).forEach(x => { s += (s ? '; ' : '') + exStr(x); });
     return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
   if (head.length) out = head.join('; ') + (out ? '; ' + out : '');
-  exs.filter(x => pos(x) == null || (pos(x) !== 0 && !idxs.has(pos(x)))).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
+  exs.filter(x => pos(x) == null || (pos(x) === 0 ? !num : !idxs.has(pos(x)))).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
   return out;
 }
 function verbText(f) {
