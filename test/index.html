@@ -1155,10 +1155,12 @@ function wordHits(t) {
     let sc = 0, via = '';
     if (own.includes(t)) sc = 5; else if (own.some(x => normAr(x) === n)) sc = 4;
     else { const hit = extra.find(([y]) => y === t || normAr(y) === n); if (hit) { sc = 3; via = hit[1]; } }
-    let ff = f;
-    if (sc >= 4 && f.arabic_word !== t && normAr(f.arabic_word) !== n) { const a = (f.alt_forms || []).find(x => x && (x.arabic_word === t || normAr(x.arabic_word) === n)); if (a) ff = altView(f, a.arabic_word); }
-    else if (sc >= 4 && f.arabic_word !== t) { const a = (f.alt_forms || []).find(x => x && x.arabic_word === t); if (a) ff = altView(f, a.arabic_word); }
-    if (sc) out.push({ e, f: ff, sc, via });
+    if (sc >= 4) {   // асосий сўз ва ҳар бир «ёки» шакл — алоҳида натижа
+      const main = String(f.arabic_word || '').split(/[,،;=]|ёки/).map(x => x.trim());
+      if (main.includes(t)) out.push({ e, f, sc: 5, via }); else if (main.some(x => normAr(x) === n)) out.push({ e, f, sc: 4, via });
+      (f.alt_forms || []).forEach(a => { if (!a || !a.arabic_word) return; const ex = a.arabic_word === t; if (ex || normAr(a.arabic_word) === n) out.push({ e, f: altView(f, a.arabic_word), sc: ex ? 5 : 4, via }); });
+      if (!out.length || out[out.length - 1].e !== e) out.push({ e, f, sc, via });
+    } else if (sc) out.push({ e, f, sc, via });
   }));
   return out.sort((a, b) => b.sc - a.sc);
 }
