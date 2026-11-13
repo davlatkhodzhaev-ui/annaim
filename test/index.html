@@ -488,13 +488,21 @@ function textToNodes(text, f, e) {
   if (last < text.length) out.push(text.slice(last));
   return out;
 }
+// «ёки» шакл учун кўриниш: сўз ва қавсдаги ҳарф ўша шаклники (ўзида бўлмаса — асосий шаклдаги), қолгани умумий
+const ALTV = new WeakMap();
+function altView(f, w) {
+  if (!f || f._of || w === f.arabic_word) return f;
+  const a = (f.alt_forms || []).find(x => x && x.arabic_word === w); if (!a) return f;
+  if (!ALTV.has(a)) ALTV.set(a, { ...f, arabic_word: a.arabic_word, vocaliz: a.vocaliz || f.vocaliz, alt_forms: [{ arabic_word: f.arabic_word, vocaliz: f.vocaliz }, ...f.alt_forms.filter(x => x !== a)], _of: f });
+  return ALTV.get(a);
+}
 function arabicRun(run, f, e) {
   const own = new Set([f.arabic_word, ...(f.alt_forms || []).map(a => a.arabic_word)]);
   const wrap = h('span', { class: 'arr', dir: 'rtl', lang: 'ar' });
   run.split(/(\s+|,|~)/).forEach(p => {
     if (!p) return;
     if (/^(\s+|,|~)$/.test(p)) { wrap.append(p); return; }
-    const t = own.has(p) ? { e, f } : lookup(p, e);
+    const t = own.has(p) ? { e, f: altView(f, p) } : lookup(p, e);
     wrap.append(t ? h('button', { class: 'aw', onclick: (ev) => openSheet(t.f, t.e, ev.currentTarget) }, dA(p)) : h('span', {}, dA(p)));
   });
   return wrap;
@@ -1146,7 +1154,10 @@ function wordHits(t) {
     let sc = 0, via = '';
     if (own.includes(t)) sc = 5; else if (own.some(x => normAr(x) === n)) sc = 4;
     else { const hit = extra.find(([y]) => y === t || normAr(y) === n); if (hit) { sc = 3; via = hit[1]; } }
-    if (sc) out.push({ e, f, sc, via });
+    let ff = f;
+    if (sc >= 4 && f.arabic_word !== t && normAr(f.arabic_word) !== n) { const a = (f.alt_forms || []).find(x => x && (x.arabic_word === t || normAr(x.arabic_word) === n)); if (a) ff = altView(f, a.arabic_word); }
+    else if (sc >= 4 && f.arabic_word !== t) { const a = (f.alt_forms || []).find(x => x && x.arabic_word === t); if (a) ff = altView(f, a.arabic_word); }
+    if (sc) out.push({ e, f: ff, sc, via });
   }));
   return out.sort((a, b) => b.sc - a.sc);
 }
@@ -1159,6 +1170,7 @@ function wordCard(x) {
 let pendingAt = null;
 function openAt(e, f) { pendingAt = f; if (location.hash === '#' + hashOf(e)) route(); else go(hashOf(e)); }
 function scrollToForm(f) {
+  f = f._of || f;
   const i = DATA.find(e => e.derivatives.includes(f)).derivatives.indexOf(f);
   const el = document.querySelector(`[data-fi="${i}"]`); if (!el) return;
   el.classList.add('hl'); el.scrollIntoView({ block: 'center' }); setTimeout(() => el.classList.remove('hl'), 2600);
