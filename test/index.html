@@ -816,7 +816,7 @@ function mazidCheck(bob, L) {
   if (!pat) return false;
   if (L.slice(0, -1).some(l => l.includes(DA))) return false;                 // луғатда мажҳул шаклда берилган (احْتُضِرَ)
   if (L.some((l, i) => !(l[0] === 'ا' && pat.includes(i)) && !vOf(l) && !l.includes(SU))) return false; // ҳаракати тушиб қолган
-  for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) return false; }
+  for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) { if ([2, 3, 6, 7].includes(bob) && i === n - 2 && /[وي]/.test(ch(i)) && vOf(L[i])) continue; return false; } }
   const rootL = L.filter((_, i) => !pat.includes(i)).map(l => l[0]);
   if (bob === 5 && n === 4) { /* ادّخر каби: ت ўзакнинг ҳарфига айланган */ }
   else if (rootL.length === 3 && rootL[1] === rootL[2]) return false; // музоъаф
@@ -826,11 +826,13 @@ function mazidCheck(bob, L) {
 function stemsMazid(f) {
   const bob = MAZID[f.sarf_form]; const cfg = MZT[bob]; if (!cfg) return null;
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); const L = splitLetters(w);
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) { L[i].push(FA); L[i + 1] = ['ا']; } // китобдаги «لاَ» ёзуви
   if (!mazidCheck(bob, L)) return null;
+  const ajw = /[وي]/.test(L[L.length - 2][0]);
   let B = cl(L); if (cfg.drop) B = B.slice(1);
   if (cfg.pk) B[B.length - 2] = setV(B[B.length - 2], KA);
   const Bl = cl(B); Bl[Bl.length - 1] = Bl[Bl.length - 1].filter(m => !VW.includes(m));
-  return { bob, cfg, madi: L, muzB: Bl, pre: cfg.pre, H: cfg.H || 'اِ', pages: '13, 18, 26–28', type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), солим` };
+  return { bob, cfg, madi: L, muzB: Bl, pre: cfg.pre, H: cfg.H || 'اِ', pages: '13, 18, 26–28', type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), ` + (ajw ? 'ажваф (саҳиҳ каби тусланади, 37-бет)' : 'солим') };
 }
 function stemsI(f) {
   const t = tasrifOf(f); if (!t || t.type !== 'солим') return null;
