@@ -236,6 +236,7 @@ p.s { margin: 0; color: var(--muted); }
 <script src="../data1.js"></script>
 <script src="../data2.js"></script>
 <script src="../extra.js"></script>
+<script src="pilot.js"></script>
 <script>
 const DATA = window.ANNAIM_DATA || [];
 
@@ -451,8 +452,17 @@ function lookup(word, cur) { const pick = (a) => a && (a.find(x => x.e === cur) 
 function meaningsText(f) {
   const trs = f.translations || [], exs = f.examples || [];
   const exStr = (x) => x.translation ? `${x.phrase} ${x.translation}` : x.phrase;
-  let out = trs.map(t => { let s = t.meaning; exs.filter(x => x.sense === t.index).forEach(x => { s += '; ' + exStr(x); }); return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
-  exs.filter(x => x.sense == null).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
+  // after_index: мисол китобда қайси рақамли маънодан кейин туради (0 = биринчи маънодан олдин, null = номаълум → охирида)
+  const pos = (x) => x.after_index != null ? x.after_index : (x.sense != null ? x.sense : null);
+  const idxs = new Set(trs.map(t => t.index));
+  const head = exs.filter(x => pos(x) === 0).map(exStr);
+  let out = trs.map((t, k) => { let s = t.meaning;
+    // бир хил рақам икки марта босилган бўлса (китобдагидек), мисоллар охиргисидан кейин
+    const last = trs.map(z => z.index).lastIndexOf(t.index) === k;
+    if (last) exs.filter(x => pos(x) === t.index).forEach(x => { s += (s ? '; ' : '') + exStr(x); });
+    return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
+  if (head.length) out = head.join('; ') + (out ? '; ' + out : '');
+  exs.filter(x => pos(x) == null || (pos(x) !== 0 && !idxs.has(pos(x)))).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
   return out;
 }
 function verbText(f) {
@@ -1308,7 +1318,7 @@ function renderEntry(e) {
     h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => (history.length > 1 ? history.back() : go('home')) }, '← Орқага'), mark),
     h('div', { class: 'entry-head' }, h('div', { class: 'root', lang: 'ar' }, rootOf(e)), h('div', { class: 'src' }, `стр. ${e.source_page} · арабча сўзни босинг`)),
     h('div', {}, runs.map(r => r.v ? h('p', { class: 'book' }, r.items.flatMap((f, i) => [i ? '; ' : '', ...formNodes(f, e)]))
-      : h('p', { class: 'book' + (r.items[0].form_type === 'derived' ? ' sub' : '') }, r.items[0].form_type === 'derived' ? '– ' : '', ...formNodes(r.items[0], e)))),
+      : h('p', { class: 'book' + ((r.items[0].dash != null ? r.items[0].dash : r.items[0].form_type === 'derived') ? ' sub' : '') }, (r.items[0].dash != null ? r.items[0].dash : r.items[0].form_type === 'derived') ? '– ' : '', ...formNodes(r.items[0], e)))),
     e.continues_on_next_page ? h('div', { class: 'cont' }, 'Мақола кейинги саҳифада давом этади.') : '');
   if (pending) { const p = pending; pending = null; openSheet(p, e, null); }
   if (pendingAt) { const p = pendingAt; pendingAt = null; requestAnimationFrame(() => scrollToForm(p)); }
