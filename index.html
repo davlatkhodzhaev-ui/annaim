@@ -323,7 +323,7 @@ function meaningsText(f) {
   return out;
 }
 function verbText(f) {
-  let s = `${f.sarf_form} ${f.arabic_word}`;
+  let s = `${f.sarf_form} ${f.pre_text ? f.pre_text + ' ' : ''}${f.arabic_word}`;
   if (f.vocaliz) s += ` (${f.vocaliz})`;
   (f.alt_forms || []).forEach(a => { s += ` ёки ${a.arabic_word}` + (a.vocaliz ? ` (${a.vocaliz})` : ''); });
   if (f.verbal_noun) s += ` \u200e${f.verbal_noun}`;
