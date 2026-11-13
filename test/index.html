@@ -575,6 +575,7 @@ function arVoc(sv) {
   for (let i = L.length - 2; i >= 1; i--) { const v = vOf(L[i]); if (v) return v === FA ? 'а' : v === KA ? 'и' : 'у'; }
   return null;
 }
+const bobLbl = (b) => b ? b + '-боб' : 'боб: луғатда босилганидек';
 function conj1(f, voc, word, madiV, pm) {
   const mv = VOW[voc]; if (!mv) return null;
   const w = (word || (f.arabic_word || '').split(/[,،]|ёки/)[0]).trim(); const L = splitLetters(w); const B = L.map(l => l[0]);
@@ -683,7 +684,7 @@ function conj1(f, voc, word, madiV, pm) {
   // ---- солим, маҳмуз ул-фо, мисол вовий; айни вов/ё бўлиб, қалб қилинмайдиган феъллар (33-бет: عَوِرَ) ----
   const qalbsiz = /[وي]/.test(A) && pv === KA && voc === 'а' && !WK.test(Lm) && !HZ.test(F + Lm) && !WK.test(F);
   if (A === Lm || HZ.test(A + Lm) || (WK.test(A + Lm) && !qalbsiz) || !pv) return null;
-  const bob = BOBS[pv + '|' + voc]; if (!bob) return null;
+  let bob = BOBS[pv + '|' + voc]; if (!bob) { if (!pm) return null; bob = 0; }   // бобга тушмайди, лекин музореъ луғатда босилган
   let type = 'солим', pages = '7–8, 11';
   if (qalbsiz) { type = 'ажваф (қалб қилинмайди)'; pages = '33, 11'; }
   else if (HZ.test(F)) { type = 'маҳмуз ул-фо'; pages = '32–33'; }
@@ -766,7 +767,7 @@ function tasrifBlock(f) {
   return h('details', { class: 'tsr-box' }, h('summary', {}, 'Тусланиши (мозий, музореъ, амр)'),
     list.length > 1 ? h('p', { class: 'tsr-note' }, 'Бу феъл икки бобда келади («Жаноҳ ут-толиб», 12-бет), иккаласи ҳам берилди.') : '',
     list.map(t => [
-      list.length > 1 ? h('h4', {}, `${t.bob}-боб (${t.voc})`) : '',
+      list.length > 1 ? h('h4', {}, `${bobLbl(t.bob)} (${t.voc})`) : '',
       h('p', { class: 'tsr-note' }, t.approx ? `Тури: ${t.type}. Китобда бу тур учун жадвал йўқ: ${t.bob}-боб вазни (11-бет) ва ҳамза ёзилиши бўйича ясалган. Китобнинг 28-бетида «маҳмузлар баъзи ўринларда ўз вазнига мувофиқ бўла олмайди» дейилган, муаллим билан текширинг.` : `Тури: ${t.type}. Бу жадвал луғатда босилмаган: «Жаноҳ ут-толиб» дарслигидаги ${t.bob}-боб намунаси бўйича (${t.pages}-бетлар) ясалган.`),
       h('h4', {}, 'Феъли мозий'), tasrifTable(t.mozi, C5, N, (uzBasic(f) || {}).mozi),
       h('h4', {}, 'Феъли музореъ'), tasrifTable(t.muzore, C5, N, (uzBasic(f) || {}).muzore),
@@ -867,7 +868,7 @@ function stemsWeak(f) {
   const mis = t.type.startsWith('мисол'), mfo = t.type === 'маҳмуз ул-фо'; if (!mis && !mfo) return null;
   const L = splitLetters(t.mozi[0][0]); const M = splitLetters(t.muzore[0][0]);
   const B = M.slice(1); B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
-  const st = { bob: t.bob, madi: L, muzB: B, pre: FA, H: 'اِ', amrI: t.amr, type: `сулосий мужаррад, ${t.bob}-боб, ${t.type}`, pages: t.pages + ', 18, 26–28' };
+  const st = { bob: t.bob, madi: L, muzB: B, pre: FA, H: 'اِ', amrI: t.amr, type: `сулосий мужаррад, ${bobLbl(t.bob)}, ${t.type}`, pages: t.pages + ', 18, 26–28' };
   if (mis) st.majMuzB = [['و'], [L[1][0], FA], [L[2][0]]];                    // 33–34-бет: يُوعَدُ، يُوسَرُ
   if (mfo) st.fix = (c) => c.replace(/أَأْ/g, 'آ').replace(/أُأْ/g, 'أُو').replace(/ُأْ/g, 'ُؤْ');   // 32-бет: آمُرُ، يُؤْمَرُ، أُومَرُ
   return st;
