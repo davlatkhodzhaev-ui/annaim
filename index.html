@@ -991,7 +991,7 @@ function mazidCheck(bob, L) {
   for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) { if ([2, 3, 6, 7].includes(bob) && i === n - 2 && /[وي]/.test(ch(i)) && vOf(L[i])) continue; return false; } }
   const rootL = L.filter((_, i) => !pat.includes(i)).map(l => l[0]);
   if (bob === 5 && n === 4) { /* ادّخر каби: ت ўзакнинг ҳарфига айланган */ }
-  else if (rootL.length === 3 && rootL[1] === rootL[2]) return false; // музоъаф
+  else if (rootL.length === 3 && rootL[1] === rootL[2] && ![2, 6].includes(bob)) return false; // музоъаф; 30-бет: тафъил ва тафаъъулда музоъаф саҳиҳдан фарқсиз тусланади
   return L[n - 1].includes(FA) && !L[n - 1].includes(SH);
 }
 // мозий, музореъ ва амрнинг асослари (бир шаклдан қолганлари ясалади)
@@ -1004,7 +1004,7 @@ function stemsMazid(f) {
   let B = cl(L); if (cfg.drop) B = B.slice(1);
   if (cfg.pk) B[B.length - 2] = setV(B[B.length - 2], KA);
   const Bl = cl(B); Bl[Bl.length - 1] = Bl[Bl.length - 1].filter(m => !VW.includes(m));
-  return { bob, cfg, madi: L, muzB: Bl, pre: cfg.pre, H: cfg.H || 'اِ', pages: '13, 18, 26–28', type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), ` + (ajw ? 'ажваф (саҳиҳ каби тусланади, 37-бет)' : 'солим') };
+  return { bob, cfg, madi: L, muzB: Bl, pre: cfg.pre, H: cfg.H || 'اِ', pages: '13, 18, 26–28', type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), ` + (ajw ? 'ажваф (саҳиҳ каби тусланади, 37-бет)' : (() => { const r = L.filter(l => !l.includes(SH) || true).map(l => l[0]); return [2, 6].includes(bob) && r[r.length - 1] === r[r.length - 2] ? 'музоъаф (саҳиҳдан фарқсиз тусланади, 30-бет)' : 'солим'; })()) };
 }
 function stemsI(f) {
   const t = tasrifOf(f); if (!t || t.type !== 'солим') return null;
