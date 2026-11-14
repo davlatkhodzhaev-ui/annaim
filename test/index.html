@@ -189,7 +189,7 @@ ol.mean li { margin: 3px 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--ink); }
 .brand { align-items: center; gap: 8px; }
-.acts { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; }
+.acts { display: flex; align-items: center; gap: 13px; padding-bottom: 15px; }
 .acts .round[data-l]::after { content: attr(data-l); position: absolute; top: 47px; left: 50%; transform: translateX(-50%); font-size: 9.5px; line-height: 1; font-weight: 500; letter-spacing: .01em; color: var(--muted); white-space: nowrap; font-family: var(--font-ui); }
 .round { position: relative; color: var(--accent); cursor: pointer; }
 .round.star { color: var(--gold); }
@@ -545,6 +545,7 @@ function h(tag, props, ...kids) {
 }
 const svg = (d, w = 24) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('width', w); s.setAttribute('height', w); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '1.9'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = d; return s; };
 const ICON = {
+  grid: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
   crescent: '<path d="M19.5 15.2A8.2 8.2 0 1 1 10.4 4.1a6.4 6.4 0 0 0 9.1 11.1z"/>',
   contrast: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/>',
   star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
@@ -1472,7 +1473,7 @@ function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
   if (active === 'sarf' || active === 'nahv') active = 'gram';
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'), t('more', '#more', 'grid', 'Қўшимча'));
 }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
 
@@ -1588,11 +1589,7 @@ function renderHome() {
     body.replaceChildren(
       hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
         h('div', { class: 'chips' }, hist.map(x => h('button', { class: 'chip', onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
-      h('div', { class: 'quad' },
-        h('button', { class: 'geo', onclick: () => go('geo'), 'aria-label': 'Географик номлар' }, h('span', { class: 'fl', 'aria-hidden': 'true' }, '🇸🇦'), h('span', {}, 'Географик номлар')),
-        ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))),
-      h('div', { class: 'quad' },
-        h('button', { class: 'geo', style: 'grid-column:1 / -1', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар'))));
+      '');
   };
   const fillAll = () => { input.value = query; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); };
   const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
@@ -1605,6 +1602,7 @@ function renderHome() {
     h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
       h('div', { class: 'acts' },
         h('a', { class: 'round', 'data-l': 'Қўлланма', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
+        h('a', { class: 'round', 'data-l': 'География', href: '#geo', 'aria-label': 'Географик номлар', title: 'Географик номлар' }, h('span', { 'aria-hidden': 'true', style: 'font-size:21px;line-height:1' }, '🇸🇦')),
         h('a', { class: 'round star', 'data-l': 'Сақланган', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
         (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           const b = h('button', { class: 'round', 'data-l': 'Режим', 'aria-label': 'Ёруғ ёки қоронғи' });
@@ -1914,6 +1912,13 @@ function renderTasrif() {
     h('div', { class: 'search' }, svg(ICON.find, 20), input), out);
   fill(); setTimeout(() => input.focus(), 50);
 }
+function renderMore() {
+  page('more', h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' }))),
+    h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Қўшимча'),
+    h('div', { class: 'quad', style: 'grid-template-columns:1fr' },
+      ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('extra-' + i) }, h('span', {}, l[1]))),
+      h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар'))));
+}
 function renderGram() {
   page('gram', h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' }))),
     h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Грамматика'),
@@ -1931,6 +1936,7 @@ function route() {
   if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
   const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'gram') return renderGram();
+  if (hsh === 'more') return renderMore();
   if (hsh === 'saved') return renderSaved();
   if (hsh === 'geo') return renderGeo();
   if (hsh === 'tasrif') return renderTasrif();
