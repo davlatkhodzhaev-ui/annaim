@@ -567,7 +567,8 @@ DATA.forEach(e => e.derivatives.forEach(f => {
 function lookup(word, cur) { const pick = (a) => a && (a.find(x => x.e === cur) || a[0]); return pick(EXACT.get(word)) || pick(LOOSE.get(normAr(word))); }
 function meaningsText(f) {
   const trs = f.translations || [], exs = f.examples || [];
-  const exStr = (x) => (x.tag ? x.tag + ' ' : '') + (x.translation ? `${x.phrase} ${x.translation}` : x.phrase);
+  const tagPre = (x) => /^◊/.test(x.tag || '') ? '◊ ' : '', tagPost = (x) => { const t = String(x.tag || '').replace(/^◊\s*/, ''); return t ? t + ' ' : ''; };
+  const exStr = (x) => tagPre(x) + (x.translation ? `${x.phrase} ${tagPost(x)}${x.translation}` : x.phrase + (tagPost(x) ? ' ' + tagPost(x).trim() : ''));
   // after_index: мисол китобда қайси рақамли маънодан кейин туради (0 = биринчи маънодан олдин, null = номаълум → охирида)
   const pos = (x) => x.after_index != null ? x.after_index : (x.sense != null ? x.sense : null);
   const idxs = new Set(trs.map(t => t.index));
