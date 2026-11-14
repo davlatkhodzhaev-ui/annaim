@@ -225,6 +225,7 @@ p.s { margin: 0; color: var(--muted); }
 .wc .cp:first-child { padding-left: 0; border-left: 0; }
 .wc .cp b { font-family: var(--font-ar); font-weight: 400; font-size: calc(20px * var(--ars, 1)); line-height: 1.6; direction: rtl; color: var(--ink); white-space: nowrap; }
 .wc .cp b.n { font-family: var(--font-ui); font-weight: 600; font-size: 14.5px; line-height: 2.3; direction: ltr; }
+.wc .sb { align-self: flex-end; font-size: 15px; color: var(--ink); padding: 0 0 2px 10px; white-space: nowrap; }
 .wc .cp i { font-style: normal; font-size: 11px; color: var(--muted); letter-spacing: .02em; }
 .wc ul { margin: 8px 0 6px; padding-left: 18px; }
 .wc li { font-size: 15.5px; line-height: 1.4; margin: 3px 0; }
@@ -1271,12 +1272,13 @@ function wordCard(x) {
     let muz = [], amr = '', bobs = [];
     try { if (MAZID[f.sarf_form]) { const sv = sevenCached(f); if (sv) { const M = sv.malum.find(t => /музореъ \(рафъ/.test(t[0])), A = sv.malum.find(t => /^Феъли амр/.test(t[0])); if (M) muz = [M[1][0][0]]; if (A) amr = A[1][0][2] || ''; } }
       else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); bobs = [...new Set(tl.map(t => t.bob).filter(Boolean))]; if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
-    if (f.sarf_form) chips.push(cp(f.sarf_form, 'шакл', true));
+    const RN = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10 }; let sb = f.sarf_form ? (RN[f.sarf_form] || f.sarf_form) + ' шакл' : '';
     // боб: китобда қавсда босилган ҳарф ва шунга мос боб рақами; мазидда боб номи
-    if (MAZID[f.sarf_form]) chips.push(cp(MAZNAME[MAZID[f.sarf_form]], 'боби', true));
-    else if (f.sarf_form === 'I' && f.vocaliz && /^[аиу,\s\/]+$/.test(String(f.vocaliz))) { if (bobs.length) chips.push(cp(bobs.join(', '), 'боб', true)); }
+    if (MAZID[f.sarf_form]) sb += ' ' + MAZNAME[MAZID[f.sarf_form]] + ' боби';
+    else if (f.sarf_form === 'I' && f.vocaliz && /^[аиу,\s\/]+$/.test(String(f.vocaliz))) { if (bobs.length) sb += ' ' + bobs.join(', ') + ' боб'; }
     if (muz.length) chips.push(cp(muz.join('، '), 'музореъ'));
     if (amr) chips.push(cp(amr, 'амр'));
+    if (sb) chips.push(h('span', { class: 'sb' }, sb));
   } else { if (f.plural_form) chips.push(cp(String(f.plural_form).split(/[,،]/).slice(0, 2).join('، '), 'кўплиги')); }
   const ms = (f.translations || []).map(t => (t.label ? t.label + ' ' : '') + t.meaning).filter(Boolean);
   const tg = { verb: 'феъл', noun: 'исм', adjective: 'сифат' }[f.form_type] || '';
