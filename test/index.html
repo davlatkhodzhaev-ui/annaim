@@ -426,7 +426,7 @@ const AR_WEAK = /[اويءؤئ]/g;
 const ACELLS = [['gm', 0, 0], ['gf', 0, 1], ['mm', 0, 2], ['mf', 0, 3], ['s1', 0, 4], ['gm2', 1, 0], ['gf2', 1, 1], ['m2', 1, 2], ['p1', 1, 4], ['gmp', 2, 0], ['gfp', 2, 1], ['mmp', 2, 2], ['mfp', 2, 3]];
 const APERS = { gm: 'ғоиб муз. муфрад', gf: 'ғоиб муан. муфрад', mm: 'мухотоб муз. муфрад', mf: 'мухотоб муан. муфрад', s1: 'мутакаллим муфрад', gm2: 'ғоиб муз. тасния', gf2: 'ғоиб муан. тасния', m2: 'мухотоб тасния', p1: 'мутакаллим жамъ', gmp: 'ғоиб муз. жамъ', gfp: 'ғоиб муан. жамъ', mmp: 'мухотоб муз. жамъ', mfp: 'мухотоб муан. жамъ' };
 const SVC = new WeakMap(), FKEY = new WeakMap();
-function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
+function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
 function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++; if (i === a.length) return true; } return a.length === 0; }
 const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
 function arFormHits(text) {
@@ -1039,8 +1039,14 @@ function sevenOf(f) {
   if (st.fix) [malum, majhul].forEach(T => T.forEach(tb => { tb[1] = tb[1].map(r => r.map(c => c ? st.fix(c) : c)); }));
   return { ...st, malum, majhul };
 }
+const MOZI_ONLY = new Set(['حَبِنَ', 'حَسُبَ', 'خَبُرَ', 'رَجُسَ', 'سَكِكَ', 'شَطَحَ', 'صَعُبَ', 'طَرُفَ', 'عَطِلَ', 'فَحُشَ', 'قَطِطَ', 'هَوَسَ', 'وَأَدَ', 'وَأَرَ', 'وَأَلَ', 'وَحُسَ', 'يَئِسَ']);
+function moziOnlyOf(f) {
+  if (f.sarf_form !== 'I' || f.form_type !== 'verb') return null; const w = String(f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!MOZI_ONLY.has(w)) return null;
+  const L = splitLetters(w); if (L.length !== 3) return null;
+  return { moziOnly: true, type: 'сулосий мужаррад; китобда қавсдаги ҳарф олти бобга тўғри келмайди, шунинг учун муаллиф қарори билан фақат мозий тусланади', pages: '7–8', malum: [['Феъли мозий', madiGrid(L)]], majhul: [] };
+}
 function sevenBlock(f) {
-  const s = sevenOf(f) || majOnlyOf(f); if (!s) return '';
+  const s = sevenOf(f) || majOnlyOf(f) || moziOnlyOf(f); if (!s) return '';
   const C5 = ['Ғоиб муз.', 'Ғоиб муан.', 'Мухотоб муз.', 'Мухотоб муан.', 'Мутакаллим'], N = ['Муфрад', 'Тасния', 'Жамъ'];
   const box = h('div', {});
   const show = (which) => {
@@ -1055,7 +1061,7 @@ function sevenBlock(f) {
         return ` Таржима луғатдаги «${u.src}» маъносидан${u.via ? ` (${u.via} сўзидан олинди)` : ''}, китобдаги жадваллар (26–28-бет) намунасида ясалган.` +
           (!u.pas ? ' Бу феълнинг ўтимли маъноси йўқ, шунинг учун мажҳулнинг ўзбекчаси қўйилмади.' : u.pasOther ? ` Мажҳулнинг ўзбекчаси ўтимли «${u.pasSrc}» маъноси бўйича.` : ''); })()),
     h('div', { class: 'segs' }, bm, bj), box);
-  if (s.only) { bm.remove(); show('majhul'); el.querySelector('summary').textContent = 'Фақат мажҳул ишлатилади: етти феъл'; } else show('malum'); return el;
+  if (s.moziOnly) { show('malum'); bm.remove(); bj.remove(); el.querySelector('summary').textContent = 'Фақат мозий тусланади'; } else if (s.only) { bm.remove(); show('majhul'); el.querySelector('summary').textContent = 'Фақат мажҳул ишлатилади: етти феъл'; } else show('malum'); return el;
 }
 
 // ================= ясама исмлар, боб маънолари, I боб изоҳлари, исми тасғир =================
@@ -1569,7 +1575,7 @@ function renderHome() {
         })(),
         items.length ? ''
           : h('div', { class: 'empty' }, letter ? 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.' : 'Ҳеч нарса топилмади. Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзиб кўринг.'));
-      if (body.querySelector('.wc')) { const em = body.querySelector('.empty'); if (em) em.remove(); body.querySelectorAll('details.more').forEach(d => { if (/\(0\)/.test(d.querySelector('summary').textContent)) d.remove(); }); }
+      if (body.querySelector('.wc, .card')) { const em = body.querySelector('.empty'); if (em) em.remove(); body.querySelectorAll('details.more').forEach(d => { if (/\(0\)/.test(d.querySelector('summary').textContent)) d.remove(); }); }
       if (!letter && HAS_AR.test(query)) { const vx = !!body.querySelector('[data-vx]'); let xh = exHits(query.trim()); if (!xh.length && !vx) xh = exHits(effQ(query.trim())); if (xh.length) { const sec = [h('div', { class: 'lbl' }, `Мисолларда (${xh.length})`), h('div', { class: 'list', style: 'margin-bottom:14px' }, xh.map(exCard))];
         const firstList = body.querySelector('.list'); const exact = ALLW.has(normAr(effQ(query.trim()))); if (vx) body.append(...sec); else if (exact && firstList) firstList.after(...sec); else { const c0 = body.querySelector('.count, .lbl'); if (c0 && /кўрсатилмоқда/.test(c0.textContent)) c0.after(...sec); else body.prepend(...sec); } } }
       return;
