@@ -478,7 +478,7 @@ const AR_WEAK = /[اويءؤئ]/g;
 const ACELLS = [['gm', 0, 0], ['gf', 0, 1], ['mm', 0, 2], ['mf', 0, 3], ['s1', 0, 4], ['gm2', 1, 0], ['gf2', 1, 1], ['m2', 1, 2], ['p1', 1, 4], ['gmp', 2, 0], ['gfp', 2, 1], ['mmp', 2, 2], ['mfp', 2, 3]];
 const APERS = { gm: 'ғоиб муз. муфрад', gf: 'ғоиб муан. муфрад', mm: 'мухотоб муз. муфрад', mf: 'мухотоб муан. муфрад', s1: 'мутакаллим муфрад', gm2: 'ғоиб муз. тасния', gf2: 'ғоиб муан. тасния', m2: 'мухотоб тасния', p1: 'мутакаллим жамъ', gmp: 'ғоиб муз. жамъ', gfp: 'ғоиб муан. жамъ', mmp: 'мухотоб муз. жамъ', mfp: 'мухотоб муан. жамъ' };
 const SVC = new WeakMap(), FKEY = new WeakMap();
-function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
+function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f) || moziOnly2Of(f); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
 function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++; if (i === a.length) return true; } return a.length === 0; }
 const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
 function arFormHits(text) {
@@ -1100,8 +1100,26 @@ function moziOnlyOf(f) {
   const L = splitLetters(w); if (L.length !== 3) return null;
   return { moziOnly: true, type: 'сулосий мужаррад; китобда қавсдаги ҳарф олти бобга тўғри келмайди, шунинг учун муаллиф қарори билан фақат мозий тусланади', pages: '7–8', malum: [['Феъли мозий', madiGrid(L)]], majhul: [] };
 }
+// 2-қисм: мозийси китоб қоидасидан аниқ чиқадиган турлар
+const MOZI_ONLY2 = new Set(['حَفَّ', 'خَمَّ', 'عَفَّ', 'هَجَّ', 'هَمَّ', 'مَضَّ', 'وَجَّ', 'وَزَّ', 'وَشَّ', 'وَنَّ', 'وَدَّ', 'حَلَى', 'حَنَى', 'كَرَى', 'شَهَا', 'وَبِئَ', 'وَبُؤَ', 'وَبَأَ', 'وَثَأَ', 'وَثِئَ', 'وَطَأَ', 'وَطُؤَ']);
+function moziOnly2Of(f) {
+  if (f.sarf_form !== 'I' || f.form_type !== 'verb') return null; const w = String(f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!MOZI_ONLY2.has(w)) return null;
+  const L = splitLetters(w), B = L.map(l => l[0]); const mk = (mozi, type, pages) => ({ moziOnly: true, type: type + '; муаллиф қарори билан фақат мозий тусланади', pages, malum: [['Феъли мозий', mozi]], majhul: [] });
+  if (L.length === 2 && L[1].includes(SH)) {   // музоъаф: қавсдаги биринчи ҳарф — мозий I–II шахсда айн ҳаракати (луғат, 12-қоида)
+    const m0 = String(f.vocaliz || '').replace(/\\/g, '/').split('/')[0].trim(), pv = VOW[m0]; if (!pv) return null;
+    const mg = B[0] + FA + B[1] + SH, un = B[0] + FA + B[1] + pv + B[1] + SU;
+    return mk(moziShape(mg, un), 'музоъаф (мозийда айн ҳаракати қавсдаги биринчи ҳарфдан)', '29–30');
+  }
+  if (L.length !== 3) return null; const X = B[0] + FA + B[1], Lm = B[2];
+  if (Lm === 'ى' && vOf(L[1]) === FA) return mk(grid({ gm: X + FA + 'ى', gf: X + FA + 'تْ', mm: X + FA + 'يْتَ', mf: X + FA + 'يْتِ', s1: X + FA + 'يْتُ', gm2: X + FA + 'يَا', gf2: X + FA + 'تَا', m2: X + FA + 'يْتُمَا', p1: X + FA + 'يْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'يْنَ', mmp: X + FA + 'يْتُمْ', mfp: X + FA + 'يْتُنَّ' }), 'ноқис (ёлик)', '39–41');
+  if (Lm === 'ا' && vOf(L[1]) === FA) return mk(grid({ gm: X + FA + 'ا', gf: X + FA + 'تْ', mm: X + FA + 'وْتَ', mf: X + FA + 'وْتِ', s1: X + FA + 'وْتُ', gm2: X + FA + 'وَا', gf2: X + FA + 'تَا', m2: X + FA + 'وْتُمَا', p1: X + FA + 'وْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'وْنَ', mmp: X + FA + 'وْتُمْ', mfp: X + FA + 'وْتُنَّ' }), 'ноқис (вовлик)', '39–41');
+  if (B[0] === 'و' && HZ.test(Lm)) { const pv = vOf(L[1]); if (!pv) return null; const P = 'و' + FA + B[1] + pv + '§', Pk = P + SU;
+    const g = grid({ gm: P + FA, gf: P + FA + 'تْ', mm: Pk + 'تَ', mf: Pk + 'تِ', s1: Pk + 'تُ', gm2: P + FA + 'ا', gf2: P + FA + 'تَا', m2: Pk + 'تُمَا', p1: Pk + 'نَا', gmp: P + DA + 'وا', gfp: Pk + 'نَ', mmp: Pk + 'تُمْ', mfp: Pk + 'تُنَّ' });
+    return mk(g.map(r => r.map(c => c && hamzaSeat(c))), 'маҳмуз ул-лом + мисол (вовлик): солим вазни, ҳамза ёзилиши 32-бет бўйича', '7–8, 32'); }
+  return null;
+}
 function sevenBlock(f) {
-  const s = sevenOf(f) || majOnlyOf(f) || moziOnlyOf(f); if (!s) return '';
+  const s = sevenOf(f) || majOnlyOf(f) || moziOnlyOf(f) || moziOnly2Of(f); if (!s) return '';
   const C5 = ['Ғоиб муз.', 'Ғоиб муан.', 'Мухотоб муз.', 'Мухотоб муан.', 'Мутакаллим'], N = ['Муфрад', 'Тасния', 'Жамъ'];
   const box = h('div', {});
   const show = (which) => {
