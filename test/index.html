@@ -1096,6 +1096,33 @@ function mazidAjwaf(f) {
     malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(mapK(raf, nasbCell), 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(jazm, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(jazm, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(jazm, 'لَا ')]],
     majhul: [['Мозий мажҳули', mMozi], ['Музореъ мажҳули', mRaf], ['Нафий феъли мажҳули', pfx(mRaf, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(mapK(mRaf, nasbCell), 'لَنْ ')], ['Жаҳд феъли мажҳули', pfx(mJazm, 'لَمْ ')], ['Амр феъли мажҳули', pfx(mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(mJazm, 'لَا ')]] };
 }
+// ноқис мазид (42-бет): ифъол, тафъил, муфоала, инфиъол, ифтиъол, истифъол — رَمَى يَرْمِي каби; тафаъъул, тафоъул — سَعَى يَسْعَى каби
+function mazidNaqis(f) {
+  const bob = MAZID[f.sarf_form], cfg = MZT[bob]; if (!cfg) return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (/\s/.test(w)) return null; const L = splitLetters(w);
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) { L[i].push(FA); L[i + 1] = ['ا']; }
+  const n = L.length, ch = (i) => L[i] && L[i][0], sh = (i) => L[i] && L[i].includes(SH);
+  if (n < 3 || ch(n - 1) !== 'ى' || L[n - 1].length > 1 || vOf(L[n - 2]) !== FA) return null;
+  const pat = { 1: n === 4 && ch(0) === 'أ' ? [0] : null, 2: n === 3 && sh(1) ? [] : null, 3: n === 4 && ch(1) === 'ا' ? [1] : null, 4: n === 5 && ch(0) === 'ا' && ch(1) === 'ن' ? [0, 1] : null,
+    5: ch(0) === 'ا' && ((n === 5 && /[تطد]/.test(ch(2))) ? [0, 2] : (n === 4 && sh(1)) ? [0] : null), 6: n === 4 && ch(0) === 'ت' && sh(2) ? [0] : null, 7: n === 5 && ch(0) === 'ت' && ch(2) === 'ا' ? [0, 2] : null,
+    10: n === 6 && ch(0) === 'ا' && ch(1) === 'س' && ch(2) === 'ت' ? [0, 1, 2] : null }[bob];
+  if (!pat) return null;
+  for (let i = 0; i < n - 1; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئة]/.test(ch(i))) return null; }   // ўзакда бошқа иллат ёки ҳамза бўлса — лафиф/маҳмуз, бу ерда қилинмайди
+  if (L.slice(0, n - 1).some((l, i) => l.includes(DA) || (!(l[0] === 'ا' && pat.includes(i)) && !vOf(l) && !l.includes(SU)))) return null;
+  const tG = bob === 6 || bob === 7, S = cl(L.slice(0, n - 1)), Sx = cl(S); Sx[Sx.length - 1] = Sx[Sx.length - 1].filter(m => !VW.includes(m));
+  const X = joinL(Sx), base = joinL(cfg.drop ? Sx.slice(1) : Sx);
+  const M = (p) => (p === 'أ' && cfg.pre === FA ? 'أَ' : p + cfg.pre) + base, Mm = (p) => p + DA + base;
+  const mozi = grid({ gm: X + FA + 'ى', gf: X + FA + 'تْ', mm: X + FA + 'يْتَ', mf: X + FA + 'يْتِ', s1: X + FA + 'يْتُ', gm2: X + FA + 'يَا', gf2: X + FA + 'تَا', m2: X + FA + 'يْتُمَا', p1: X + FA + 'يْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'يْنَ', mmp: X + FA + 'يْتُمْ', mfp: X + FA + 'يْتُنَّ' });
+  const zk = tG ? 4 : 1, raf = naqRaf(M, zk), jazm = naqJazm(M, zk), nasb = naqNasb(raf);
+  const amr = tG ? [[X + FA, X + FA + 'يْ'], [X + FA + 'يَا', ''], [X + FA + 'وْا', X + FA + 'يْنَ']] : [[X + KA, X + KA + 'ي'], [X + KA + 'يَا', ''], [X + DA + 'وا', X + KA + 'ينَ']];
+  const Ym = majMadi([...S, ['ي']]).slice(0, n - 1), Y = joinL(Ym), Ys = joinL(Ym.map((l, i) => i === Ym.length - 1 ? l.filter(m => !VW.includes(m)) : l));
+  const mMozi = grid({ gm: Y + 'يَ', gf: Y + 'يَتْ', mm: Y + 'يتَ', mf: Y + 'يتِ', s1: Y + 'يتُ', gm2: Y + 'يَا', gf2: Y + 'يَتَا', m2: Y + 'يتُمَا', p1: Y + 'ينَا', gmp: Ys + DA + 'وا', gfp: Y + 'ينَ', mmp: Y + 'يتُمْ', mfp: Y + 'يتُنَّ' });
+  const mRaf = naqRaf(Mm, 4), mJazm = naqJazm(Mm, 4), mNasb = naqNasb(mRaf);
+  return { bob, type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), ноқис (${tG ? 'سَعَى يَسْعَى' : 'رَمَى يَرْمِي'} каби)`, pages: '42, 39–41, 18, 26–28',
+    xnote: 'Мажҳул жадвали дарсликда бу тур учун алоҳида берилмаган: 18-бетдаги умумий қоида ва 40-бетдаги ноқис мажҳули намунаси бўйича ясалди. Насб (لَنْ) жадвали луғат муаллифи кўрсатмаси бўйича қўшилган.',
+    malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(nasb, 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(jazm, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(jazm, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(jazm, 'لَا ')]],
+    majhul: [['Мозий мажҳули', mMozi], ['Музореъ мажҳули', mRaf], ['Нафий феъли мажҳули', pfx(mRaf, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(mNasb, 'لَنْ ')], ['Жаҳд феъли мажҳули', pfx(mJazm, 'لَمْ ')], ['Амр феъли мажҳули', pfx(mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(mJazm, 'لَا ')]] };
+}
 // ифъилол (IX): 30-бетдаги احْمَرَّ жадвали — идғомли; I–II шахс мозийда ва муаннас жамъида идғом очилади
 function mazidIX(f) {
   if (MAZID[f.sarf_form] !== 8) return null;
@@ -1112,7 +1139,7 @@ function mazidIX(f) {
 }
 function sevenOf(f) {
   let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
-  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f); if (a) return a; }
+  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f) || mazidNaqis(f); if (a) return a; }
   if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
   if (!st) return null;
   const mB = st.majMuzB || majB(st.muzB);
