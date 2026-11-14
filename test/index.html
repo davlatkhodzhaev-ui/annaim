@@ -456,7 +456,7 @@ function arFormHits(text) {
 }
 // қўшимчали феъл: олдида س و ف ل, охирида олмош (سيكتب، يكتبه، كتبوه)
 const VPRE = ['', 'و', 'ف', 'س', 'ل', 'وس', 'فس', 'ول', 'فل'], VSUF2 = ['', 'هما', 'كما', 'هم', 'هن', 'كم', 'كن', 'ها', 'نا', 'ني', 'ه', 'ك', 'ي'];
-const XFC = new Map();
+const XFC = new Map(), XST = new Map();
 function arFormHitsX(text) {
   const nq = normAr(text); if (nq.length < 4 || /\s/.test(String(text).trim())) return []; if (XFC.has(nq)) return XFC.get(nq);
   const vars = [];
@@ -466,7 +466,7 @@ function arFormHitsX(text) {
   let out = [];
   for (const v of vars.slice(0, 12)) { let hh = []; try { hh = arFormHits(v.st); } catch (z) {}
     if (/س$/.test(v.pr)) hh = hh.filter(x => /музореъ \(рафъ/.test(x.table));
-    if (hh.length) { out = hh.map(x => Object.assign({}, x, { cl: (v.pr ? v.pr.split('').join(' + ') + ' + ' : '') + 'феъл' + (v.sf ? ' + ' + v.sf : '') })); break; } }
+    if (hh.length) { XST.set(nq, v.st); out = hh.map(x => Object.assign({}, x, { cl: (v.pr ? v.pr.split('').join(' + ') + ' + ' : '') + 'феъл' + (v.sf ? ' + ' + v.sf : '') })); break; } }
   XFC.set(nq, out); return out;
 }
 // ҳамзаси ташлаб ёзилган сўз: ҳамзали шакллари
@@ -1550,11 +1550,12 @@ function renderHome() {
           const exactW = wh.some(x => x.sc === 4.5 || (marked ? arRaw(x.f.arabic_word) === rawq : normAr(x.f.arabic_word) === nqa));
           let ah = (!letter && nqa) ? arFormHits(query) : [], viaX = false;
           if (!ah.length && !letter && nqa && !exactW) { ah = arFormHitsX(query.trim()); viaX = ah.length > 0; }
+          const xb = (viaX && !arAlt(query.trim())) ? h('div', { class: 'count', 'data-vx': '1', style: 'color:var(--gold)' }, `«${query.trim()}» — «${XST.get(nqa) || ''}» бўйича кўрсатилмоқда`) : '';
           const ahSec = ah.length ? [h('div', { class: 'lbl' }, `Феъл шакллари (${ah.length})`), h('div', { class: 'list' }, ah.slice(0, 20).map(arFormCard))] : [];
-          if (ah.length && !exactW && !(viaX && wh.length) && !whx.length) return [...ahSec,
+          if (ah.length && !exactW && !(viaX && wh.length) && !whx.length) return [xb, ...ahSec,
             wh.length ? h('details', { class: 'more' }, h('summary', {}, `Сўзлар (${wh.length})`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard))) : '',
             items.length ? h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items))) : ''];
-          if (ah.length) return [h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)), ...ahSec,
+          if (ah.length) return [xb, h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)), ...ahSec,
             h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items)))];
           if (wh.length) return [h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)),
             h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items)))];
@@ -1568,7 +1569,7 @@ function renderHome() {
         items.length ? ''
           : h('div', { class: 'empty' }, letter ? 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.' : 'Ҳеч нарса топилмади. Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзиб кўринг.'));
       if (body.querySelector('.wc')) { const em = body.querySelector('.empty'); if (em) em.remove(); body.querySelectorAll('details.more').forEach(d => { if (/\(0\)/.test(d.querySelector('summary').textContent)) d.remove(); }); }
-      if (!letter && HAS_AR.test(query)) { const xh = exHits(effQ(query.trim())); if (xh.length) { const sec = [h('div', { class: 'lbl' }, `Мисолларда (${xh.length})`), h('div', { class: 'list', style: 'margin-bottom:14px' }, xh.map(exCard))];
+      if (!letter && HAS_AR.test(query) && !body.querySelector('[data-vx]')) { const xh = exHits(effQ(query.trim())); if (xh.length) { const sec = [h('div', { class: 'lbl' }, `Мисолларда (${xh.length})`), h('div', { class: 'list', style: 'margin-bottom:14px' }, xh.map(exCard))];
         const firstList = body.querySelector('.list'); const exact = ALLW.has(normAr(effQ(query.trim()))); if (exact && firstList) firstList.after(...sec); else { const c0 = body.querySelector('.count, .lbl'); if (c0 && /кўрсатилмоқда/.test(c0.textContent)) c0.after(...sec); else body.prepend(...sec); } } }
       return;
     }
