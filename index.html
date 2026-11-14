@@ -85,6 +85,10 @@ button.row:hover { background: var(--bg); }
 .card .gloss { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .card .meta { font-size: 13px; color: var(--muted); }
 .bar[hidden] { display: none; }
+.nbar { position: sticky; top: 0; z-index: 6; background: var(--bg); padding: calc(8px + env(safe-area-inset-top, 0px)) 0 8px; }
+.navg { display: flex; gap: 8px; }
+.navb { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 20px; background: var(--surface); border: 1px solid var(--line); color: var(--accent); font: 600 14px/1 var(--font-ui); cursor: pointer; }
+.navb svg { width: 18px; height: 18px; }
 .bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 0; }
 .link { background: none; border: 0; color: var(--accent); padding: 8px 0; min-height: 44px; font-weight: 500; }
 .mark { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
@@ -1522,7 +1526,24 @@ function renderTabs(active) {
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
   tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'), t('more', '#more', 'grid', 'Қўшимча'));
 }
-function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
+const goBack = () => { if (!sheet.hidden) return closeSheet(); const hsh = location.hash.replace(/^#/, '');
+  if (hsh === '' || hsh === 'home') { if (query || letter) { query = ''; letter = ''; route(); } return; }
+  if (history.length > 1) history.back(); else go('home'); };
+const goHome = () => { query = ''; letter = ''; if (location.hash === '#home') route(); else go('home'); };
+function navBar() { return h('div', { class: 'navg' }, h('button', { class: 'navb', onclick: goBack, 'aria-label': 'Орқага' }, '← Орқага'), h('button', { class: 'navb', onclick: goHome, 'aria-label': 'Бош саҳифа' }, svg(ICON.home, 18), 'Бош')); }
+function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity));
+  const hsh = location.hash.replace(/^#/, '');
+  if (active !== 'home' || (hsh && hsh !== 'home')) { if (!/^w[1234]$/.test(hsh)) {   // бош саҳифа ва таништирувдан бошқа ҳамма жойда
+    let bar = view.querySelector(':scope > .bar');
+    if (bar) { const old = bar.querySelector(':scope > button.link'); if (old && /^←/.test(old.textContent)) old.remove(); bar.prepend(navBar()); bar.classList.add('nbar'); }
+    else view.prepend(h('div', { class: 'bar nbar' }, navBar())); } }
+  window.scrollTo(0, 0); }
+// свайп: ўнгга суриш = орқага (жадвал ёки ёзув майдони устида ишламайди)
+(() => { let sx = 0, sy = 0, st = 0, ok = false;
+  const scrollsX = (n) => { for (; n && n !== document.body; n = n.parentElement) { if (n.scrollWidth > n.clientWidth + 4) { const o = getComputedStyle(n).overflowX; if (o === 'auto' || o === 'scroll') return true; } } return false; };
+  document.addEventListener('touchstart', (ev) => { const t = ev.touches[0]; ok = ev.touches.length === 1 && !/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) && !scrollsX(ev.target); sx = t.clientX; sy = t.clientY; st = Date.now(); }, { passive: true });
+  document.addEventListener('touchend', (ev) => { if (!ok) return; const t = ev.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (dx > 80 && Math.abs(dy) < 45 && Date.now() - st < 700) goBack(); }, { passive: true }); })();
 
 // ---------- танишув экранлари ----------
 const dots = (n) => h('div', { class: 'dots', 'aria-hidden': 'true' }, [1, 2, 3, 4].map(i => h('i', { class: i === n ? 'on' : '' })));
