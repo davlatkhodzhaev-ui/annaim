@@ -219,12 +219,12 @@ p.s { margin: 0; color: var(--muted); }
 .wc { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; }
 .wc:hover { border-color: var(--accent); }
 .wc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-.wc .w { font-family: var(--font-ar); font-size: calc(36px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; }
+.wc .w { font-family: var(--font-ar); font-size: calc(34px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; }
 .wc .chips2 { display: flex; align-items: stretch; flex-wrap: wrap; min-width: 0; }
-.wc .cp { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 10px; border-left: 1px solid var(--line); }
+.wc .cp { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 7px; border-left: 1px solid var(--line); }
 .wc .cp:first-child { padding-left: 0; border-left: 0; }
-.wc .cp b { font-family: var(--font-ar); font-weight: 400; font-size: calc(21px * var(--ars, 1)); line-height: 1.6; direction: rtl; color: var(--ink); white-space: nowrap; }
-.wc .cp b.n { font-family: var(--font-ui); font-weight: 600; font-size: 17px; line-height: 1.9; direction: ltr; }
+.wc .cp b { font-family: var(--font-ar); font-weight: 400; font-size: calc(20px * var(--ars, 1)); line-height: 1.6; direction: rtl; color: var(--ink); white-space: nowrap; }
+.wc .cp b.n { font-family: var(--font-ui); font-weight: 600; font-size: 14.5px; line-height: 2.3; direction: ltr; }
 .wc .cp i { font-style: normal; font-size: 11px; color: var(--muted); letter-spacing: .02em; }
 .wc ul { margin: 8px 0 6px; padding-left: 18px; }
 .wc li { font-size: 15.5px; line-height: 1.4; margin: 3px 0; }
@@ -1268,10 +1268,13 @@ function wordHits(t) {
 function wordCard(x) {
   const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
   if (f.form_type === 'verb') {
-    let muz = [], amr = '';
+    let muz = [], amr = '', bobs = [];
     try { if (MAZID[f.sarf_form]) { const sv = sevenCached(f); if (sv) { const M = sv.malum.find(t => /музореъ \(рафъ/.test(t[0])), A = sv.malum.find(t => /^Феъли амр/.test(t[0])); if (M) muz = [M[1][0][0]]; if (A) amr = A[1][0][2] || ''; } }
-      else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
+      else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); bobs = [...new Set(tl.map(t => t.bob).filter(Boolean))]; if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
     if (f.sarf_form) chips.push(cp(f.sarf_form, 'шакл', true));
+    // боб: китобда қавсда босилган ҳарф ва шунга мос боб рақами; мазидда боб номи
+    if (MAZID[f.sarf_form]) chips.push(cp(MAZNAME[MAZID[f.sarf_form]], 'боби', true));
+    else if (f.sarf_form === 'I' && f.vocaliz && /^[аиу,\s\/]+$/.test(String(f.vocaliz))) chips.push(cp('(' + f.vocaliz + ')', bobs.length ? bobs.join(', ') + '-боб' : 'боб', true));
     if (muz.length) chips.push(cp(muz.join('، '), 'музореъ'));
     if (amr) chips.push(cp(amr, 'амр'));
   } else { if (f.plural_form) chips.push(cp(String(f.plural_form).split(/[,،]/).slice(0, 2).join('، '), 'кўплиги')); }
