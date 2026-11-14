@@ -1096,9 +1096,23 @@ function mazidAjwaf(f) {
     malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(mapK(raf, nasbCell), 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(jazm, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(jazm, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(jazm, 'لَا ')]],
     majhul: [['Мозий мажҳули', mMozi], ['Музореъ мажҳули', mRaf], ['Нафий феъли мажҳули', pfx(mRaf, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(mapK(mRaf, nasbCell), 'لَنْ ')], ['Жаҳд феъли мажҳули', pfx(mJazm, 'لَمْ ')], ['Амр феъли мажҳули', pfx(mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(mJazm, 'لَا ')]] };
 }
+// ифъилол (IX): 30-бетдаги احْمَرَّ жадвали — идғомли; I–II шахс мозийда ва муаннас жамъида идғом очилади
+function mazidIX(f) {
+  if (MAZID[f.sarf_form] !== 8) return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (/\s/.test(w)) return null; const L = splitLetters(w), n = L.length, ch = (i) => L[i] && L[i][0];
+  if (n !== 4 || ch(0) !== 'ا' || !L[1].includes(SU) || vOf(L[2]) !== FA || !L[3].includes(SH) || vOf(L[3]) !== FA) return null;
+  if ([1, 2, 3].some(i => /[اىآأإءؤئة]/.test(ch(i)))) return null;
+  const P = 'ا' + ch(1) + SU + ch(2) + FA, R = ch(3), Z = (p) => p + FA + ch(1) + SU + ch(2) + FA;
+  const mozi = moziShape(P + R + SH, P + R + FA + R + SU);
+  const raf = rafShape((p) => Z(p) + R + SH, (p) => Z(p) + R + KA + R + SU + 'نَ'), nasb = mapK(raf, nasbCell);
+  const amr = [[P + R + KA + R + SU + ' ёки ' + P + R + SH + FA, P + R + SH + KA + 'ي'], [P + R + SH + FA + 'ا', ''], [P + R + SH + DA + 'وا', P + R + KA + R + SU + 'نَ']];
+  return { bob: 8, type: 'мазид, ифъилол боби, идғомли', pages: '30, 26–28', xnote: 'Жазмда идғом фатҳа билан берилди (30-бетдаги амр жадвалидагидек: لِيَحْمَرَّ). Бу боб феъллари лозим, мажҳули ясалмайди (19-бет).',
+    malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(nasb, 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(nasb, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(nasb, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(nasb, 'لَا ')]],
+    majhul: [] };
+}
 function sevenOf(f) {
   let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
-  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f); if (a) return a; }
+  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f); if (a) return a; }
   if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
   if (!st) return null;
   const mB = st.majMuzB || majB(st.muzB);
@@ -1161,7 +1175,7 @@ function sevenBlock(f) {
         return ` Таржима луғатдаги «${u.src}» маъносидан${u.via ? ` (${u.via} сўзидан олинди)` : ''}, китобдаги жадваллар (26–28-бет) намунасида ясалган.` +
           (!u.pas ? ' Бу феълнинг ўтимли маъноси йўқ, шунинг учун мажҳулнинг ўзбекчаси қўйилмади.' : u.pasOther ? ` Мажҳулнинг ўзбекчаси ўтимли «${u.pasSrc}» маъноси бўйича.` : ''); })()),
     h('div', { class: 'segs' }, bm, bj), box);
-  if (s.moziOnly) { show('malum'); bm.remove(); bj.remove(); el.querySelector('summary').textContent = 'Фақат мозий тусланади'; } else if (s.only) { bm.remove(); show('majhul'); el.querySelector('summary').textContent = 'Фақат мажҳул ишлатилади: етти феъл'; } else show('malum'); return el;
+  if (!s.majhul.length && !s.moziOnly && !s.only) { show('malum'); bm.remove(); bj.remove(); } else if (s.moziOnly) { show('malum'); bm.remove(); bj.remove(); el.querySelector('summary').textContent = 'Фақат мозий тусланади'; } else if (s.only) { bm.remove(); show('majhul'); el.querySelector('summary').textContent = 'Фақат мажҳул ишлатилади: етти феъл'; } else show('malum'); return el;
 }
 
 // ================= ясама исмлар, боб маънолари, I боб изоҳлари, исми тасғир =================
