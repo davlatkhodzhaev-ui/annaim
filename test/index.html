@@ -189,7 +189,8 @@ ol.mean li { margin: 3px 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--ink); }
 .brand { align-items: center; gap: 8px; }
-.acts { display: flex; align-items: center; gap: 8px; }
+.acts { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; }
+.acts .round[data-l]::after { content: attr(data-l); position: absolute; top: 47px; left: 50%; transform: translateX(-50%); font-size: 9.5px; line-height: 1; font-weight: 500; letter-spacing: .01em; color: var(--muted); white-space: nowrap; font-family: var(--font-ui); }
 .round { position: relative; color: var(--accent); cursor: pointer; }
 .round.star { color: var(--gold); }
 .round .cnt { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: var(--surface); font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; }
@@ -1603,13 +1604,13 @@ function renderHome() {
   page('home',
     h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
       h('div', { class: 'acts' },
-        h('a', { class: 'round', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
-        h('a', { class: 'round star', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
+        h('a', { class: 'round', 'data-l': 'Қўлланма', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
+        h('a', { class: 'round star', 'data-l': 'Сақланган', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
         (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-          const b = h('button', { class: 'round', 'aria-label': 'Ёруғ ёки қоронғи' });
+          const b = h('button', { class: 'round', 'data-l': 'Режим', 'aria-label': 'Ёруғ ёки қоронғи' });
           const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.contrast, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
           b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })(),
-        h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22)))),
+        h('a', { class: 'round', 'data-l': 'Профил', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22)))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
 }
