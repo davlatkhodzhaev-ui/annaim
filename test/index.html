@@ -1070,8 +1070,35 @@ function sevenX(t) {
       ['لَنْ билан манфий музореъ мажҳули', x.mNasb ? pfx(x.mNasb, 'لَنْ ') : E], ['Жаҳд феъли мажҳули', pfx(x.mJazm, 'لَمْ ')],
       ['Амр феъли мажҳули', pfx(x.mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(x.mJazm, 'لَا ')]] };
 }
+// ажваф мазид: 37–38-бетдаги жадваллар (أَقَامَ، اسْتَعَانَ، اخْتَاطَ، انْقَادَ); узун асос унли қўшимча олдидан, қисқа асос сукун олдидан
+function mazidAjwaf(f) {
+  const sf = f.sarf_form, bob = MAZID[sf]; if (![1, 10, 4, 5].includes(bob)) return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (/\s/.test(w)) return null; const L = splitLetters(w);
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) { L[i].push(FA); L[i + 1] = ['ا']; }
+  const n = L.length, ch = (i) => L[i] && L[i][0], bad = (c) => !c || /[اوىيآأإءؤئة]/.test(c);
+  let hd, mzH, mjH, F, Lm;   // hd: мозий боши; mzH(p): музореъ боши; mjH: мажҳул мозий боши
+  if (bob === 1 && n === 4 && ch(0) === 'أ' && ch(2) === 'ا' && vOf(L[1]) === FA) { F = ch(1); Lm = ch(3); hd = 'أَ'; mjH = 'أُ'; mzH = (p, v) => p + (v || DA); }
+  else if (bob === 10 && n === 6 && ch(0) === 'ا' && ch(1) === 'س' && ch(2) === 'ت' && ch(4) === 'ا' && vOf(L[3]) === FA) { F = ch(3); Lm = ch(5); hd = 'اسْتَ'; mjH = 'اُسْتُ'; mzH = (p, v) => p + (v || FA) + 'سْتَ'; }
+  else if ((bob === 4 || bob === 5) && n === 5 && ch(0) === 'ا' && L[1].includes(SU) && !L[1].includes(SH) && ch(3) === 'ا' && vOf(L[2]) === FA && !bad(ch(1))) { F = ch(2); Lm = ch(4); hd = 'ا' + ch(1) + SU; mjH = 'اُ' + ch(1) + SU; mzH = (p, v) => p + (v || FA) + ch(1) + SU; }
+  else return null;
+  if (bad(F) || bad(Lm) || L[n - 1].includes(SH) || vOf(L[n - 1]) !== FA) return null;
+  const io = bob === 1 || bob === 10;                       // ифъол, истифъол: музореъда «ي»; ифтиъол, инфиъол: «ا» сақланади
+  const idg = (c) => c && c.replace(/([\u0621-\u064A])ْ\1([َُِ])/g, '$1ّ$2');   // 30-бет: сокин + ҳаракатли бир хил ҳарф идғом қилинади
+  const G = (g) => g.map(r => r.map(idg));
+  const jz = (lg, sh) => grid({ gm: sh('ي'), gf: sh('ت'), mm: sh('ت'), mf: lg('ت') + KA + 'ي', s1: sh('أ'), gm2: lg('ي') + FA + 'ا', gf2: lg('ت') + FA + 'ا', m2: lg('ت') + FA + 'ا', p1: sh('ن'), gmp: lg('ي') + DA + 'وا', gfp: sh('ي') + 'نَ', mmp: lg('ت') + DA + 'وا', mfp: sh('ت') + 'نَ' });
+  const lg = (p) => mzH(p) + F + (io ? KA + 'ي' : FA + 'ا') + Lm, sh = (p) => mzH(p) + F + (io ? KA : FA) + Lm + SU;
+  const Mlg = (p) => mzH(p, DA) + F + FA + 'ا' + Lm, Msh = (p) => mzH(p, DA) + F + FA + Lm + SU;
+  const mozi = G(moziShape(hd + F + FA + 'ا' + Lm, hd + F + FA + Lm + SU)), raf = G(rafShape(lg, (p) => sh(p) + 'نَ')), jazm = G(jz(lg, sh));
+  const aS = hd + F + (io ? KA : FA) + Lm + SU, aL = hd + F + (io ? KA + 'ي' : FA + 'ا') + Lm;
+  const amr = G([[aS, aL + KA + 'ي'], [aL + FA + 'ا', ''], [aL + DA + 'وا', aS + 'نَ']]);
+  const mMozi = G(moziShape(mjH + F + KA + 'ي' + Lm, mjH + F + KA + Lm + SU)), mRaf = G(rafShape(Mlg, (p) => Msh(p) + 'نَ')), mJazm = G(jz(Mlg, Msh));
+  return { bob, type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), ажваф`, pages: '37–38, 18, 26–28',
+    malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(mapK(raf, nasbCell), 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(jazm, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(jazm, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(jazm, 'لَا ')]],
+    majhul: [['Мозий мажҳули', mMozi], ['Музореъ мажҳули', mRaf], ['Нафий феъли мажҳули', pfx(mRaf, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(mapK(mRaf, nasbCell), 'لَنْ ')], ['Жаҳд феъли мажҳули', pfx(mJazm, 'لَمْ ')], ['Амр феъли мажҳули', pfx(mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(mJazm, 'لَا ')]] };
+}
 function sevenOf(f) {
   let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
+  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f); if (a) return a; }
   if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
   if (!st) return null;
   const mB = st.majMuzB || majB(st.muzB);
