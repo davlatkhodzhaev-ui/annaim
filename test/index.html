@@ -416,7 +416,7 @@ function verbHits(text) {
 }
 function verbCard(x) {
   return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
-    h('span', { class: 'gloss' }, (x.cl ? x.cl + ' · ' : '') + (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers),
+    h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers),
     h('span', { class: 'root', lang: 'ar' }, x.ar),
     h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
@@ -473,7 +473,7 @@ function arFormHitsX(text) {
 function hamzaAlts(text) { const n = normAr(text); if (n.length < 2 || /\s/.test(String(text).trim())) return []; return (WH2.get(HK2(n)) || []).filter(w => w !== n && hzN(w) > hzN(n)).slice(0, 3); }
 function arFormCard(x) {
   return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
-    h('span', { class: 'gloss' }, (x.cl ? x.cl + ' · ' : '') + (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers.join('; ')),
+    h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers.join('; ')),
     h('span', { class: 'root', lang: 'ar' }, x.ar),
     h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
