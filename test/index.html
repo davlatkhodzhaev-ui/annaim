@@ -544,6 +544,8 @@ function h(tag, props, ...kids) {
 }
 const svg = (d, w = 24) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('width', w); s.setAttribute('height', w); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '1.9'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = d; return s; };
 const ICON = {
+  crescent: '<path d="M19.5 15.2A8.2 8.2 0 1 1 10.4 4.1a6.4 6.4 0 0 0 9.1 11.1z"/>',
+  contrast: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/>',
   star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
@@ -1467,8 +1469,9 @@ function entryRow(e) {
 }
 function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
+  if (active === 'sarf' || active === 'nahv') active = 'gram';
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('guide', '#guide', 'info', 'Қўлланма'), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'));
 }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
 
@@ -1584,8 +1587,6 @@ function renderHome() {
     body.replaceChildren(
       hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
         h('div', { class: 'chips' }, hist.map(x => h('button', { class: 'chip', onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
-      h('div', { class: 'lbl' }, 'Ҳарфлар бўйича'),
-      h('div', { class: 'letters' }, LETTERS.map(l => h('button', { class: 'letter', lang: 'ar', onclick: () => { letter = l; fillAll(); } }, l))),
       h('div', { class: 'quad' },
         h('button', { class: 'geo', onclick: () => go('geo'), 'aria-label': 'Географик номлар' }, h('span', { class: 'fl', 'aria-hidden': 'true' }, '🇸🇦'), h('span', {}, 'Географик номлар')),
         ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))),
@@ -1602,10 +1603,11 @@ function renderHome() {
   page('home',
     h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
       h('div', { class: 'acts' },
-        h('a', { class: 'round star', href: '#saved', 'aria-label': 'Сақланганлар' }, svg(ICON.star, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
+        h('a', { class: 'round', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
+        h('a', { class: 'round star', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
         (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           const b = h('button', { class: 'round', 'aria-label': 'Ёруғ ёки қоронғи' });
-          const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.moon, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
+          const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.contrast, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
           b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })(),
         h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22)))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
@@ -1911,6 +1913,13 @@ function renderTasrif() {
     h('div', { class: 'search' }, svg(ICON.find, 20), input), out);
   fill(); setTimeout(() => input.focus(), 50);
 }
+function renderGram() {
+  page('gram', h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' }))),
+    h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Грамматика'),
+    h('div', { class: 'quad' },
+      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('sarf') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'الصَّرْفُ'), h('span', {}, 'Сарф')),
+      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('nahv') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'النَّحْوُ'), h('span', {}, 'Наҳв'))));
+}
 function route() {
   const hsh = location.hash.replace(/^#/, '');
   if (!S.seen && !/^w[1234]$/.test(hsh)) return go('w1');
@@ -1920,6 +1929,7 @@ function route() {
   const gm = hsh.match(/^(guide|extra)-(\d+)$/);
   if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
   const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
+  if (hsh === 'gram') return renderGram();
   if (hsh === 'saved') return renderSaved();
   if (hsh === 'geo') return renderGeo();
   if (hsh === 'tasrif') return renderTasrif();
