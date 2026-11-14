@@ -1264,7 +1264,20 @@ function wordHits(t) {
       if (!out.length || out[out.length - 1].e !== e) out.push({ e, f, sc, via });
     } else if (sc) out.push({ e, f, sc, via });
   }));
+  if (!out.length) muzGuess(n).forEach(x => out.push(x));
   return out.sort((a, b) => b.sc - a.sc);
+}
+// музореъ шаклидан феълни тахминан топиш (жадвали йўқ феъллар учун)
+let VSK = null;
+function muzGuess(n) {
+  if (n.length < 4 || !/^[يتنا]/.test(n)) return [];
+  let fh = []; try { fh = arFormHits(n); } catch (z) {} if (fh.length) return [];
+  if (!VSK) { VSK = new Map(); DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type !== 'verb' || !f.sarf_form || !f.arabic_word) return;
+    String(f.arabic_word).split(/[,،]|ёки/).forEach(w => { let k = normAr(w.trim()).replace(/[ؤئء]/g, 'ا'); if (!k) return; if (/^(IV|VII|VIII|IX|X)$/.test(f.sarf_form) && k[0] === 'ا') k = k.slice(1); else if (f.sarf_form === 'I') return;
+      if (!VSK.has(k)) VSK.set(k, []); VSK.get(k).push({ e, f }); }); })); }
+  const body = n.slice(1).replace(/[ؤئء]/g, 'ا'), seen = new Set(), out = [];
+  [body, ...['ون', 'ان', 'ين', 'وا', 'ن', 'ا', 'ي'].filter(sf => body.endsWith(sf) && body.length - sf.length >= 3).map(sf => body.slice(0, -sf.length))].forEach(c => (VSK.get(c) || []).forEach(x => { if (!seen.has(x.f)) { seen.add(x.f); out.push({ e: x.e, f: x.f, sc: 2, via: 'музореъ шакли бўлиши мумкин' }); } }));
+  return out.slice(0, 6);
 }
 function wordCard(x) {
   const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
