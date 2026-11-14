@@ -216,6 +216,24 @@ p.s { margin: 0; color: var(--muted); }
 .me .av { width: 64px; height: 64px; border-radius: 32px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; }
 .set { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; min-height: 56px; }
 .set + .set { border-top: 1px solid var(--line); }
+.wc { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; }
+.wc:hover { border-color: var(--accent); }
+.wc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.wc .w { font-family: var(--font-ar); font-size: calc(36px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; }
+.wc .chips2 { display: flex; align-items: stretch; flex-wrap: wrap; min-width: 0; }
+.wc .cp { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 10px; border-left: 1px solid var(--line); }
+.wc .cp:first-child { padding-left: 0; border-left: 0; }
+.wc .cp b { font-family: var(--font-ar); font-weight: 400; font-size: calc(21px * var(--ars, 1)); line-height: 1.6; direction: rtl; color: var(--ink); white-space: nowrap; }
+.wc .cp b.n { font-family: var(--font-ui); font-weight: 600; font-size: 17px; line-height: 1.9; direction: ltr; }
+.wc .cp i { font-style: normal; font-size: 11px; color: var(--muted); letter-spacing: .02em; }
+.wc ul { margin: 8px 0 6px; padding-left: 18px; }
+.wc li { font-size: 15.5px; line-height: 1.4; margin: 3px 0; }
+.wc li::marker { color: var(--gold); }
+.wc .via { font-size: 13.5px; color: var(--gold); margin-top: 8px; }
+.wc .ft { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.wc .ft .meta { font-size: 13px; color: var(--muted); }
+.wc .tg { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); }
+.wc .more { font-size: 13px; color: var(--muted); list-style: none; margin-left: -18px; }
 .day { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 4px 0 12px; }
 .day .k { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
 .day .w { font-family: var(--font-ar); font-size: calc(38px * var(--ars, 1)); line-height: 1.6; direction: rtl; text-align: right; color: var(--accent); }
@@ -1248,6 +1266,25 @@ function wordHits(t) {
   return out.sort((a, b) => b.sc - a.sc);
 }
 function wordCard(x) {
+  const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
+  if (f.form_type === 'verb') {
+    let muz = [], amr = '';
+    try { if (MAZID[f.sarf_form]) { const sv = sevenCached(f); if (sv) { const M = sv.malum.find(t => /музореъ \(рафъ/.test(t[0])), A = sv.malum.find(t => /^Феъли амр/.test(t[0])); if (M) muz = [M[1][0][0]]; if (A) amr = A[1][0][2] || ''; } }
+      else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
+    if (f.sarf_form) chips.push(cp(f.sarf_form, 'шакл', true));
+    if (muz.length) chips.push(cp(muz.join('، '), 'музореъ'));
+    if (amr) chips.push(cp(amr, 'амр'));
+  } else { if (f.plural_form) chips.push(cp(String(f.plural_form).split(/[,،]/).slice(0, 2).join('، '), 'кўплиги')); }
+  const ms = (f.translations || []).map(t => (t.label ? t.label + ' ' : '') + t.meaning).filter(Boolean);
+  const tg = { verb: 'феъл', noun: 'исм', adjective: 'сифат' }[f.form_type] || '';
+  return h('button', { class: 'wc', onclick: () => openAt(x.e, f) },
+    h('div', { class: 'top' }, h('div', { class: 'chips2' }, chips), h('div', { class: 'w', lang: 'ar' }, f.arabic_word)),
+    x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
+    ms.length ? h('ul', {}, ms.slice(0, 3).map(m => h('li', {}, m)), ms.length > 3 ? h('li', { class: 'more' }, `яна ${ms.length - 3} та маъно`) : '')
+      : h('ul', {}, h('li', {}, base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—')),
+    h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), tg ? h('span', { class: 'tg' }, tg) : ''));
+}
+function wordCardOld(x) {
   const m = (x.f.translations || []).map(t => t.meaning).filter(Boolean).slice(0, 6).join('; ') || (x.f.equivalent_to ? '= ' + x.f.equivalent_to.join(', ') : '—');
   return h('button', { class: 'card', onclick: () => openAt(x.e, x.f) },
     h('span', { class: 'gloss' }, (x.via ? `${x.f.arabic_word} сўзининг ${x.via} · ` : '') + m), h('span', { class: 'root', lang: 'ar' }, x.f.arabic_word),
