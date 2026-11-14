@@ -467,7 +467,7 @@ function exHits(text) {
 }
 function exCard(h0) {
   return h('button', { class: 'card', style: 'grid-template-columns:1fr', onclick: () => openAt(h0.e, h0.f) },
-    h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:calc(26px * var(--ars, 1));line-height:1.7;direction:rtl;text-align:right;color:var(--accent)' }, (h0.sc === 3 && !/~[\u064B-\u0652\u0640]/.test(h0.x.phrase)) ? h0.x.phrase.replace(/~/g, String(h0.f.arabic_word).split(/[,،]|ёки/)[0]) : h0.x.phrase),
+    h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:calc(26px * var(--ars, 1));line-height:1.7;direction:rtl;text-align:right;color:var(--accent)' }, (h0.sc === 3 && !/~[\u064B-\u0652\u0640]/.test(h0.x.phrase)) ? ((t) => /\s/.test(String(query).trim()) ? t : t.replace(/\s+/g, ''))(h0.x.phrase.replace(/~/g, String(h0.f.arabic_word).split(/[,،]|ёки/)[0])) : h0.x.phrase),
     h('span', { class: 'gloss' }, h0.x.translation), h('span', { class: 'meta' }, `${h0.f.arabic_word} сўзи мисоли · ${rootOf(h0.e)} · стр. ${h0.e.source_page}`));
 }
 function search(text) {
