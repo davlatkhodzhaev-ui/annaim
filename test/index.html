@@ -1274,7 +1274,7 @@ function wordCard(x) {
     if (f.sarf_form) chips.push(cp(f.sarf_form, 'шакл', true));
     // боб: китобда қавсда босилган ҳарф ва шунга мос боб рақами; мазидда боб номи
     if (MAZID[f.sarf_form]) chips.push(cp(MAZNAME[MAZID[f.sarf_form]], 'боби', true));
-    else if (f.sarf_form === 'I' && f.vocaliz && /^[аиу,\s\/]+$/.test(String(f.vocaliz))) chips.push(cp('(' + f.vocaliz + ')', bobs.length ? bobs.join(', ') + '-боб' : 'боб', true));
+    else if (f.sarf_form === 'I' && f.vocaliz && /^[аиу,\s\/]+$/.test(String(f.vocaliz))) { if (bobs.length) chips.push(cp(bobs.join(', '), 'боб', true)); }
     if (muz.length) chips.push(cp(muz.join('، '), 'музореъ'));
     if (amr) chips.push(cp(amr, 'амр'));
   } else { if (f.plural_form) chips.push(cp(String(f.plural_form).split(/[,،]/).slice(0, 2).join('، '), 'кўплиги')); }
