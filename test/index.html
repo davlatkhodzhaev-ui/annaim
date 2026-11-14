@@ -1538,6 +1538,7 @@ function renderHome() {
         })(),
         items.length ? ''
           : h('div', { class: 'empty' }, letter ? 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.' : 'Ҳеч нарса топилмади. Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзиб кўринг.'));
+      if (body.querySelector('.wc')) { const em = body.querySelector('.empty'); if (em) em.remove(); body.querySelectorAll('details.more').forEach(d => { if (/\(0\)/.test(d.querySelector('summary').textContent)) d.remove(); }); }
       if (!letter && HAS_AR.test(query)) { const xh = exHits(effQ(query.trim())); if (xh.length) { const sec = [h('div', { class: 'lbl' }, `Мисолларда (${xh.length})`), h('div', { class: 'list', style: 'margin-bottom:14px' }, xh.map(exCard))];
         const firstList = body.querySelector('.list'); const exact = ALLW.has(normAr(effQ(query.trim()))); if (exact && firstList) firstList.after(...sec); else { const c0 = body.querySelector('.count, .lbl'); if (c0 && /кўрсатилмоқда/.test(c0.textContent)) c0.after(...sec); else body.prepend(...sec); } } }
       return;
