@@ -51,9 +51,10 @@ a { text-decoration: none; }
 .brand .ar { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 38px; line-height: 1.1; color: var(--accent); }
 .brand b { font-size: 20px; font-weight: 600; letter-spacing: 0.02em; }
 .round { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
-.search { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin: 8px 0 16px; }
+.search { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: var(--accent-soft); border: 1px solid var(--dot); border-radius: 14px; margin: 8px 0 16px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 17px; }
-.search:focus-within { border-color: var(--accent); }
+.search:focus-within { border-color: var(--accent); background: var(--surface); }
+.search input::placeholder { color: var(--muted); }
 .lbl { font-size: 12px; letter-spacing: 0.08em; font-weight: 600; color: var(--muted); text-transform: uppercase; margin: 18px 0 8px; }
 .wotd { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; width: 100%; text-align: left; background: var(--accent-soft); border: 0; border-radius: 14px; padding: 10px 14px; font-size: 14px; }
 .wotd > span:last-child { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
