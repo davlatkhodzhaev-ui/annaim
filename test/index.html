@@ -310,7 +310,7 @@ function applyPrefs() {
 const MARKS = /[ً-ٰٟ]/g;
 const AR_MARKS = /[ً-ٰٟـ]/g;
 const dA = (s) => S.harakat ? s : s.replace(MARKS, '');
-const KB = (s) => String(s || '').replace(/[یےۍ]/g, 'ي').replace(/[کڪ]/g, 'ك').replace(/[ھہەۀ]/g, 'ه');
+const KB = (s) => String(s || '').replace(/[یےۍ]/g, 'ي').replace(/[کڪ]/g, 'ك').replace(/[ھہەۀ]/g, 'ه').replace(/[،؛؟,.;:!?"'«»()\[\]{}…\u200e\u200f\u200c\u200d]/g, ' ');
 function normAr(s) { return KB(s).replace(AR_MARKS, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[~\s]/g, ''); }
 const normArS = (s) => KB(s).replace(AR_MARKS, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[^\u0621-\u064A]+/g, ' ').trim();
 // мисолдаги «~» ўрнига бош сўз қўйилган кўриниш (фақат қидирув учун)
