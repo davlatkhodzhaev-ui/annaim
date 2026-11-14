@@ -1530,7 +1530,7 @@ const goBack = () => { if (!sheet.hidden) return closeSheet(); const hsh = locat
   if (hsh === '' || hsh === 'home') { if (query || letter) { query = ''; letter = ''; route(); } return; }
   if (history.length > 1) history.back(); else go('home'); };
 const goHome = () => { query = ''; letter = ''; if (location.hash === '#home') route(); else go('home'); };
-function navBar() { return h('div', { class: 'navg' }, h('button', { class: 'navb', onclick: goBack, 'aria-label': 'Орқага' }, '← Орқага'), h('button', { class: 'navb', onclick: goHome, 'aria-label': 'Бош саҳифа' }, svg(ICON.home, 18), 'Бош')); }
+function navBar() { return h('div', { class: 'navg' }, h('button', { class: 'navb', onclick: goBack, 'aria-label': 'Орқага' }, '← Орқага')); }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity));
   const hsh = location.hash.replace(/^#/, '');
   if (active !== 'home' || (hsh && hsh !== 'home')) { if (!/^w[1234]$/.test(hsh)) {   // бош саҳифа ва таништирувдан бошқа ҳамма жойда
