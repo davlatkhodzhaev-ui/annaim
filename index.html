@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0e6b5a">
+<meta name="theme-color" content="#1b2340">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,28 +13,28 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Kanz Луғат</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Comfortaa:wght@500;700&family=Amiri:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Comfortaa:wght@500;700&family=Amiri:wght@400;700&family=Inter:wght@400;500;600&family=Noto+Sans:wght@400;500;600&family=PT+Sans:wght@400;700&family=Roboto:wght@400;500&family=Noto+Sans+Arabic:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&display=swap">
 <style>
 /* Layout: one phone-width column. Welcome (3 steps), Home with search, an entry laid out as in the book,
    a bottom sheet for the tapped Arabic word, Saved, Profile. Tab bar fixed to the bottom of the column. */
 :root {
-  --bg: #f2f5f3; --surface: #ffffff; --ink: #15211d; --muted: #4b5a55; --line: #d9e1dd;
-  --accent: #0e6b5a; --accent-ink: #ffffff; --accent-soft: #dcefe9; --accent-deep: #0b5547; --dot: #b8c7c1;
-  --warn: #8a5a00; --warn-soft: #fbefd2; --gold: #9a6a00;
+  --bg: #f4f2ec; --surface: #ffffff; --ink: #161c2e; --muted: #565c6e; --line: #e2ddd0;
+  --accent: #1b2340; --accent-ink: #ecd27c; --accent-soft: #e6e7ee; --accent-deep: #121830; --dot: #c9c4b4;
+  --warn: #8a5a00; --warn-soft: #fbefd2; --gold: #a07812;
   --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-ar: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1512; --surface: #16201c; --ink: #e6efeb; --muted: #94a69f; --line: #26342f;
-    --accent: #5cc9ae; --accent-ink: #0b1511; --accent-soft: #17302a; --accent-deep: #8fe0cb; --dot: #35463f;
-    --warn: #f0c36a; --warn-soft: #33290f; --gold: #e6bd4f; color-scheme: dark;
+    --bg: #10152a; --surface: #1a2140; --ink: #ece6d6; --muted: #a4a6b4; --line: #2a3254;
+  --accent: #d9b44a; --accent-ink: #141a33; --accent-soft: #262d4d; --accent-deep: #f0d58a; --dot: #3a4266;
+  --warn: #f0c36a; --warn-soft: #33290f; --gold: #e6c35c; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1512; --surface: #16201c; --ink: #e6efeb; --muted: #94a69f; --line: #26342f;
-  --accent: #5cc9ae; --accent-ink: #0b1511; --accent-soft: #17302a; --accent-deep: #8fe0cb; --dot: #35463f;
-  --warn: #f0c36a; --warn-soft: #33290f; --gold: #e6bd4f; color-scheme: dark;
+  --bg: #10152a; --surface: #1a2140; --ink: #ece6d6; --muted: #a4a6b4; --line: #2a3254;
+  --accent: #d9b44a; --accent-ink: #141a33; --accent-soft: #262d4d; --accent-deep: #f0d58a; --dot: #3a4266;
+  --warn: #f0c36a; --warn-soft: #33290f; --gold: #e6c35c; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }
@@ -52,9 +52,10 @@ a { text-decoration: none; }
 .brand .ar { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 38px; line-height: 1.1; color: var(--accent); }
 .brand b { font-size: 20px; font-weight: 600; letter-spacing: 0.02em; }
 .round { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
-.search { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin: 8px 0 16px; }
+.search { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: color-mix(in srgb, var(--accent-soft) 84%, var(--ink)); border: 1px solid color-mix(in srgb, var(--dot) 75%, var(--ink)); border-radius: 14px; margin: 8px 0 16px; }
 .search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 17px; }
-.search:focus-within { border-color: var(--accent); }
+.search:focus-within { border-color: var(--accent); background: var(--surface); }
+.search input::placeholder { color: var(--muted); }
 .lbl { font-size: 12px; letter-spacing: 0.08em; font-weight: 600; color: var(--muted); text-transform: uppercase; margin: 18px 0 8px; }
 .wotd { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 12px; width: 100%; text-align: left; background: var(--accent-soft); border: 0; border-radius: 14px; padding: 10px 14px; font-size: 14px; }
 .wotd > span:last-child { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
@@ -184,8 +185,24 @@ ol.mean li { margin: 3px 0; }
 .hero { background: var(--accent); border-radius: 28px; padding: 28px 24px 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 300px; margin-top: 12px; }
 .hero.cover { padding: 0; min-height: 0; background: #1b2340; overflow: hidden; display: block; }
 .hero.cover img { width: 100%; height: auto; display: block; }
+.hist .lbl { display: flex; justify-content: space-between; align-items: center; }
+.hist .hclr { font-size: 13px; padding: 0; min-height: 32px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--ink); }
+.brand { align-items: center; gap: 8px; }
+.acts { display: flex; align-items: center; gap: 13px; padding-bottom: 15px; }
+.acts .round[data-l]::after { content: attr(data-l); position: absolute; top: 47px; left: 50%; transform: translateX(-50%); font-size: 9.5px; line-height: 1; font-weight: 500; letter-spacing: .01em; color: var(--muted); white-space: nowrap; font-family: var(--font-ui); }
+.round { position: relative; color: var(--accent); cursor: pointer; }
+.round.star { color: var(--gold); }
+.round .cnt { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--gold); color: var(--surface); font-size: 11px; font-weight: 600; line-height: 18px; text-align: center; }
+.bobs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+.bob { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 56px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; color: var(--gold); }
+.bob b { font-size: 17px; font-family: 'Comfortaa', var(--font-ui); }
+.bob small { font-size: 11px; color: var(--muted); }
+.lvid { margin: 12px 0 18px; }
+.lvid video { display: block; width: 100%; max-width: 360px; max-height: 78vh; margin: 0 auto; border-radius: 14px; background: #000; aspect-ratio: 9 / 16; }
 .brand .logo { height: 44px; width: auto; display: block; }
-.hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #dcefe9; }
+.hero small { font-size: 13px; letter-spacing: 0.24em; font-weight: 600; color: #ecd27c; }
 .hero .a { font-family: 'Amiri', var(--font-ar); font-weight: 700; font-size: 150px; line-height: 1.3; direction: rtl; text-align: right; color: #f2f5f3; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px 18px; display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
 .mock { background: var(--bg); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
@@ -202,6 +219,48 @@ p.s { margin: 0; color: var(--muted); }
 .me .av { width: 64px; height: 64px; border-radius: 32px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; }
 .set { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; min-height: 56px; }
 .set + .set { border-top: 1px solid var(--line); }
+.wc { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; }
+.wc:hover { border-color: var(--accent); }
+.wc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.wc .w { font-family: var(--font-ar); font-size: calc(34px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; }
+.wc .chips2 { display: flex; align-items: stretch; flex-wrap: wrap; min-width: 0; }
+.wc .cp { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 7px; border-left: 1px solid var(--line); }
+.wc .cp:first-child { padding-left: 0; border-left: 0; }
+.wc .cp b { font-family: var(--font-ar); font-weight: 400; font-size: calc(20px * var(--ars, 1)); line-height: 1.6; direction: rtl; color: var(--ink); white-space: nowrap; }
+.wc .cp b.n { font-family: var(--font-ui); font-weight: 600; font-size: 14.5px; line-height: 2.3; direction: ltr; }
+.wc .sb { align-self: flex-end; font-size: 15px; color: var(--ink); padding: 0 0 2px 10px; white-space: nowrap; }
+.wc .cp i { font-style: normal; font-size: 11px; color: var(--muted); letter-spacing: .02em; }
+.wc ul { margin: 8px 0 6px; padding-left: 18px; }
+.wc li { font-size: 15.5px; line-height: 1.4; margin: 3px 0; }
+.wc li::marker { color: var(--gold); }
+.wc .via { font-size: 13.5px; color: var(--gold); margin-top: 8px; }
+.wc .ft { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.wc .ft .meta { font-size: 13px; color: var(--muted); }
+.wc .tg { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); }
+.wc .more { font-size: 13px; color: var(--muted); list-style: none; margin-left: -18px; }
+.day { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 4px 0 12px; }
+.day .k { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.day .w { font-family: var(--font-ar); font-size: calc(38px * var(--ars, 1)); line-height: 1.6; direction: rtl; text-align: right; color: var(--accent); }
+.day .m { font-size: 16px; }
+.day .x { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 15px; color: var(--muted); }
+.day .x .p { font-family: var(--font-ar); font-size: calc(24px * var(--ars, 1)); line-height: 1.7; direction: rtl; text-align: right; color: var(--ink); }
+.qz-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); margin: 6px 0 10px; }
+.qz-bar { height: 6px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; margin-bottom: 18px; }
+.qz-bar i { display: block; height: 100%; background: var(--gold); }
+.qz-q { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 16px; text-align: center; margin-bottom: 14px; }
+.qz-q .t { font-size: 15px; color: var(--muted); }
+.qz-q .w { font-family: var(--font-ar); font-size: calc(46px * var(--ars, 1)); line-height: 1.7; direction: rtl; color: var(--accent); }
+.qz-q .g { font-size: 16px; }
+.opt { display: block; width: 100%; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; min-height: 52px; font-size: 16px; margin-bottom: 10px; }
+.opt.ar { font-family: var(--font-ar); font-size: calc(30px * var(--ars, 1)); line-height: 1.6; direction: rtl; text-align: center; }
+.opt.ok { border-color: #2e7d4f; background: rgba(46, 125, 79, .14); }
+.opt.no { border-color: #b3423a; background: rgba(179, 66, 58, .12); }
+.qz-end { text-align: center; padding: 30px 0 18px; }
+.qz-end .n { font-size: 54px; font-weight: 600; color: var(--gold); line-height: 1.1; }
+.set.col { flex-direction: column; align-items: flex-start; gap: 8px; }
+.set.col .seg { flex-wrap: wrap; }
+.set.col .seg button { border-left: 0 !important; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .seg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .seg button { border: 0; background: transparent; padding: 7px 11px; min-height: 40px; font-size: 14px; }
 .seg button + button { border-left: 1px solid var(--line); }
@@ -227,7 +286,15 @@ const DATA = window.ANNAIM_DATA || [];
 
 // ---------- сақлаш (қурилмада) ----------
 const KEY = 'annaim-v1';
-const DEF = { seen: false, saved: [], recent: [], harakat: true, size: 1, theme: 'system' };
+const DEF = { seen: false, saved: [], recent: [], hist: [], harakat: true, size: 1, theme: 'system', pal: 'A', far: 'naskh', fui: 'plex' };
+// дизайн синови: ранглар (ёруғ мавзу учун) ва шрифтлар
+const PALS = { O: '', A: '--bg:#F6F1E6;--surface:#FFFDF7;--ink:#1B2440;--muted:#666A78;--line:#E4DCC8;--accent:#1B2440;--accent-ink:#F0D68A;--accent-soft:#ECE7D8;--accent-deep:#121830;--dot:#CFC6AE;--gold:#9A7414;',
+  B: '--bg:#F2EAD8;--surface:#FBF6EA;--ink:#33291F;--muted:#746858;--line:#E0D4BB;--accent:#5A3E1B;--accent-ink:#FBF1D6;--accent-soft:#EADFC6;--accent-deep:#3E2A10;--dot:#CDBF9F;--gold:#8C6414;',
+  C: '--bg:#EFF2EA;--surface:#FCFDF9;--ink:#1C2A24;--muted:#5E6B63;--line:#DBE2D4;--accent:#1F5A46;--accent-ink:#F4E3A6;--accent-soft:#E1EADF;--accent-deep:#143D30;--dot:#C2CDBF;--gold:#8F7420;' };
+const FAR = { naskh: '"Noto Naskh Arabic", "Geeza Pro", serif', amiri: '"Amiri", "Geeza Pro", serif', sans: '"Noto Sans Arabic", "Geeza Pro", sans-serif', plex: '"IBM Plex Sans Arabic", "Geeza Pro", sans-serif', kufi: '"Noto Kufi Arabic", "Geeza Pro", sans-serif' };
+const FUI = { plex: '"IBM Plex Sans", system-ui, sans-serif', inter: '"Inter", system-ui, sans-serif', noto: '"Noto Sans", system-ui, sans-serif', pt: '"PT Sans", system-ui, sans-serif', roboto: '"Roboto", system-ui, sans-serif' };
+const isDark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+const logoSrc = () => 'icons/kanz-mark-' + (isDark() ? 'gold' : 'ink') + '.png';
 let S = { ...DEF };
 try { S = { ...DEF, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -235,26 +302,37 @@ function applyPrefs() {
   const r = document.documentElement;
   if (S.theme === 'system') r.removeAttribute('data-theme'); else r.setAttribute('data-theme', S.theme);
   r.style.setProperty('--ars', String(S.size));
+  let st = document.getElementById('dsg'); if (!st) { st = document.createElement('style'); st.id = 'dsg'; document.head.append(st); }
+  st.textContent = ':root,:root[data-theme]{' + (isDark() ? '' : (PALS[S.pal] || '')) + '--font-ar:' + (FAR[S.far] || FAR.naskh) + ';--font-ui:' + (FUI[S.fui] || FUI.plex) + '}';
+  document.querySelectorAll('.brand .logo').forEach(i => { i.src = logoSrc(); });
 }
 
 // ---------- қидирув ҳелперлари ----------
 const MARKS = /[ً-ٰٟ]/g;
 const AR_MARKS = /[ً-ٰٟـ]/g;
 const dA = (s) => S.harakat ? s : s.replace(MARKS, '');
-function normAr(s) { return (s || '').replace(AR_MARKS, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[~\s]/g, ''); }
+const KB = (s) => String(s || '').replace(/[یےۍ]/g, 'ي').replace(/[کڪ]/g, 'ك').replace(/[ھہەۀ]/g, 'ه').replace(/[،؛؟,.;:!?"'«»()\[\]{}…\u200e\u200f\u200c\u200d]/g, ' ');
+function normAr(s) { return KB(s).replace(AR_MARKS, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[~\s]/g, ''); }
+const normArS = (s) => KB(s).replace(AR_MARKS, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[^\u0621-\u064A]+/g, ' ').trim();
+// мисолдаги «~» ўрнига бош сўз қўйилган кўриниш (фақат қидирув учун)
+const exFull = (ph, f) => normArS(String(ph).replace(/~[\u064B-\u0652\u0640]*/g, ' ' + String(f.arabic_word).split(/[,،]|ёки/)[0] + ' '));
+const HKEY = (w) => w.replace(/[ئؤ]/g, 'ء'); const WH = new Map(), ALLW = new Set();
+const HK2 = (w) => w.replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/ء/g, ''); const WH2 = new Map(); const hzN = (w) => (w.match(/[ءؤئ]/g) || []).length;
+const exFull2 = (ph, f) => normArS(String(ph).replace(/\u0640*~[\u064B-\u0652\u0640]*/g, String(f.arabic_word).split(/[,،]|ёки/)[0].trim()));
 function normUz(s) { return (s || '').toLowerCase().replace(/ў/g, 'у').replace(/қ/g, 'к').replace(/ғ/g, 'г').replace(/ҳ/g, 'х').replace(/ё/g, 'е'); }
 const HAS_AR = /[؀-ۿ]/;
 // ўзбекча қидирув: сўз чегараси бўйича (« урмоқ » «бурмоқ» ичидан чиқмайди)
 function uzWords(s) { return ' ' + normUz(s).replace(/[^a-zа-я0-9]+/g, ' ').trim() + ' '; }
 DATA.forEach(e => {
   const ar = [e.root_search || ''], uz = [], uzTr = [], uzEx = [];
+  const arx = [], arxs = [];
   e.derivatives.forEach(f => {
     [f.arabic_word, f.verbal_noun, f.plural_form, f.collective_form].forEach(x => x && ar.push(x));
     (f.alt_forms || []).forEach(a => ar.push(a.arabic_word));
-    (f.examples || []).forEach(x => { ar.push(x.phrase); if (x.translation) { uz.push(x.translation); uzEx.push(x.translation); } });
+    (f.examples || []).forEach(x => { ar.push(x.phrase); if (x.phrase && x.phrase.includes('~') && f.arabic_word) { arx.push(exFull(x.phrase, f).replace(/ /g, '')); arxs.push(exFull(x.phrase, f), exFull2(x.phrase, f)); } if (x.translation) { uz.push(x.translation); uzEx.push(x.translation); } });
     (f.translations || []).forEach(t => { uz.push(t.meaning); uzTr.push(t.meaning); });
   });
-  e._ar = normAr(ar.join(' ')); e._uz = normUz(uz.join(' | ')); e._root = normAr(e.root_search || '');
+  e._ar = ' ' + ar.map(normArS).join(' ') + ' '; e._arx = ' ' + arx.join(' ') + ' '; e._arxs = ' ' + arxs.join(' | ') + ' '; e._uz = normUz(uz.join(' | ')); e._root = normAr(e.root_search || '');
   e._utr = uzWords(uzTr.join(' | ')); e._uex = uzWords(uzEx.join(' | '));
   // сегментлар: таржима «,» ва «;» бўйича бўлаклар; аниқ мослик учун
   const segs = (arr) => '|' + arr.flatMap(m => String(m || '').split(/[;,]/)).map(x => normUz(x).replace(/[^a-zа-я0-9]+/g, ' ').trim()).filter(Boolean).join('|') + '|';
@@ -263,19 +341,236 @@ DATA.forEach(e => {
   // сўз бўйича аниқ мослик учун: ҳар бир шакл, кўплик ва вариант алоҳида сўз
   e._raw = new Set(); e._words = new Set();
   e.derivatives.forEach(f => [f.arabic_word, f.verbal_noun, f.plural_form, f.collective_form, ...(f.alt_forms || []).map(a => a && (a.arabic_word || a))]
-    .forEach(x => x && String(x).split(/[,،;=]+/).forEach(w => { w = w.trim(); if (w) { e._raw.add(w); e._words.add(normAr(w)); } })));
+    .forEach(x => x && String(x).split(/[,،;=]+/).forEach(w => { w = w.trim(); if (w) { e._raw.add(w); const nw = normAr(w); e._words.add(nw); ALLW.add(nw); if (!WH.has(HKEY(nw))) WH.set(HKEY(nw), nw); const k2 = HK2(nw); if (!WH2.has(k2)) WH2.set(k2, []); if (!WH2.get(k2).includes(nw)) WH2.get(k2).push(nw); } })));
 });
 const byId = (id) => DATA.find(e => e.id === id);
 const hashOf = (e) => 'e-' + e.id.replace(/_/g, '-');
 function firstGloss(e) { for (const f of e.derivatives) if (f.translations && f.translations.length) return f.translations[0].meaning; return ''; }
 function rootOf(e) { return e.root_search || e.derivatives[0].arabic_word; }
+// ---------- лотин ёзувидаги ўзбекча сўзни кириллга ўгириш ----------
+const LAT1 = { a: 'а', b: 'б', d: 'д', e: 'е', f: 'ф', g: 'г', h: 'ҳ', i: 'и', j: 'ж', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', q: 'қ', r: 'р', s: 'с', t: 'т', u: 'у', v: 'в', x: 'х', y: 'й', z: 'з', c: 'с', w: 'в' };
+const isLat = (t) => /[a-z]/i.test(t) && !/[а-яёўқғҳ]/i.test(t);
+function latCyr(t) {
+  return t.toLowerCase().replace(/[ʻʼ’‘`´]/g, "'").split(/(\s+)/).map(w => {
+    if (/^\s+$/.test(w)) return w;
+    w = w.replace(/o'/g, 'ў').replace(/g'/g, 'ғ').replace(/sh/g, 'ш').replace(/ch/g, 'ч').replace(/yo/g, 'ё').replace(/yu/g, 'ю').replace(/ya/g, 'я').replace(/ye/g, 'е').replace(/'/g, 'ъ');
+    w = w.replace(/^e/, 'э');
+    return w.replace(/[a-z]/g, c => LAT1[c] || c);
+  }).join('');
+}
+// ---------- ўзбекча тусланган феъл бўйича қидирув (уряпти → музореъ, ур → амр) ----------
+// жадваллар: 0 мозий, 1 музореъ, 2 нафий, 4 жаҳд (ўтган замон инкори), 5 амр, 6 наҳий; ўзбекчаси uzSeven() дагидек
+const VSUF = [
+  ['динглар', 0, 'mmp'], ['дилар', 0, 'gmp'], ['динг', 0, 'mm'], ['дим', 0, 's1'], ['дик', 0, 'p1'], ['ди', 0, 'gm'],
+  ['адилар', 1, 'gmp'], ['йдилар', 1, 'gmp'], ['асизлар', 1, 'mmp'], ['йсизлар', 1, 'mmp'], ['асан', 1, 'mm'], ['йсан', 1, 'mm'], ['аман', 1, 's1'], ['йман', 1, 's1'], ['амиз', 1, 'p1'], ['ймиз', 1, 'p1'], ['ади', 1, 'gm'], ['йди', 1, 'gm'],
+  ['яптилар', 1, 'gmp'], ['япсизлар', 1, 'mmp'], ['япсан', 1, 'mm'], ['япман', 1, 's1'], ['япмиз', 1, 'p1'], ['япти', 1, 'gm'], ['етибди', 1, 'gm'], ['мокда', 1, 'gm'],
+  ['майдилар', 2, 'gmp'], ['майсизлар', 2, 'mmp'], ['майсан', 2, 'mm'], ['майман', 2, 's1'], ['маймиз', 2, 'p1'], ['майди', 2, 'gm'],
+  ['мадинглар', 4, 'mmp'], ['мадилар', 4, 'gmp'], ['мадинг', 4, 'mm'], ['мадим', 4, 's1'], ['мадик', 4, 'p1'], ['мади', 4, 'gm'],
+  ['синлар', 5, 'gmp'], ['инглар', 5, 'mmp'], ['нглар', 5, 'mmp'], ['инг', 5, 'mm'], ['нг', 5, 'mm'], ['син', 5, 'gm'], ['айлик', 5, 'p1'], ['йлик', 5, 'p1'], ['ай', 5, 's1'], ['', 5, 'mm'],
+  ['масинлар', 6, 'gmp'], ['манглар', 6, 'mmp'], ['масин', 6, 'gm'], ['манг', 6, 'mm'], ['майлик', 6, 'p1'], ['ма', 6, 'mm'], ['май', 6, 's1']];
+const VCELL = { gm: [0, 0], gf: [0, 1], mm: [0, 2], mf: [0, 3], s1: [0, 4], gm2: [1, 0], gf2: [1, 1], m2: [1, 2], p1: [1, 4], gmp: [2, 0], gfp: [2, 1], mmp: [2, 2], mfp: [2, 3] };
+const VPERS = { gm: 'ғоиб, музаккар, муфрад', mm: 'мухотоб, музаккар, муфрад', s1: 'мутакаллим, муфрад', p1: 'мутакаллим, жамъ', gmp: 'ғоиб, музаккар, жамъ', mmp: 'мухотоб, музаккар, жамъ' };
+let VSTEM = null;
+function vstemIndex() {
+  if (VSTEM) return VSTEM; VSTEM = new Map();
+  DATA.forEach(e => e.derivatives.forEach(f => {
+    if (f.form_type !== 'verb') return; let parts = []; try { parts = uzParts(f); } catch (x) {}
+    parts.forEach((x, pi) => { const ws = x.p.split(' '); const last = ws.pop(); const st = last.slice(0, -3); if (st.length < 2) return;
+      const k = normUz(st); if (!VSTEM.has(k)) VSTEM.set(k, []); VSTEM.get(k).push({ e, f, pre: ws.length ? ws.join(' ') + ' ' : '', s: st, pi }); });
+    // мажҳул: ўтимли маънодан ясалган ўзбекча (урмоқ → урилмоқ); лозим феъллардан мажҳул ясалмайди («Жаноҳ ут-толиб», 19-бет)
+    parts.forEach((x, pi) => { const ws = x.p.split(' '); const last = ws.pop(); const st = last.slice(0, -3);
+      if (st.length < 2 || /н$/.test(st) || st === 'бўл' || (st.length > 3 && /ил$/.test(st))) return; // uzVerb() даги ўтимлилик қоидаси
+      const pas = /е$/.test(st) ? st + 'йил' : /ла$/.test(st) ? st + 'н' : UZV.test(st) ? st + 'л' : /л$/.test(st) ? st + 'ин' : st + 'ил';
+      const k = normUz(pas); if (!VSTEM.has(k)) VSTEM.set(k, []); VSTEM.get(k).push({ e, f, pre: ws.length ? ws.join(' ') + ' ' : '', s: pas, pi, maj: true, act: st }); });
+  }));
+  return VSTEM;
+}
+const RK = new Map();
+function verbHits(text) {
+  const idx = vstemIndex(), best = new Map();
+  const raws = text.toLowerCase().replace(/[^a-zа-яёўқғҳ]+/g, ' ').trim().split(' ').filter(Boolean);
+  if (!raws.length) return [];
+  // охирги сўз тусланган феъл; олдидаги сўзлар феълнинг олд қисми бўлиши мумкин («хоинлик қилади» → «хоинлик қилмоқ»)
+  const raw = raws[raws.length - 1], tok = normUz(raw), prefix = normUz(raws.slice(0, -1).join(' '));
+  if (tok.length < 2) return [];
+  { for (const [suf, ti, key] of VSUF) {
+      if (!tok.endsWith(suf)) continue; const stem = tok.slice(0, tok.length - suf.length); if (stem.length < 2) continue;
+      for (const c of (idx.get(stem) || [])) {
+        const id = c.e.id + '|' + c.e.derivatives.indexOf(c.f) + '|' + ti + '|' + key + (c.maj ? '|m' : '');
+        const cpre = normUz(c.pre).trim();
+        // баҳо: бутун ибора мос > ибора охири мос > бир сўзли феъл; олд сўзи бор феъл фақат ибора мос келганда чиқади
+        let sc = cpre ? (prefix === cpre ? 3000 : (prefix.endsWith(' ' + cpre) ? 2500 : -1)) : 1000;
+        if (sc < 0) continue;
+        sc += raw.startsWith(c.s.toLowerCase()) ? 100 : 0;
+        if (best.has(id) && best.get(id).sc >= sc) continue;
+        let sv = null; try { sv = sevenOf(c.f); } catch (x) {} if (!sv) continue;
+        const [r, col] = VCELL[key], tb = (c.maj ? sv.majhul : sv.malum)[ti]; const ar = tb && tb[1][r] && tb[1][r][col]; if (!ar) continue;
+        let uz = ''; try { const U = uzSeven(c.pre, c.s)[ti]; uz = U && U[r] && U[r][col] || ''; } catch (x) {}
+        const rkey = c.pre + (c.maj && c.act ? c.act : c.s) + 'моқ'; if (!RK.has(rkey)) { const m = new Map(); search(rkey).forEach((x, i) => m.set(x, i)); RK.set(rkey, m); }
+        const rk = RK.get(rkey).has(c.e) ? RK.get(rkey).get(c.e) : 9999;
+        best.set(id, { e: c.e, f: c.f, ar, uz, table: tb[0], pers: VPERS[key] || '', sc, rk, fi: c.e.derivatives.indexOf(c.f) });
+      }
+    } }
+  // тартиб: «-моқ» шакли бўйича оддий қидирувдаги ўрни (масалан, урмоқ → ضرب биринчи)
+  const arr = [...best.values()].sort((a, b) => b.sc - a.sc || a.rk - b.rk || a.fi - b.fi);
+  return arr.length && arr[0].sc >= 2500 ? arr.filter(x => x.sc >= 2500) : arr;
+}
+function verbCard(x) {
+  return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
+    h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers),
+    h('span', { class: 'root', lang: 'ar' }, x.ar),
+    h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
+}
+// ---------- ўзбекча: аниқ сўз, қўшимчалар, имло ----------
+let UZI = null;
+const uzKey = (t) => normUz(t).replace(/[^a-zа-я0-9]+/g, ' ').trim();
+function uzIndex() {
+  if (UZI) return UZI; const seg = new Map(), k2 = new Map(), bag = new Map(), words = new Map(), disp = new Map();
+  DATA.forEach(e => { if (String(e.id).startsWith('letter_')) return; e.derivatives.forEach((f, fi) => (f.translations || []).forEach((t, ti) => String(t.meaning || '').replace(/\([^)]*\)/g, ' ').split(/[;,]/).forEach((s0, si) => {
+    const k = uzKey(s0); if (!k || k.length > 40) return;
+    const sc = (ti === 0 ? (si === 0 ? 3 : 2) : 1) + (fi === 0 ? 0.5 : 0);
+    if (!seg.has(k)) { seg.set(k, []); disp.set(k, s0.replace(/\s+/g, ' ').trim().toLowerCase()); } seg.get(k).push({ e, f, sc });
+    const o = k.replace(/о/g, 'у'); if (!k2.has(o)) k2.set(o, k);
+    if (k.includes(' ')) { const b = k.split(' ').sort().join(' '); if (!bag.has(b)) bag.set(b, k); } else words.set(k, (words.get(k) || 0) + 1);
+  }))); });
+  return UZI = { seg, k2, bag, words, disp };
+}
+function uzWordHits(k) {
+  const best = new Map(); (uzIndex().seg.get(k) || []).forEach(x => { if (!best.has(x.f) || best.get(x.f).sc < x.sc) best.set(x.f, { e: x.e, f: x.f, sc: x.sc, via: '' }); });
+  const rich = (f) => (f.examples || []).length * 2 + (f.translations || []).length;
+  return [...best.values()].sort((a, b) => Math.floor(b.sc) - Math.floor(a.sc) || rich(b.f) - rich(a.f) || b.sc - a.sc);
+}
+const UZ_NSUF = ['ларининг', 'ларнинг', 'лардан', 'ларини', 'ларига', 'ларида', 'ларни', 'ларга', 'ларда', 'лари', 'лар', 'нинг', 'дан', 'ни', 'га', 'ка', 'да', 'си', 'и'];
+const UZ_PSUF = ['аетган', 'етган', 'йдиган', 'адиган', 'мокчи', 'ган', 'кан', 'увчи', 'вчи', 'иб', 'иш', 'б', 'ш'];
+const near1 = (a, b) => { const la = a.length, lb = b.length; if (Math.abs(la - lb) > 1 || a === b) return false; let i = 0; while (i < la && i < lb && a[i] === b[i]) i++;
+  if (la === lb) return a.slice(i + 1) === b.slice(i + 1) || (a[i] === b[i + 1] && a[i + 1] === b[i] && a.slice(i + 2) === b.slice(i + 2));
+  return la > lb ? a.slice(i + 1) === b.slice(i) : a.slice(i) === b.slice(i + 1); };
+const UZALT = new Map();
+function uzAlt(n) {
+  if (UZALT.has(n)) return UZALT.get(n); const I = uzIndex(); const d = (k) => ({ key: k, disp: I.disp.get(k) || k }); let out = null;
+  const o = I.k2.get(n.replace(/о/g, 'у')); if (o && o !== n) out = d(o);
+  const ws = n.split(' '), tok = ws.pop(), pre = ws.length ? ws.join(' ') + ' ' : '';
+  if (!out) for (const sf of UZ_NSUF) { if (!tok.endsWith(sf) || tok.length - sf.length < 3) continue; const c = pre + tok.slice(0, -sf.length); if (I.seg.has(c)) { out = d(c); break; } const c2 = I.k2.get(c.replace(/о/g, 'у')); if (c2) { out = d(c2); break; } }
+  if (!out) { const vs = [...UZ_PSUF, ...VSUF.map(x => x[0]).filter(Boolean)].sort((a, b) => b.length - a.length);
+    for (const sf of vs) { if (!tok.endsWith(sf) || tok.length - sf.length < 2) continue; const c = pre + tok.slice(0, -sf.length) + 'мок'; if (I.seg.has(c)) { out = d(c); break; } }
+    if (!out && I.seg.has(pre + tok + 'мок')) out = d(pre + tok + 'мок'); }
+  if (!out && ws.length) { const k = I.bag.get(n.split(' ').sort().join(' ')); if (k && k !== n) out = d(k); }
+  if (!out && !pre && tok.length >= 4) { let bw = null, bc = 0; I.words.forEach((c, w) => { if (c > bc && near1(tok, w)) { bw = w; bc = c; } }); if (bw) out = d(bw); }
+  UZALT.set(n, out); return out;
+}
+function uzView(qv, vh, items) {
+  const n = uzKey(qv); if (n.length < 2) return null;
+  let uw = uzWordHits(n), ban = '', its = items;
+  if (!uw.length && !vh.length) { const a = uzAlt(n); if (a) { uw = uzWordHits(a.key); its = search(a.disp);
+    ban = h('div', { class: 'count', style: 'color:var(--gold)' }, `«${qv.trim()}» — «${a.disp}» бўйича кўрсатилмоқда`); } }
+  if (!uw.length) return null;
+  return [ban, h('div', { class: 'count' }, `${uw.length} та сўз`), h('div', { class: 'list' }, uw.slice(0, 30).map(wordCard)),
+    ...(vh.length ? [h('div', { class: 'lbl' }, `Феъл шакллари (${vh.length})`), h('div', { class: 'list' }, vh.slice(0, 20).map(verbCard))] : []),
+    its.length ? h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${its.length})`), h('div', { class: 'list' }, cards(its))) : ''];
+}
+// ---------- арабча тусланган феъл бўйича қидирув ----------
+// илдиз ҳарфлари (иллат ва ҳамзадан ташқари) сўзда тартиб билан бўлса, ўша феълнинг етти феъл жадваллари текширилади
+const AR_WEAK = /[اويءؤئ]/g;
+const ACELLS = [['gm', 0, 0], ['gf', 0, 1], ['mm', 0, 2], ['mf', 0, 3], ['s1', 0, 4], ['gm2', 1, 0], ['gf2', 1, 1], ['m2', 1, 2], ['p1', 1, 4], ['gmp', 2, 0], ['gfp', 2, 1], ['mmp', 2, 2], ['mfp', 2, 3]];
+const APERS = { gm: 'ғоиб муз. муфрад', gf: 'ғоиб муан. муфрад', mm: 'мухотоб муз. муфрад', mf: 'мухотоб муан. муфрад', s1: 'мутакаллим муфрад', gm2: 'ғоиб муз. тасния', gf2: 'ғоиб муан. тасния', m2: 'мухотоб тасния', p1: 'мутакаллим жамъ', gmp: 'ғоиб муз. жамъ', gfp: 'ғоиб муан. жамъ', mmp: 'мухотоб муз. жамъ', mfp: 'мухотоб муан. жамъ' };
+const SVC = new WeakMap(), FKEY = new WeakMap();
+function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
+function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++; if (i === a.length) return true; } return a.length === 0; }
+const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
+function arFormHits(text) {
+  const nq = normAr(text); if (nq.length < 2) return [];
+  const out = new Map();
+  DATA.forEach(e => {
+    const rs = normAr(e.root_search || '').replace(AR_WEAK, ''); const rOk = !!rs && isSubseq(rs, nq);
+    e.derivatives.forEach(f => {
+      if (f.form_type !== 'verb') return; if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 || !isSubseq(fk, nq)) return; } const sv = sevenCached(f); if (!sv) return;
+      let exact = false; [sv.malum, sv.majhul].forEach(T => (T || []).forEach(tb => ACELLS.forEach(([k0, r, c]) => { const cl = tb[1][r] && tb[1][r][c]; if (cl && normAr(cl) === nq) exact = true; })));
+      [['malum', sv.malum], ['majhul', sv.majhul]].forEach(([kind, T]) => (T || []).forEach((tb, ti) => {
+        ACELLS.forEach(([key, r, c]) => { const cell = tb[1][r] && tb[1][r][c]; if (!cell || !(normAr(cell) === nq || (!exact && /\s/.test(cell.trim()) && normAr(cell.trim().split(/\s+/).pop()) === nq))) return;
+          const id = e.id + '|' + e.derivatives.indexOf(f) + '|' + kind + '|' + ti + '|' + cell;
+          if (!out.has(id)) {
+            let uz = ''; try { const u = uzVerb(f); const U = kind === 'malum' ? uzSeven(u.pre, u.s)[ti] : (u.pas ? uzSeven(u.pasPre || '', u.pas)[ti] : null); uz = U && U[r] && U[r][c] || ''; } catch (x) {}
+            out.set(id, { e, f, ar: cell, uz, table: tb[0], pers: [], fi: e.derivatives.indexOf(f), maj: kind === 'majhul' });
+          }
+          out.get(id).pers.push(APERS[key]);
+        });
+      }));
+    });
+  });
+  // ҳаракат билан ёзилса, ҳаракати ҳам мос келгани биринчи; кейин маълум, кейин катта мақола
+  const raw = arRaw(text), marked = nq.length < raw.length;
+  const ex = (x) => marked && arRaw(x.ar) === raw ? 0 : 1;
+  return [...out.values()].sort((a, b) => ex(a) - ex(b) || (a.maj - b.maj) || (b.e.derivatives.length - a.e.derivatives.length) || a.fi - b.fi);
+}
+// қўшимчали феъл: олдида س و ف ل, охирида олмош (سيكتب، يكتبه، كتبوه)
+const VPRE = ['', 'و', 'ف', 'س', 'ل', 'وس', 'فس', 'ول', 'فل'], VSUF2 = ['', 'هما', 'كما', 'هم', 'هن', 'كم', 'كن', 'ها', 'نا', 'ني', 'ه', 'ك', 'ي'];
+const XFC = new Map(), XST = new Map();
+function arFormHitsX(text) {
+  const nq = normAr(text); if (nq.length < 4 || /\s/.test(String(text).trim())) return []; if (XFC.has(nq)) return XFC.get(nq);
+  const vars = [];
+  VPRE.forEach(pr => VSUF2.forEach(sf => { if (!pr && !sf) return; if (!nq.startsWith(pr) || !nq.endsWith(sf)) return; const st = nq.slice(pr.length, nq.length - sf.length); if (st.length < 3) return;
+    if (/[سل]$/.test(pr) && !/^[يتنا]/.test(st)) return; vars.push({ st, pr, sf }); if (sf && /و$/.test(st)) vars.push({ st: st + 'ا', pr, sf }); }));
+  vars.sort((a, b) => (a.pr.length + a.sf.length) - (b.pr.length + b.sf.length));
+  let out = [];
+  for (const v of vars.slice(0, 12)) { let hh = []; try { hh = arFormHits(v.st); } catch (z) {}
+    if (/س$/.test(v.pr)) hh = hh.filter(x => /музореъ \(рафъ/.test(x.table));
+    if (hh.length) { XST.set(nq, v.st); out = hh.map(x => Object.assign({}, x, { cl: (v.pr ? v.pr.split('').join(' + ') + ' + ' : '') + 'феъл' + (v.sf ? ' + ' + v.sf : '') })); break; } }
+  XFC.set(nq, out); return out;
+}
+// ҳамзаси ташлаб ёзилган сўз: ҳамзали шакллари
+function hamzaAlts(text) { const n = normAr(text); if (n.length < 2 || /\s/.test(String(text).trim())) return []; return (WH2.get(HK2(n)) || []).filter(w => w !== n && hzN(w) > hzN(n)).slice(0, 3); }
+function arFormCard(x) {
+  return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
+    h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers.join('; ')),
+    h('span', { class: 'root', lang: 'ar' }, x.ar),
+    h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
+}
+// ---------- қидирув тарихи ----------
+function pushHist(q) { q = (q || '').trim(); if (q.length < 2) return; S.hist = [q, ...(S.hist || []).filter(x => x.toLowerCase() !== q.toLowerCase())].slice(0, 12); save(); }
+// ҳамза курсиси ва қўшимчалар: сўз луғатда айнан топилмаса, яқин шакли қидирилади
+const AR_PRE = ['وال', 'بال', 'كال', 'فال', 'لل', 'ال', 'و', 'ف', 'ب', 'ل', 'ك'], AR_SUF = ['هما', 'كما', 'هم', 'هن', 'كم', 'كن', 'ها', 'نا', 'ه', 'ك', 'ي'];
+const ALTC = new Map();
+function arAlt(text) {
+  const n = normAr(text); if (n.length < 3 || /\s/.test(text.trim())) return null; if (ALTC.has(n)) return ALTC.get(n);
+  let out = null;
+  if (!ALLW.has(n)) {
+    let fh = []; try { fh = arFormHits(text); } catch (x) {}
+    if (!fh.length) {
+      const tails = (w) => [w, w.replace(/[ئؤ]$/, 'ء'), w.replace(/ت$/, 'ه'), w.replace(/ي$/, 'ى')];
+      const cands = [n]; AR_SUF.forEach(sf => { if (n.endsWith(sf) && n.length - sf.length >= 3) cands.push(n.slice(0, -sf.length)); });
+      cands.slice().forEach(c => ['تان', 'تين', 'ات', 'ان', 'ين', 'ون', 'ا'].forEach(sf => { if (c.endsWith(sf) && c.length - sf.length >= 3) { const st = c.slice(0, -sf.length); cands.push(st); if (sf !== 'ا') cands.push(st + 'ه'); } }));
+      const all = cands.slice(); cands.forEach(c => { AR_PRE.forEach(pr => { if (c.startsWith(pr) && c.length - pr.length >= 3) all.push(c.slice(pr.length)); }); });
+      for (const c0 of all) { for (const c of tails(c0)) { const k = HKEY(normAr(c)); if (WH.has(k) && WH.get(k) !== n) { out = WH.get(k); break; } } if (out) break; }
+      if (!out) for (const c0 of [n, ...['وال', 'بال', 'كال', 'فال', 'لل', 'ال'].filter(pr => n.startsWith(pr) && n.length - pr.length >= 3).map(pr => n.slice(pr.length))]) { const a = (WH2.get(HK2(c0)) || []).find(w => w !== n && hzN(w) > hzN(c0)); if (a) { out = a; break; } }
+    }
+  }
+  ALTC.set(n, out); return out;
+}
+const effQ = (t) => (HAS_AR.test(t) && arAlt(t)) || t;
+// мисоллар ичидан: тўлиқ сўз(лар) бўйича
+function exHits(text) {
+  const q = normArS(text); if (q.length < 3) return []; const key = ' ' + q + ' ', out = [];
+  const qj = q.replace(/ /g, '');
+  const multi = q.includes(' ');
+  DATA.forEach(e => { const full = e._arx.includes(' ' + qj + ' '); const part = multi && e._arxs.includes(key); if (!full && !part && !e._ar.includes(key)) return; e.derivatives.forEach(f => (f.examples || []).forEach(x => { if (!x.translation) return; const p = normArS(x.phrase);
+    if (full && x.phrase.includes('~') && f.arabic_word && exFull(x.phrase, f).replace(/ /g, '') === qj) out.push({ e, f, x, sc: 3 });
+    else if ((' ' + p + ' ').includes(key)) out.push({ e, f, x, sc: p === q ? 2 : 1 });
+    else if (part && x.phrase.includes('~') && f.arabic_word && ((' ' + exFull(x.phrase, f) + ' ').includes(key) || (' ' + exFull2(x.phrase, f) + ' ').includes(key))) out.push({ e, f, x, sc: 1.5 }); })); });
+  return out.sort((a, b) => b.sc - a.sc).slice(0, 12);
+}
+function exCard(h0) {
+  return h('button', { class: 'card', style: 'grid-template-columns:1fr', onclick: () => openAt(h0.e, h0.f) },
+    h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:calc(26px * var(--ars, 1));line-height:1.7;direction:rtl;text-align:right;color:var(--accent)' }, ((h0.sc === 3 || h0.sc === 1.5) && !/~[\u064B-\u0652\u0640]/.test(h0.x.phrase)) ? ((t) => /\s/.test(String(query).trim()) ? t : t.replace(/\s+/g, ''))(h0.x.phrase.replace(/~/g, String(h0.f.arabic_word).split(/[,،]|ёки/)[0])) : h0.x.phrase),
+    h('span', { class: 'gloss' }, (h0.x.tag ? h0.x.tag + ' ' : '') + h0.x.translation), h('span', { class: 'meta' }, `${h0.f.arabic_word} сўзи мисоли · ${rootOf(h0.e)} · стр. ${h0.e.source_page}`));
+}
 function search(text) {
-  const t = text.trim(); if (!t) return [];
+  let t = text.trim(); if (!t) return [];
+  if (!HAS_AR.test(t) && isLat(t)) t = latCyr(t);
   if (HAS_AR.test(t)) {
-    const n = normAr(t);
+    t = effQ(t); const n = normAr(t), ns = normArS(t);
     // тартиб: ҳаракатлари билан аниқ сўз > ҳаракатсиз аниқ сўз > илдиз > сўз боши > сўз ичида
-    const score = (e) => e._raw.has(t) ? 5 : e._words.has(n) ? 4 : e._root === n ? 3 : [...e._words].some(w => w.startsWith(n)) ? 2 : 1;
-    return DATA.filter(e => e._ar.includes(n)).map((e, i) => [e, score(e), i]).sort((a, b) => b[1] - a[1] || a[2] - b[2]).map(x => { x[0]._score = x[1]; return x[0]; });
+    const score = (e) => e._raw.has(t) ? 5 : e._words.has(n) ? 4 : e._arx.includes(' ' + n + ' ') ? 3.5 : e._root === n ? 3 : [...e._words].some(w => w.startsWith(n)) ? 2 : 1;
+    return DATA.filter(e => e._ar.includes(ns) || e._arx.includes(' ' + n + ' ')).map((e, i) => [e, score(e), i]).sort((a, b) => b[1] - a[1] || a[2] - b[2]).map(x => { x[0]._score = x[1]; return x[0]; });
   }
   // тартиб: асосий феълнинг биринчи таржимасида аниқ мослик > асосий феълда > бошқа шаклларда > таржимада тўлиқ сўз > таржимада сўз боши > мисолда тўлиқ сўз > мисолда сўз боши; сўз ўртасидаги мослик чиқмайди
   const q = normUz(t).replace(/[^a-zа-я0-9]+/g, ' ').trim(); if (!q) return [];
@@ -297,6 +592,12 @@ function h(tag, props, ...kids) {
 }
 const svg = (d, w = 24) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('width', w); s.setAttribute('height', w); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '1.9'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = d; return s; };
 const ICON = {
+  grid: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
+  crescent: '<path d="M19.5 15.2A8.2 8.2 0 1 1 10.4 4.1a6.4 6.4 0 0 0 9.1 11.1z"/>',
+  contrast: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor"/>',
+  star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
   home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
   mark: '<path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
@@ -317,9 +618,19 @@ DATA.forEach(e => e.derivatives.forEach(f => {
 function lookup(word, cur) { const pick = (a) => a && (a.find(x => x.e === cur) || a[0]); return pick(EXACT.get(word)) || pick(LOOSE.get(normAr(word))); }
 function meaningsText(f) {
   const trs = f.translations || [], exs = f.examples || [];
-  const exStr = (x) => x.translation ? `${x.phrase} ${x.translation}` : x.phrase;
-  let out = trs.map(t => { let s = (t.label ? t.label + ' ' : '') + t.meaning; exs.filter(x => x.sense === t.index).forEach(x => { s += '; ' + exStr(x); }); return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
-  exs.filter(x => x.sense == null).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
+  const tagPre = (x) => /^◊/.test(x.tag || '') ? '◊ ' : '', tagPost = (x) => { const t = String(x.tag || '').replace(/^◊\s*/, ''); return t ? t + ' ' : ''; };
+  const exStr = (x) => tagPre(x) + (x.translation ? `${x.phrase} ${tagPost(x)}${x.translation}` : x.phrase + (tagPost(x) ? ' ' + tagPost(x).trim() : ''));
+  // after_index: мисол китобда қайси рақамли маънодан кейин туради (0 = биринчи маънодан олдин, null = номаълум → охирида)
+  const pos = (x) => x.after_index != null ? x.after_index : (x.sense != null ? x.sense : null);
+  const idxs = new Set(trs.map(t => t.index));
+  const num = trs.length > 1; const head = num ? exs.filter(x => pos(x) === 0).map(exStr) : [];
+  let out = trs.map((t, k) => { let s = (t.label ? t.label + ' ' : '') + t.meaning;
+    // бир хил рақам икки марта босилган бўлса (китобдагидек), мисоллар охиргисидан кейин
+    const last = trs.map(z => z.index).lastIndexOf(t.index) === k;
+    if (last) exs.filter(x => pos(x) === t.index).forEach(x => { s += (s ? '; ' : '') + exStr(x); });
+    return (trs.length > 1 ? `${t.index}) ` : '') + s; }).join('; ');
+  if (head.length) out = head.join('; ') + (out ? '; ' + out : '');
+  exs.filter(x => pos(x) == null || (pos(x) === 0 ? !num : !idxs.has(pos(x)))).forEach(x => { out += (out ? '; ' : '') + exStr(x); });
   return out;
 }
 function verbText(f) {
@@ -345,13 +656,21 @@ function textToNodes(text, f, e) {
   if (last < text.length) out.push(text.slice(last));
   return out;
 }
+// «ёки» шакл учун кўриниш: сўз ва қавсдаги ҳарф ўша шаклники (ўзида бўлмаса — асосий шаклдаги), қолгани умумий
+const ALTV = new WeakMap();
+function altView(f, w) {
+  if (!f || f._of || w === f.arabic_word) return f;
+  const a = (f.alt_forms || []).find(x => x && x.arabic_word === w); if (!a) return f;
+  if (!ALTV.has(a)) ALTV.set(a, { ...f, arabic_word: a.arabic_word, vocaliz: a.vocaliz || f.vocaliz, alt_forms: [{ arabic_word: f.arabic_word, vocaliz: f.vocaliz }, ...f.alt_forms.filter(x => x !== a)], _of: f });
+  return ALTV.get(a);
+}
 function arabicRun(run, f, e) {
   const own = new Set([f.arabic_word, ...(f.alt_forms || []).map(a => a.arabic_word)]);
   const wrap = h('span', { class: 'arr', dir: 'rtl', lang: 'ar' });
   run.split(/(\s+|,|~)/).forEach(p => {
     if (!p) return;
     if (/^(\s+|,|~)$/.test(p)) { wrap.append(p); return; }
-    const t = own.has(p) ? { e, f } : lookup(p, e);
+    const t = own.has(p) ? { e, f: altView(f, p) } : lookup(p, e);
     wrap.append(t ? h('button', { class: 'aw', onclick: (ev) => openSheet(t.f, t.e, ev.currentTarget) }, dA(p)) : h('span', {}, dA(p)));
   });
   return wrap;
@@ -391,7 +710,41 @@ const hasM = (l, m) => l.includes(m), vOf = (l) => l.find(m => m === FA || m ===
 const SFX_C = ['تَ', 'تِ', 'تُ', 'تُمَا', 'نَا', 'نَ', 'تُمْ', 'تُنَّ']; // ундош билан бошланадиган шахс қўшимчалари
 function grid(m) { // m: {gm, gf, mm, mf, s1, gm2, gf2, m2, p1, gmp, gfp, mmp, mfp}
   return [[m.gm, m.gf, m.mm, m.mf, m.s1], [m.gm2, m.gf2, m.m2, '', m.p1], [m.gmp, m.gfp, m.mmp, m.mfp, '']]; }
-function conj1(f, voc, word, madiV) {
+const KEYG = [['gm', 'gf', 'mm', 'mf', 's1'], ['gm2', 'gf2', 'm2', '', 'p1'], ['gmp', 'gfp', 'mmp', 'mfp', '']];
+const mapK = (g, fn) => g.map((r, i) => r.map((c, j) => c ? fn(c, KEYG[i][j]) : c));
+const BARE = ['gm', 'gf', 'mm', 's1', 'p1'];
+// 26–28-бетлар: насбда охирги замма фатҳага айланади, эъроб нуни тушади; муаннас жамъи ўзгармайди
+function nasbCell(c, k) {
+  if (BARE.includes(k)) return c.replace(/ُ$/, FA);
+  if (k === 'mf') return c.replace(/نَ$/, '');
+  if (k === 'gm2' || k === 'gf2' || k === 'm2') return c.replace(/نِ$/, '');
+  if (k === 'gmp' || k === 'mmp') return c.replace(/ونَ$/, 'وا');
+  return c;
+}
+const jazmCell = (c, k) => BARE.includes(k) ? c.replace(/ُ$/, SU) : nasbCell(c, k);
+const rafShape = (st, fpl) => grid({ gm: st('ي') + DA, gf: st('ت') + DA, mm: st('ت') + DA, mf: st('ت') + KA + 'ينَ', s1: st('أ') + DA, gm2: st('ي') + FA + 'انِ', gf2: st('ت') + FA + 'انِ', m2: st('ت') + FA + 'انِ', p1: st('ن') + DA, gmp: st('ي') + DA + 'ونَ', gfp: fpl('ي'), mmp: st('ت') + DA + 'ونَ', mfp: fpl('ت') });
+const moziShape = (lg, sh) => grid({ gm: lg + FA, gf: lg + FA + 'تْ', mm: sh + 'تَ', mf: sh + 'تِ', s1: sh + 'تُ', gm2: lg + FA + 'ا', gf2: lg + FA + 'تَا', m2: sh + 'تُمَا', p1: sh + 'نَا', gmp: lg + DA + 'وا', gfp: sh + 'نَ', mmp: sh + 'تُمْ', mfp: sh + 'تُنَّ' });
+// ноқис (39–41-бетлар): музореъ ва жаҳд, охирги унли бўйича (1: ي, 2: و, 4: ى)
+function naqRaf(M, z) {
+  if (z === 1) return grid({ gm: M('ي') + KA + 'ي', gf: M('ت') + KA + 'ي', mm: M('ت') + KA + 'ي', mf: M('ت') + KA + 'ينَ', s1: M('أ') + KA + 'ي', gm2: M('ي') + KA + 'يَانِ', gf2: M('ت') + KA + 'يَانِ', m2: M('ت') + KA + 'يَانِ', p1: M('ن') + KA + 'ي', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + KA + 'ينَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + KA + 'ينَ' });
+  if (z === 4) return grid({ gm: M('ي') + FA + 'ى', gf: M('ت') + FA + 'ى', mm: M('ت') + FA + 'ى', mf: M('ت') + FA + 'يْنَ', s1: M('أ') + FA + 'ى', gm2: M('ي') + FA + 'يَانِ', gf2: M('ت') + FA + 'يَانِ', m2: M('ت') + FA + 'يَانِ', p1: M('ن') + FA + 'ى', gmp: M('ي') + FA + 'وْنَ', gfp: M('ي') + FA + 'يْنَ', mmp: M('ت') + FA + 'وْنَ', mfp: M('ت') + FA + 'يْنَ' });
+  return grid({ gm: M('ي') + DA + 'و', gf: M('ت') + DA + 'و', mm: M('ت') + DA + 'و', mf: M('ت') + KA + 'ينَ', s1: M('أ') + DA + 'و', gm2: M('ي') + DA + 'وَانِ', gf2: M('ت') + DA + 'وَانِ', m2: M('ت') + DA + 'وَانِ', p1: M('ن') + DA + 'و', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + DA + 'ونَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + DA + 'ونَ' });
+}
+function naqJazm(M, z) {
+  const v = z === 1 ? KA : z === 4 ? FA : DA;
+  const mf = z === 4 ? FA + 'يْ' : KA + 'ي', du = z === 1 ? KA + 'يَا' : z === 4 ? FA + 'يَا' : DA + 'وَا', mp = z === 4 ? FA + 'وْا' : DA + 'وا', fp = z === 1 ? KA + 'ينَ' : z === 4 ? FA + 'يْنَ' : DA + 'ونَ';
+  return grid({ gm: M('ي') + v, gf: M('ت') + v, mm: M('ت') + v, mf: M('ت') + mf, s1: M('أ') + v, gm2: M('ي') + du, gf2: M('ت') + du, m2: M('ت') + du, p1: M('ن') + v, gmp: M('ي') + mp, gfp: M('ي') + fp, mmp: M('ت') + mp, mfp: M('ت') + fp });
+}
+const naqNasb = (g) => mapK(g, (c, k) => BARE.includes(k) ? c.replace(/([يو])$/, '$1' + FA) : (k === 'gmp' || k === 'mmp') ? c.replace(/وْنَ$/, 'وْا').replace(/ونَ$/, 'وا') : nasbCell(c, k));
+const GUTT = /[ءأؤئهعحغخ]/;
+// қавсда ҳарф ўрнига музореънинг ўзи босилган бўлса (يَوْشُكُ): айн ҳаракати ўша босилган сўздан олинади
+function arVoc(sv) {
+  const L = splitLetters(String(sv).replace(/[()\s]/g, ''));
+  for (let i = L.length - 2; i >= 1; i--) { const v = vOf(L[i]); if (v) return v === FA ? 'а' : v === KA ? 'и' : 'у'; }
+  return null;
+}
+const bobLbl = (b) => b ? b + '-боб' : 'боб: луғатда босилганидек';
+function conj1(f, voc, word, madiV, pm) {
   const mv = VOW[voc]; if (!mv) return null;
   const w = (word || (f.arabic_word || '').split(/[,،]|ёки/)[0]).trim(); const L = splitLetters(w); const B = L.map(l => l[0]);
   const pre = { y: 'ي', t: 'ت', a: 'أ', n: 'ن' };
@@ -403,7 +756,10 @@ function conj1(f, voc, word, madiV) {
     const mg = F + FA + A + SH, un = F + FA + A + pv + A + SU, H = mv === DA ? 'اُ' : 'اِ';
     const mz = (p) => p + FA + F + mv + A + SH, mzU = (p) => p + FA + F + SU + A + mv + A + SU + 'نَ';
     const ar = F + mv + A + SH;
-    return { bob, type: F === '§' ? 'музоъаф + маҳмуз ул-фо' : 'музоъаф', pages: F === '§' ? '29–30, 32' : '29–30',
+    const zRaf = rafShape((p) => mz(p), mzU), mRaf = rafShape((p) => p + DA + F + FA + A + SH, (p) => p + DA + F + SU + A + FA + A + SU + 'نَ');
+    const x = { nasb: mapK(zRaf, nasbCell), jazm: mapK(zRaf, nasbCell), mMozi: moziShape(F + DA + A + SH, F + DA + A + KA + A + SU), mRaf, mNasb: mapK(mRaf, nasbCell), mJazm: mapK(mRaf, nasbCell),
+      note: 'Жазмда идғом фатҳа билан берилди (29-бетдаги амр жадвалидагидек: لِيَرُدَّ); 30-бетга кўра идғомсиз (لَمْ يَرْدُدْ) ҳам жоиз.' };
+    return { x, bob, type: F === '§' ? 'музоъаф + маҳмуз ул-фо' : 'музоъаф', pages: F === '§' ? '29–30, 32' : '29–30',
       mozi: grid({ gm: mg + FA, gf: mg + FA + 'تْ', mm: un + 'تَ', mf: un + 'تِ', s1: un + 'تُ', gm2: mg + FA + 'ا', gf2: mg + FA + 'تَا', m2: un + 'تُمَا', p1: un + 'نَا', gmp: mg + DA + 'وا', gfp: un + 'نَ', mmp: un + 'تُمْ', mfp: un + 'تُنَّ' }),
       muzore: grid({ gm: mz('ي') + DA, gf: mz('ت') + DA, mm: mz('ت') + DA, mf: mz('ت') + KA + 'ينَ', s1: mz('أ') + DA, gm2: mz('ي') + FA + 'انِ', gf2: mz('ت') + FA + 'انِ', m2: mz('ت') + FA + 'انِ', p1: mz('ن') + DA, gmp: mz('ي') + DA + 'ونَ', gfp: mzU('ي'), mmp: mz('ت') + DA + 'ونَ', mfp: mzU('ت') }),
       amr: [[ar + FA + ' ёки ' + H + F + SU + A + mv + A + SU, ar + KA + 'ي'], [ar + FA + 'ا', ''], [ar + DA + 'وا', H + F + SU + A + mv + A + SU + 'نَ']] };
@@ -419,7 +775,10 @@ function conj1(f, voc, word, madiV) {
     const mg = F + FA + 'ا' + Lm, sh = F + sv + Lm + SU;
     const ml = (p) => p + FA + F + lv + Lm, ms = (p) => p + FA + F + av + Lm + SU + 'نَ';
     const tz = voc === 'у' ? 'ажваф (вовлик)' : voc === 'и' ? 'ажваф (ёлик)' : 'ажваф';
-    return { bob, type: tz + (F === '§' ? ' + маҳмуз ул-фо' : Lm === '§' ? ' + маҳмуз ул-лом' : ''), pages: F === '§' ? '35–37, 32' : Lm === '§' ? '35–37, 28' : '35–37',
+    const jzG = (l, sj, fp) => grid({ gm: sj('ي'), gf: sj('ت'), mm: sj('ت'), mf: l('ت') + KA + 'ي', s1: sj('أ'), gm2: l('ي') + FA + 'ا', gf2: l('ت') + FA + 'ا', m2: l('ت') + FA + 'ا', p1: sj('ن'), gmp: l('ي') + DA + 'وا', gfp: fp('ي'), mmp: l('ت') + DA + 'وا', mfp: fp('ت') });
+    const zRaf = rafShape(ml, ms), Ml = (p) => p + DA + F + FA + 'ا' + Lm, Ms = (p) => p + DA + F + FA + Lm + SU + 'نَ', mRaf = rafShape(Ml, Ms);
+    const x = { nasb: mapK(zRaf, nasbCell), jazm: jzG(ml, (p) => p + FA + F + av + Lm + SU, ms), mMozi: moziShape(F + KA + 'ي' + Lm, sh), mRaf, mNasb: mapK(mRaf, nasbCell), mJazm: jzG(Ml, (p) => p + DA + F + FA + Lm + SU, Ms) };
+    return { x, bob, type: tz + (F === '§' ? ' + маҳмуз ул-фо' : Lm === '§' ? ' + маҳмуз ул-лом' : ''), pages: F === '§' ? '35–37, 32' : Lm === '§' ? '35–37, 28' : '35–37',
       mozi: grid({ gm: mg + FA, gf: mg + FA + 'تْ', mm: sh + 'تَ', mf: sh + 'تِ', s1: sh + 'تُ', gm2: mg + FA + 'ا', gf2: mg + FA + 'تَا', m2: sh + 'تُمَا', p1: sh + 'نَا', gmp: mg + DA + 'وا', gfp: sh + 'نَ', mmp: sh + 'تُمْ', mfp: sh + 'تُنَّ' }),
       muzore: grid({ gm: ml('ي') + DA, gf: ml('ت') + DA, mm: ml('ت') + DA, mf: ml('ت') + KA + 'ينَ', s1: ml('أ') + DA, gm2: ml('ي') + FA + 'انِ', gf2: ml('ت') + FA + 'انِ', m2: ml('ت') + FA + 'انِ', p1: ml('ن') + DA, gmp: ml('ي') + DA + 'ونَ', gfp: ms('ي'), mmp: ml('ت') + DA + 'ونَ', mfp: ms('ت') }),
       amr: [[F + av + Lm + SU, F + lv + Lm + KA + 'ي'], [F + lv + Lm + FA + 'ا', ''], [F + lv + Lm + DA + 'وا', F + av + Lm + SU + 'نَ']] };
@@ -437,18 +796,26 @@ function conj1(f, voc, word, madiV) {
   }
   const F = (HZ.test(F0) && /[اىيو]/.test(Lm)) ? '§' : F0;
   // ---- ноқис ва лафиф: رَمَى، دَعَا، رَضِيَ، رَخُوَ ----
-  if (/[اىيو]/.test(Lm) && !HZ.test(A) && !WK.test(F)) {
-    const X = F + FA + A, M = (p) => p + FA + F + SU + A;
+  if (/[اىيو]/.test(Lm) && !HZ.test(A) && (!WK.test(F) || F === 'و')) {
+    const mlt = F === 'و';                                         // мултавий (43–44-бетлар): وَقَى يَقِي
+    const X = F + FA + A; let M = (p) => p + FA + F + SU + A;
     let kind = null;
     if (pv === FA && voc === 'а' && (Lm === 'ى' || Lm === 'ا')) kind = 3; // 3-боб: мозий 1/2-боб каби, музореъ 4-боб каби (39–41, қалб: 31–32)
     if (Lm === 'ى' && pv === FA && voc === 'и') kind = 1;
     else if (Lm === 'ا' && pv === FA && voc === 'у') kind = 2;
     else if ((Lm === 'ي' || Lm === 'ى') && pv === KA && voc === 'а') kind = 4;
     else if (Lm === 'و' && pv === DA && voc === 'у') kind = 6;
+    else if (mlt && (Lm === 'ي' || Lm === 'ى') && pv === KA && voc === 'и') kind = 5;   // وَلِيَ يَلِي (44-бет, 47-машқ)
     if (!kind) return null;
+    if (mlt && ![1, 4, 5].includes(kind)) return null;
+    if (mlt && /[وي]/.test(A)) return null;
     let pages = /[وي]/.test(A) ? '39–41, 43' : '39–41', type = /[وي]/.test(A) ? 'лафиф' : 'ноқис';
+    if (mlt) { type = 'мултавий'; pages = '39–41, 43–44'; }
     if (F === '§') { type += ' + маҳмуз ул-фо'; pages += ', 32'; }
-    const mk = kind === 3 ? (Lm === 'ا' ? 2 : 1) : kind, zk = kind === 3 ? 4 : kind;
+    const mk = kind === 3 ? (Lm === 'ا' ? 2 : 1) : kind === 5 ? 4 : kind, zk = kind === 3 ? 4 : kind === 5 ? 1 : kind;
+    const drop = mlt && (pm ? splitLetters(pm).length === 3 : zk === 1);                                 // 43-бет: вов мисоллардагидек ҳазф қилинади
+    if (drop) M = (p) => p + FA + A;
+    const Mm = (p) => p + DA + (mlt ? 'و' : F + SU) + A;          // мажҳул: يُرْمَى، يُوقَى
     let mozi;
     if (mk === 1) mozi = grid({ gm: X + FA + 'ى', gf: X + FA + 'تْ', mm: X + FA + 'يْتَ', mf: X + FA + 'يْتِ', s1: X + FA + 'يْتُ', gm2: X + FA + 'يَا', gf2: X + FA + 'تَا', m2: X + FA + 'يْتُمَا', p1: X + FA + 'يْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'يْنَ', mmp: X + FA + 'يْتُمْ', mfp: X + FA + 'يْتُنَّ' });
     else if (mk === 2) mozi = grid({ gm: X + FA + 'ا', gf: X + FA + 'تْ', mm: X + FA + 'وْتَ', mf: X + FA + 'وْتِ', s1: X + FA + 'وْتُ', gm2: X + FA + 'وَا', gf2: X + FA + 'تَا', m2: X + FA + 'وْتُمَا', p1: X + FA + 'وْنَا', gmp: X + FA + 'وْا', gfp: X + FA + 'وْنَ', mmp: X + FA + 'وْتُمْ', mfp: X + FA + 'وْتُنَّ' });
@@ -457,15 +824,29 @@ function conj1(f, voc, word, madiV) {
     let muzore, amr;
     if (zk === 1) {
       muzore = grid({ gm: M('ي') + KA + 'ي', gf: M('ت') + KA + 'ي', mm: M('ت') + KA + 'ي', mf: M('ت') + KA + 'ينَ', s1: M('أ') + KA + 'ي', gm2: M('ي') + KA + 'يَانِ', gf2: M('ت') + KA + 'يَانِ', m2: M('ت') + KA + 'يَانِ', p1: M('ن') + KA + 'ي', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + KA + 'ينَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + KA + 'ينَ' });
-      const R = 'اِ' + F + SU + A; amr = [[R + KA, R + KA + 'ي'], [R + KA + 'يَا', ''], [R + DA + 'وا', R + KA + 'ينَ']];
+      const R = drop ? A : 'اِ' + F + SU + A; amr = [[R + KA, R + KA + 'ي'], [R + KA + 'يَا', ''], [R + DA + 'وا', R + KA + 'ينَ']];
     } else if (zk === 4) {
       muzore = grid({ gm: M('ي') + FA + 'ى', gf: M('ت') + FA + 'ى', mm: M('ت') + FA + 'ى', mf: M('ت') + FA + 'يْنَ', s1: M('أ') + FA + 'ى', gm2: M('ي') + FA + 'يَانِ', gf2: M('ت') + FA + 'يَانِ', m2: M('ت') + FA + 'يَانِ', p1: M('ن') + FA + 'ى', gmp: M('ي') + FA + 'وْنَ', gfp: M('ي') + FA + 'يْنَ', mmp: M('ت') + FA + 'وْنَ', mfp: M('ت') + FA + 'يْنَ' });
-      const R = 'اِ' + F + SU + A; amr = [[R + FA, R + FA + 'يْ'], [R + FA + 'يَا', ''], [R + FA + 'وْا', R + FA + 'يْنَ']];
+      const R = mlt ? 'اِي' + A : 'اِ' + F + SU + A; amr = [[R + FA, R + FA + 'يْ'], [R + FA + 'يَا', ''], [R + FA + 'وْا', R + FA + 'يْنَ']];
     } else {
       muzore = grid({ gm: M('ي') + DA + 'و', gf: M('ت') + DA + 'و', mm: M('ت') + DA + 'و', mf: M('ت') + KA + 'ينَ', s1: M('أ') + DA + 'و', gm2: M('ي') + DA + 'وَانِ', gf2: M('ت') + DA + 'وَانِ', m2: M('ت') + DA + 'وَانِ', p1: M('ن') + DA + 'و', gmp: M('ي') + DA + 'ونَ', gfp: M('ي') + DA + 'ونَ', mmp: M('ت') + DA + 'ونَ', mfp: M('ت') + DA + 'ونَ' });
       const R = 'اُ' + F + SU + A; amr = [[R + DA, R + KA + 'ي'], [R + DA + 'وَا', ''], [R + DA + 'وا', R + DA + 'ونَ']];
     }
-    return { bob: kind, type, pages, mozi, muzore, amr };
+    const Y = F + DA + A + KA;
+    const x = { nasb: naqNasb(muzore), note: 'Насб (لَنْ) жадвали дарсликда йўқ, луғат муаллифи кўрсатмаси бўйича қўшилди.', jazm: naqJazm(M, zk === 6 ? 2 : zk),
+      mMozi: grid({ gm: Y + 'يَ', gf: Y + 'يَتْ', mm: Y + 'يتَ', mf: Y + 'يتِ', s1: Y + 'يتُ', gm2: Y + 'يَا', gf2: Y + 'يَتَا', m2: Y + 'يتُمَا', p1: Y + 'ينَا', gmp: F + DA + A + DA + 'وا', gfp: Y + 'ينَ', mmp: Y + 'يتُمْ', mfp: Y + 'يتُنَّ' }),
+      mRaf: naqRaf(Mm, 4), mNasb: naqNasb(naqRaf(Mm, 4)), mJazm: naqJazm(Mm, 4) };
+    return { x, bob: kind, type, pages, mozi, muzore, amr };
+  }
+  // ---- мисол + маҳмуз ул-лом, музореъ луғатда босилган: وَطِئَ – يَطَأُ (муаллиф: икки қоида бўйича) ----
+  if (F === 'و' && HZ.test(Lm) && !HZ.test(A) && !WK.test(A) && pv && pm) {
+    const bob = BOBS[pv + '|' + voc] || 0, drop = splitLetters(pm).length === 3;
+    const P = 'و' + FA + A + pv + '§', Pk = P + SU, st = (q) => drop ? q + FA + A + mv + '§' : q + FA + 'وْ' + A + mv + '§', R = drop ? A + mv + '§' : (mv === DA ? 'اُو' : 'اِي') + A + mv + '§';
+    const fixw = (g) => g.map(r => r.map(c => c && hamzaSeat(c)));
+    return { bob, type: 'маҳмуз ул-лом + мисол (вовлик)', pages: '32, 33–34; музореъ луғатда босилганидек',
+      mozi: fixw(grid({ gm: P + FA, gf: P + FA + 'تْ', mm: Pk + 'تَ', mf: Pk + 'تِ', s1: Pk + 'تُ', gm2: P + FA + 'ا', gf2: P + FA + 'تَا', m2: Pk + 'تُمَا', p1: Pk + 'نَا', gmp: P + DA + 'وا', gfp: Pk + 'نَ', mmp: Pk + 'تُمْ', mfp: Pk + 'تُنَّ' })),
+      muzore: fixw(grid({ gm: st('ي') + DA, gf: st('ت') + DA, mm: st('ت') + DA, mf: st('ت') + KA + 'ينَ', s1: st('أ') + DA, gm2: st('ي') + FA + 'انِ', gf2: st('ت') + FA + 'انِ', m2: st('ت') + FA + 'انِ', p1: st('ن') + DA, gmp: st('ي') + DA + 'ونَ', gfp: st('ي') + SU + 'نَ', mmp: st('ت') + DA + 'ونَ', mfp: st('ت') + SU + 'نَ' })),
+      amr: fixw([[R + SU, R + KA + 'ي'], [R + FA + 'ا', ''], [R + DA + 'وا', R + SU + 'نَ']]) };
   }
   // ---- маҳмуз ул-айн ва ул-лом: солим вазни + ҳамза ёзилиши (муаллиф розилиги билан) ----
   if (HZ.test(A) !== HZ.test(Lm) && !HZ.test(F) && !WK.test(F) && !WK.test(A + Lm) && pv) {
@@ -481,16 +862,19 @@ function conj1(f, voc, word, madiV) {
   // ---- солим, маҳмуз ул-фо, мисол вовий; айни вов/ё бўлиб, қалб қилинмайдиган феъллар (33-бет: عَوِرَ) ----
   const qalbsiz = /[وي]/.test(A) && pv === KA && voc === 'а' && !WK.test(Lm) && !HZ.test(F + Lm) && !WK.test(F);
   if (A === Lm || HZ.test(A + Lm) || (WK.test(A + Lm) && !qalbsiz) || !pv) return null;
-  const bob = BOBS[pv + '|' + voc]; if (!bob) return null;
+  let bob = BOBS[pv + '|' + voc]; if (!bob) { if (!pm) return null; bob = 0; }   // бобга тушмайди, лекин музореъ луғатда босилган
   let type = 'солим', pages = '7–8, 11';
   if (qalbsiz) { type = 'ажваф (қалб қилинмайди)'; pages = '33, 11'; }
   else if (HZ.test(F)) { type = 'маҳмуз ул-фо'; pages = '32–33'; }
-  else if (F === 'و') { type = 'мисол (вовлик)'; pages = '33–34'; if (![1, 3, 4, 5].includes(bob)) return null; }
+  else if (F === 'و') { type = 'мисол (вовлик)'; pages = '33–34'; }
+  else if (F === 'ي') { type = 'мисол (ёлик)'; pages = '34'; }
   else if (WK.test(F)) return null;
   const Fm = HZ.test(F) ? 'أ' : F;
   const P = Fm + FA + A + pv + Lm, Pk = P + SU;
   const mozi = grid({ gm: P + FA, gf: P + FA + 'تْ', mm: Pk + 'تَ', mf: Pk + 'تِ', s1: Pk + 'تُ', gm2: P + FA + 'ا', gf2: P + FA + 'تَا', m2: Pk + 'تُمَا', p1: Pk + 'نَا', gmp: P + DA + 'وا', gfp: Pk + 'نَ', mmp: Pk + 'تُمْ', mfp: Pk + 'تُنَّ' });
-  const drop = type.startsWith('мисол') && bob !== 4; // 33–34-бетлар: вов ҳазф
+  // 33–34-бетлар: вов фақат ундан кейин касра (ҳақиқий: 1, 5-боб; тақдирий: 3-бобда бўғиз ҳарфи бўлса) келганда ҳазф қилинади
+  let drop = type === 'мисол (вовлик)' && (bob === 1 || bob === 5 || (bob === 3 && GUTT.test(A + Lm)));
+  if (pm && type === 'мисол (вовлик)') { drop = splitLetters(pm).length === 3; pages += '; музореъ луғатда босилганидек'; }  // луғатда босилган музореъ устун
   const stem = (p) => drop ? p + FA + A + mv + Lm : p + FA + Fm + SU + A + mv + Lm;
   const s1 = type === 'маҳмуз ул-фо' ? 'آ' + A + mv + Lm : stem('أ');      // 32-бет, 10-қоида: آمُرُ
   const muzore = grid({ gm: stem('ي') + DA, gf: stem('ت') + DA, mm: stem('ت') + DA, mf: stem('ت') + KA + 'ينَ', s1: s1 + DA, gm2: stem('ي') + FA + 'انِ', gf2: stem('ت') + FA + 'انِ', m2: stem('ت') + FA + 'انِ', p1: stem('ن') + DA, gmp: stem('ي') + DA + 'ونَ', gfp: stem('ي') + SU + 'نَ', mmp: stem('ت') + DA + 'ونَ', mfp: stem('ت') + SU + 'نَ' });
@@ -498,7 +882,7 @@ function conj1(f, voc, word, madiV) {
   let R;
   if (drop) R = A + mv + Lm;                                                       // عِدْ
   else if (type === 'маҳмуз ул-фо') R = (pv === FA && mv === DA && ['خذ', 'كل', 'مر'].includes(A + Lm)) ? A + mv + Lm : H + (mv === DA ? 'و' : 'ي') + A + mv + Lm; // خُذْ، كُلْ، مُرْ / اُومُلْ
-  else if (type.startsWith('мисол')) R = 'اِي' + A + mv + Lm;                     // اِيجَلْ
+  else if (type.startsWith('мисол')) R = (mv === DA ? 'اُو' : 'اِي') + A + mv + Lm;   // اِيجَلْ ; 34-бет: اُوقُظْ
   else R = H + F + SU + A + mv + Lm;
   const amr = [[R + SU, R + KA + 'ي'], [R + FA + 'ا', ''], [R + DA + 'وا', R + SU + 'نَ']];
   if (type === 'маҳмуз ул-фо' && R === A + mv + Lm) amr[0][0] += ' ёки ' + H + 'ؤْ' + A + mv + Lm + SU; // 33-бет: اُؤْمُرْ – مُرْ
@@ -528,10 +912,12 @@ function hamzaSeat(s) {
 }
 function tasrifList(f) {
   if (!f || f.form_type !== 'verb' || f.sarf_form !== 'I' || !f.vocaliz) return [];
-  const vz = String(f.vocaliz).replace(/\\/g, '/').replace(/\./g, ',');
+  let vz = String(f.vocaliz).replace(/\\/g, '/').replace(/\./g, ',');
+  const pms = /[\u0621-\u064A]/.test(vz) ? [...new Set(vz.match(/[\u0621-\u0652]+/g))] : null;
   const words = (f.arabic_word || '').split(/[,،]|ёки/).map(x => x.trim()).filter(Boolean);
   const fx = (g) => g.map(r => r.map(c => c && c.split(' ёки ').map(hamzaSeat).join(' ёки ')));
-  const out = [], add = (t, label) => { if (!t || out.some(o => o.voc === label)) return; t.mozi = fx(t.mozi); t.muzore = fx(t.muzore); t.amr = fx(t.amr); t.voc = label; out.push(t); };
+  const out = [], add = (t, label) => { if (!t || out.some(o => o.voc === label)) return; t.mozi = fx(t.mozi); t.muzore = fx(t.muzore); t.amr = fx(t.amr); if (t.x) ['nasb', 'jazm', 'mMozi', 'mRaf', 'mNasb', 'mJazm'].forEach(k => { if (t.x[k]) t.x[k] = fx(t.x[k]); }); t.voc = label; out.push(t); };
+  if (pms) { pms.forEach(m => { const v = arVoc(m); if (v) add(conj1(f, v, words[0], null, m), m); }); return out; }
   const L0 = splitLetters(words[0] || '');
   if (L0.length === 2 && L0[1].includes(SH)) {
     // иккиланган феъл: 12-қоида бўйича жуфтлар (мозий/музореъ); «а/у, и» = мозий а, музореъ у ёки и
@@ -559,7 +945,7 @@ function tasrifBlock(f) {
   return h('details', { class: 'tsr-box' }, h('summary', {}, 'Тусланиши (мозий, музореъ, амр)'),
     list.length > 1 ? h('p', { class: 'tsr-note' }, 'Бу феъл икки бобда келади («Жаноҳ ут-толиб», 12-бет), иккаласи ҳам берилди.') : '',
     list.map(t => [
-      list.length > 1 ? h('h4', {}, `${t.bob}-боб (${t.voc})`) : '',
+      list.length > 1 ? h('h4', {}, `${bobLbl(t.bob)} (${t.voc})`) : '',
       h('p', { class: 'tsr-note' }, t.approx ? `Тури: ${t.type}. Китобда бу тур учун жадвал йўқ: ${t.bob}-боб вазни (11-бет) ва ҳамза ёзилиши бўйича ясалган. Китобнинг 28-бетида «маҳмузлар баъзи ўринларда ўз вазнига мувофиқ бўла олмайди» дейилган, муаллим билан текширинг.` : `Тури: ${t.type}. Бу жадвал луғатда босилмаган: «Жаноҳ ут-толиб» дарслигидаги ${t.bob}-боб намунаси бўйича (${t.pages}-бетлар) ясалган.`),
       h('h4', {}, 'Феъли мозий'), tasrifTable(t.mozi, C5, N, (uzBasic(f) || {}).mozi),
       h('h4', {}, 'Феъли музореъ'), tasrifTable(t.muzore, C5, N, (uzBasic(f) || {}).muzore),
@@ -598,7 +984,7 @@ function mazidCheck(bob, L) {
   if (!pat) return false;
   if (L.slice(0, -1).some(l => l.includes(DA))) return false;                 // луғатда мажҳул шаклда берилган (احْتُضِرَ)
   if (L.some((l, i) => !(l[0] === 'ا' && pat.includes(i)) && !vOf(l) && !l.includes(SU))) return false; // ҳаракати тушиб қолган
-  for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) return false; }
+  for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) { if ([2, 3, 6, 7].includes(bob) && i === n - 2 && /[وي]/.test(ch(i)) && vOf(L[i])) continue; return false; } }
   const rootL = L.filter((_, i) => !pat.includes(i)).map(l => l[0]);
   if (bob === 5 && n === 4) { /* ادّخر каби: ت ўзакнинг ҳарфига айланган */ }
   else if (rootL.length === 3 && rootL[1] === rootL[2]) return false; // музоъаф
@@ -608,11 +994,13 @@ function mazidCheck(bob, L) {
 function stemsMazid(f) {
   const bob = MAZID[f.sarf_form]; const cfg = MZT[bob]; if (!cfg) return null;
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); const L = splitLetters(w);
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) { L[i].push(FA); L[i + 1] = ['ا']; } // китобдаги «لاَ» ёзуви
   if (!mazidCheck(bob, L)) return null;
+  const ajw = /[وي]/.test(L[L.length - 2][0]);
   let B = cl(L); if (cfg.drop) B = B.slice(1);
   if (cfg.pk) B[B.length - 2] = setV(B[B.length - 2], KA);
   const Bl = cl(B); Bl[Bl.length - 1] = Bl[Bl.length - 1].filter(m => !VW.includes(m));
-  return { bob, cfg, madi: L, muzB: Bl, pre: cfg.pre, H: cfg.H || 'اِ', pages: '13, 18, 26–28', type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), солим` };
+  return { bob, cfg, madi: L, muzB: Bl, pre: cfg.pre, H: cfg.H || 'اِ', pages: '13, 18, 26–28', type: `мазид, ${bob}-боб (${MAZNAME[bob]} боби), ` + (ajw ? 'ажваф (саҳиҳ каби тусланади, 37-бет)' : 'солим') };
 }
 function stemsI(f) {
   const t = tasrifOf(f); if (!t || t.type !== 'солим') return null;
@@ -654,9 +1042,35 @@ function amrMalum(st) {
   const l = (c) => 'لِ' + c;
   return [[l(J[0][0]), l(J[0][1]), lomsiz.mm, lomsiz.mf, l(J[0][4])], [l(J[1][0]), l(J[1][1]), lomsiz.m2, '', l(J[1][4])], [l(J[2][0]), l(J[2][1]), lomsiz.mmp, lomsiz.mfp, '']];
 }
+// мисол ва маҳмуз ул-фо: охири саҳиҳ, шунинг учун умумий қолип (26–28-бет) + ўз қоидаси (32–34-бетлар)
+function stemsWeak(f) {
+  const t = tasrifOf(f); if (!t) return null;
+  const mis = t.type.startsWith('мисол'), mfo = t.type === 'маҳмуз ул-фо'; if (!mis && !mfo) return null;
+  const L = splitLetters(t.mozi[0][0]); const M = splitLetters(t.muzore[0][0]);
+  const B = M.slice(1); B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
+  const st = { bob: t.bob, madi: L, muzB: B, pre: FA, H: 'اِ', amrI: t.amr, type: `сулосий мужаррад, ${bobLbl(t.bob)}, ${t.type}`, pages: t.pages + ', 18, 26–28' };
+  if (mis) st.majMuzB = [['و'], [L[1][0], FA], [L[2][0]]];                    // 33–34-бет: يُوعَدُ، يُوسَرُ
+  if (mfo) st.fix = (c) => c.replace(/أَأْ/g, 'آ').replace(/أُأْ/g, 'أُو').replace(/ُأْ/g, 'ُؤْ');   // 32-бет: آمُرُ، يُؤْمَرُ، أُومَرُ
+  return st;
+}
+function amr5(J, a) { const l = (c) => c ? 'لِ' + c : c;
+  return [[l(J[0][0]), l(J[0][1]), a[0][0], a[0][1], l(J[0][4])], [l(J[1][0]), l(J[1][1]), a[1][0], '', l(J[1][4])], [l(J[2][0]), l(J[2][1]), a[2][0], a[2][1], '']]; }
+// музоъаф, ажваф, ноқис, лафиф, мултавий: жадваллар conj1 да китобдаги намуналар бўйича тўлиқ ясалган
+function sevenX(t) {
+  const x = t.x, E = [];
+  return { bob: t.bob, type: `сулосий мужаррад, ${t.bob}-боб, ${t.type}`, pages: t.pages + ', 18, 26–28', xnote: (x.note || '') + (x.nasb ? '' : ' Китобда бу тур учун насб (لَنْ) жадвали берилмаган, шунинг учун у қўйилмади.'),
+    malum: [['Феъли мозий', t.mozi], ['Феъли музореъ (рафъ ҳолида)', t.muzore], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(t.muzore, 'لَا ')],
+      ['لَنْ билан манфий музореъ (насб ҳолида)', x.nasb ? pfx(x.nasb, 'لَنْ ') : E], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(x.jazm, 'لَمْ ')],
+      ['Феъли амр (жазм ҳолида)', amr5(x.jazm, t.amr)], ['Феъли наҳий (жазм ҳолида)', pfx(x.jazm, 'لَا ')]],
+    majhul: [['Мозий мажҳули', x.mMozi], ['Музореъ мажҳули', x.mRaf], ['Нафий феъли мажҳули', pfx(x.mRaf, 'لَا ')],
+      ['لَنْ билан манфий музореъ мажҳули', x.mNasb ? pfx(x.mNasb, 'لَنْ ') : E], ['Жаҳд феъли мажҳули', pfx(x.mJazm, 'لَمْ ')],
+      ['Амр феъли мажҳули', pfx(x.mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(x.mJazm, 'لَا ')]] };
+}
 function sevenOf(f) {
-  const st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null)); if (!st) return null;
-  const mB = majB(st.muzB);
+  let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
+  if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
+  if (!st) return null;
+  const mB = st.majMuzB || majB(st.muzB);
   const malum = [
     ['Феъли мозий', madiGrid(st.madi)],
     ['Феъли музореъ (рафъ ҳолида)', muzGrid(st.muzB, st.pre, 'raf')],
@@ -673,25 +1087,32 @@ function sevenOf(f) {
     ['Жаҳд феъли мажҳули', pfx(muzGrid(mB, DA, 'jazm'), 'لَمْ ')],
     ['Амр феъли мажҳули', pfx(muzGrid(mB, DA, 'jazm'), 'لِ')],
     ['Наҳий феъли мажҳули', pfx(muzGrid(mB, DA, 'jazm'), 'لَا ')]];
+  if (st.fix) [malum, majhul].forEach(T => T.forEach(tb => { tb[1] = tb[1].map(r => r.map(c => c ? st.fix(c) : c)); }));
   return { ...st, malum, majhul };
 }
+const MOZI_ONLY = new Set(['حَبِنَ', 'حَسُبَ', 'خَبُرَ', 'رَجُسَ', 'سَكِكَ', 'شَطَحَ', 'صَعُبَ', 'طَرُفَ', 'عَطِلَ', 'فَحُشَ', 'قَطِطَ', 'هَوَسَ', 'وَأَدَ', 'وَأَرَ', 'وَأَلَ', 'وَحُسَ', 'يَئِسَ']);
+function moziOnlyOf(f) {
+  if (f.sarf_form !== 'I' || f.form_type !== 'verb') return null; const w = String(f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!MOZI_ONLY.has(w)) return null;
+  const L = splitLetters(w); if (L.length !== 3) return null;
+  return { moziOnly: true, type: 'сулосий мужаррад; китобда қавсдаги ҳарф олти бобга тўғри келмайди, шунинг учун муаллиф қарори билан фақат мозий тусланади', pages: '7–8', malum: [['Феъли мозий', madiGrid(L)]], majhul: [] };
+}
 function sevenBlock(f) {
-  const s = sevenOf(f) || majOnlyOf(f); if (!s) return '';
+  const s = sevenOf(f) || majOnlyOf(f) || moziOnlyOf(f); if (!s) return '';
   const C5 = ['Ғоиб муз.', 'Ғоиб муан.', 'Мухотоб муз.', 'Мухотоб муан.', 'Мутакаллим'], N = ['Муфрад', 'Тасния', 'Жамъ'];
   const box = h('div', {});
   const show = (which) => {
     const u = uzVerb(f), st = u && (which === 'malum' || s.only ? u.s : u.pas), U = st ? uzSeven(which === 'malum' || s.only ? u.pre : u.pasPre, st) : [];
-    box.replaceChildren(...(which === 'malum' ? s.malum : s.majhul).map(([t, g], i) => [h('h4', {}, t), tasrifTable(g, C5, N, U[i])]).flat());
+    box.replaceChildren(...(which === 'malum' ? s.malum : s.majhul).map(([t, g], i) => g.length ? [h('h4', {}, t), tasrifTable(g, C5, N, U[i])] : []).flat());
     bm.classList.toggle('on', which === 'malum'); bj.classList.toggle('on', which === 'majhul'); };
   const bm = h('button', { class: 'seg', onclick: () => show('malum') }, 'Маълум'), bj = h('button', { class: 'seg', onclick: () => show('majhul') }, 'Мажҳул');
   const el = h('details', { class: 'tsr-box' }, h('summary', {}, 'Етти феъл (маълум ва мажҳул)'),
     h('p', { class: 'tsr-note' }, `Тури: ${s.type}.` + (s.approx ? ' Маҳмуз ул-ломнинг мажҳул жадвали китобда йўқ: ҳамза ёзилиши 28 ва 32-бетлар бўйича қўйилди, муаллим билан текширинг.' : '') + (s.cfg ? ` Масдар вазни: ` : ''), s.cfg ? h('span', { lang: 'ar', class: 'arw' }, s.cfg.masdar) : '',
-      `. «Жаноҳ ут-толиб», ${s.pages}-бетлар бўйича ясалган. Лозим (ўтимсиз) феъллардан мажҳул ясалмайди (19-бет).`,
+      `${s.cfg ? '. ' : ' '}«Жаноҳ ут-толиб», ${s.pages}-бетлар бўйича ясалган.${s.xnote ? ' ' + s.xnote : ''} Лозим (ўтимсиз) феъллардан мажҳул ясалмайди (19-бет).`,
       (() => { const u = uzVerb(f); if (!u) return ' Луғатда бу феълнинг «-моқ» шаклидаги таржимаси йўқ, шунинг учун ўзбекчаси қўйилмади.';
         return ` Таржима луғатдаги «${u.src}» маъносидан${u.via ? ` (${u.via} сўзидан олинди)` : ''}, китобдаги жадваллар (26–28-бет) намунасида ясалган.` +
           (!u.pas ? ' Бу феълнинг ўтимли маъноси йўқ, шунинг учун мажҳулнинг ўзбекчаси қўйилмади.' : u.pasOther ? ` Мажҳулнинг ўзбекчаси ўтимли «${u.pasSrc}» маъноси бўйича.` : ''); })()),
     h('div', { class: 'segs' }, bm, bj), box);
-  if (s.only) { bm.remove(); show('majhul'); el.querySelector('summary').textContent = 'Фақат мажҳул ишлатилади: етти феъл'; } else show('malum'); return el;
+  if (s.moziOnly) { show('malum'); bm.remove(); bj.remove(); el.querySelector('summary').textContent = 'Фақат мозий тусланади'; } else if (s.only) { bm.remove(); show('majhul'); el.querySelector('summary').textContent = 'Фақат мажҳул ишлатилади: етти феъл'; } else show('malum'); return el;
 }
 
 // ================= ясама исмлар, боб маънолари, I боб изоҳлари, исми тасғир =================
@@ -919,20 +1340,62 @@ function wordHits(t) {
     const extra = [[f.verbal_noun, 'масдари'], [f.plural_form, 'кўплиги'], [f.collective_form, 'жамловчиси']].filter(x => x[0]).flatMap(([x, l]) => String(x).split(/[,،;=]|ёки/).map(y => [y.trim(), l]));
     let sc = 0, via = '';
     if (own.includes(t)) sc = 5; else if (own.some(x => normAr(x) === n)) sc = 4;
-    else { const hit = extra.find(([y]) => y === t || normAr(y) === n); if (hit) { sc = 3; via = hit[1]; } }
-    if (sc) out.push({ e, f, sc, via });
+    else { const hit = extra.find(([y]) => y === t) || extra.find(([y]) => normAr(y) === n); if (hit) { sc = (hit[0] === t && /[\u064B-\u0652]/.test(t)) ? 4.5 : 3; via = hit[1]; } }
+    if (sc >= 4 && !via) {   // асосий сўз ва ҳар бир «ёки» шакл — алоҳида натижа
+      const main = String(f.arabic_word || '').split(/[,،;=]|ёки/).map(x => x.trim());
+      if (main.includes(t)) out.push({ e, f, sc: 5, via }); else if (main.some(x => normAr(x) === n)) out.push({ e, f, sc: 4, via });
+      (f.alt_forms || []).forEach(a => { if (!a || !a.arabic_word) return; const ex = a.arabic_word === t; if (ex || normAr(a.arabic_word) === n) out.push({ e, f: altView(f, a.arabic_word), sc: ex ? 5 : 4, via }); });
+      if (!out.length || out[out.length - 1].e !== e) out.push({ e, f, sc, via });
+    } else if (sc) out.push({ e, f, sc, via });
   }));
+  if (!out.length) muzGuess(n).forEach(x => out.push(x));
   return out.sort((a, b) => b.sc - a.sc);
 }
+// музореъ шаклидан феълни тахминан топиш (жадвали йўқ феъллар учун)
+let VSK = null;
+function muzGuess(n) {
+  if (n.length < 4 || !/^[يتنا]/.test(n)) return [];
+  let fh = []; try { fh = arFormHits(n); } catch (z) {} if (fh.length) return [];
+  if (!VSK) { VSK = new Map(); DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type !== 'verb' || !f.sarf_form || !f.arabic_word) return;
+    String(f.arabic_word).split(/[,،]|ёки/).forEach(w => { let k = normAr(w.trim()).replace(/[ؤئء]/g, 'ا'); if (!k) return; if (/^(IV|VII|VIII|IX|X)$/.test(f.sarf_form) && k[0] === 'ا') k = k.slice(1); else if (f.sarf_form === 'I') return;
+      if (!VSK.has(k)) VSK.set(k, []); VSK.get(k).push({ e, f }); }); })); }
+  const body = n.slice(1).replace(/[ؤئء]/g, 'ا'), seen = new Set(), out = [];
+  [body, ...['ون', 'ان', 'ين', 'وا', 'ن', 'ا', 'ي'].filter(sf => body.endsWith(sf) && body.length - sf.length >= 3).map(sf => body.slice(0, -sf.length))].forEach(c => (VSK.get(c) || []).forEach(x => { if (!seen.has(x.f)) { seen.add(x.f); out.push({ e: x.e, f: x.f, sc: 2, via: 'музореъ шакли бўлиши мумкин' }); } }));
+  return out.slice(0, 6);
+}
 function wordCard(x) {
-  const m = ((x.f.translations || [])[0] || {}).meaning || (x.f.equivalent_to ? '= ' + x.f.equivalent_to.join(', ') : '—');
+  const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
+  if (f.form_type === 'verb') {
+    let muz = [], amr = '', bobs = [];
+    try { if (MAZID[f.sarf_form]) { const sv = sevenCached(f); if (sv) { const M = sv.malum.find(t => /музореъ \(рафъ/.test(t[0])), A = sv.malum.find(t => /^Феъли амр/.test(t[0])); if (M) muz = [M[1][0][0]]; if (A) amr = A[1][0][2] || ''; } }
+      else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); bobs = [...new Set(tl.map(t => t.bob).filter(Boolean))]; if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
+    const RB = ['', 'I', 'II', 'III', 'IV', 'V', 'VI']; let sb = f.sarf_form ? f.sarf_form + ' шакл' : '';
+    // боб: китобда қавсда босилган ҳарф ва шунга мос боб рақами; мазидда боб номи
+    if (MAZID[f.sarf_form]) sb += ' ' + MAZNAME[MAZID[f.sarf_form]] + ' боби';
+    else if (f.sarf_form === 'I' && f.vocaliz && /^[аиу,\s\/]+$/.test(String(f.vocaliz))) { if (bobs.length) sb += ' ' + bobs.map(x => RB[x] || x).join(', ') + ' боб'; }
+    if (muz.length) chips.push(cp(muz.join('، '), 'музореъ'));
+    if (amr) chips.push(cp(amr, 'амр'));
+    if (sb) chips.push(h('span', { class: 'sb' }, sb));
+  } else { if (f.plural_form) chips.push(cp(String(f.plural_form).split(/[,،]/).slice(0, 2).join('، '), 'кўплиги')); }
+  const ms = (f.translations || []).map(t => (t.label ? t.label + ' ' : '') + t.meaning).filter(Boolean);
+  const tg = { verb: 'феъл', noun: 'исм', adjective: 'сифат' }[f.form_type] || '';
+  return h('button', { class: 'wc', onclick: () => openAt(x.e, f) },
+    h('div', { class: 'top' }, h('div', { class: 'chips2' }, chips), h('div', { class: 'w', lang: 'ar' }, f.arabic_word)),
+    x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
+    ms.length ? h('ul', {}, ms.slice(0, 3).map(m => h('li', {}, m)), ms.length > 3 ? h('li', { class: 'more' }, `яна ${ms.length - 3} та маъно`) : '')
+      : h('ul', {}, h('li', {}, base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—')),
+    h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), tg ? h('span', { class: 'tg' }, tg) : ''));
+}
+function wordCardOld(x) {
+  const m = (x.f.translations || []).map(t => t.meaning).filter(Boolean).slice(0, 6).join('; ') || (x.f.equivalent_to ? '= ' + x.f.equivalent_to.join(', ') : '—');
   return h('button', { class: 'card', onclick: () => openAt(x.e, x.f) },
-    h('span', { class: 'gloss' }, (x.via ? `(${x.f.arabic_word} — ${x.via}) ` : '') + m), h('span', { class: 'root', lang: 'ar' }, x.f.arabic_word),
+    h('span', { class: 'gloss' }, (x.via ? `${x.f.arabic_word} сўзининг ${x.via} · ` : '') + m), h('span', { class: 'root', lang: 'ar' }, x.f.arabic_word),
     h('span', { class: 'meta' }, `${x.f.form_type === 'verb' && x.f.sarf_form ? x.f.sarf_form + ' шакл · ' : ''}${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
 let pendingAt = null;
 function openAt(e, f) { pendingAt = f; if (location.hash === '#' + hashOf(e)) route(); else go(hashOf(e)); }
 function scrollToForm(f) {
+  f = f._of || f;
   const i = DATA.find(e => e.derivatives.includes(f)).derivatives.indexOf(f);
   const el = document.querySelector(`[data-fi="${i}"]`); if (!el) return;
   el.classList.add('hl'); el.scrollIntoView({ block: 'center' }); setTimeout(() => el.classList.remove('hl'), 2600);
@@ -941,9 +1404,25 @@ function scrollToForm(f) {
 // ================= фақат мажҳулда ишлатиладиган феъллар (أُبِنَ каби) =================
 // 18-бет: сулосий мужаррад мажҳули олти бобда ҳам бир хил (فُعِلَ — يُفْعَلُ), рубоъий: دُحْرِجَ — يُدَحْرَجُ;
 // музоъаф мажҳули 29-бет (رُدَّ — يُرَدُّ), ноқис мажҳули 40-бет (دُعِيَ — يُدْعَى).
+let F2M = null;
 function majOnlyOf(f) {
   if (f.form_type !== 'verb') return null;
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); const L0 = splitLetters(w);
+  // ажваф, фақат мажҳул: إِيفَ = أُوِفَ (таскин 3 + қалб 4; قُوِلَ → قِيلَ каби, 31–32, 35–36-бетлар)
+  if (L0.length === 3 && (f.sarf_form || 'I') === 'I' && !f.vocaliz && L0[0].includes(KA) && L0[1][0] === 'ي' && !vOf(L0[1]) && L0[2].includes(FA) && !L0[2].includes(SH)) {
+    if (!F2M) { F2M = new WeakMap(); DATA.forEach(e => e.derivatives.forEach(x => F2M.set(x, e))); }
+    const e = F2M.get(f), r = e ? (e.root_search || '').replace(/[\u064B-\u0652\s()]/g, '') : '';
+    const sv = r.length === 3 ? (r[1] === 'و' ? DA : r[1] === 'ي' ? KA : null) : null; if (!sv) return null;
+    const F = HZ.test(L0[0][0]) ? '§' : L0[0][0], Lm = L0[2][0]; if (WK.test(F + Lm) || HZ.test(Lm) || Lm === 'ت') return null;
+    if (r[2] !== Lm || (F === '§' ? !HZ.test(r[0]) : r[0] !== F)) return null;   // мақола ўзаги шу сўзники бўлиши шарт
+    const fx2 = (g) => g.map(r2 => r2.map(c => c && hamzaSeat(Lm === 'ن' ? c.replace(/نْنَ/g, 'نَّ') : c)));
+    const Ml = (q) => q + DA + F + FA + 'ا' + Lm, Ms = (q) => q + DA + F + FA + Lm + SU + 'نَ', Sj = (q) => q + DA + F + FA + Lm + SU;
+    const R = fx2(rafShape(Ml, Ms)), Nn = fx2(mapK(rafShape(Ml, Ms), nasbCell));
+    const J = fx2(grid({ gm: Sj('ي'), gf: Sj('ت'), mm: Sj('ت'), mf: Ml('ت') + KA + 'ي', s1: Sj('أ'), gm2: Ml('ي') + FA + 'ا', gf2: Ml('ت') + FA + 'ا', m2: Ml('ت') + FA + 'ا', p1: Sj('ن'), gmp: Ml('ي') + DA + 'وا', gfp: Ms('ي'), mmp: Ml('ت') + DA + 'وا', mfp: Ms('ت') }));
+    return { only: true, type: (sv === DA ? 'ажваф (вовлик)' : 'ажваф (ёлик)') + ', фақат мажҳул ишлатилади', pages: '31–32, 35–36', majhul: [
+      ['Мозий мажҳули', fx2(moziShape(F + KA + 'ي' + Lm, F + sv + Lm + SU))], ['Музореъ мажҳули', R], ['Нафий феъли мажҳули', pfx(R, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(Nn, 'لَنْ ')],
+      ['Жаҳд феъли мажҳули', pfx(J, 'لَمْ ')], ['Амр феъли мажҳули', pfx(J, 'لِ')], ['Наҳий феъли мажҳули', pfx(J, 'لَا ')]] };
+  }
   if (!L0.length || !L0[0].includes(DA)) return null;
   const sf = f.sarf_form || 'I', hz = (l) => HZ.test(l[0]) ? ['§', ...l.slice(1)] : l.slice();
   const L = L0.map(hz), n = L.length, ch = (i) => L[i][0];
@@ -973,6 +1452,12 @@ function majOnlyOf(f) {
     const g = (s, mf, du, mp, fp) => grid({ gm: M('ي') + s, gf: M('ت') + s, mm: M('ت') + s, mf: M('ت') + mf, s1: M('أ') + s, gm2: M('ي') + du, gf2: M('ت') + du, m2: M('ت') + du, p1: M('ن') + s, gmp: M('ي') + mp, gfp: M('ي') + fp, mmp: M('ت') + mp, mfp: M('ت') + fp });
     return pack(madi, g('ى', 'يْنَ', 'يَانِ', 'وْنَ', 'يْنَ'), g('ى', 'يْ', 'يَا', 'وْا', 'يْنَ'), g('', 'يْ', 'يَا', 'وْا', 'يْنَ'),
       'ноқис, фақат мажҳул ишлатилади', '18, 39–41');
+  }
+  // мисол, фақат мажҳул: وُبِئَ – يُوبَأُ (33–34-бет: يُوعَدُ каби вов сақланади)
+  if (sf === 'I' && n === 3 && ch(0) === 'و' && !WK.test(ch(1)) && !/[ىيو]/.test(ch(2)) && L[1].includes(KA)) {
+    const Bm = [['و'], [ch(1), FA], [ch(2)]], Lw = L.map((l, i) => i === n - 1 ? [l[0], FA] : l);
+    return pack(madiGrid(Lw), muzGrid(Bm, DA, 'raf'), muzGrid(Bm, DA, 'nasb'), muzGrid(Bm, DA, 'jazm'),
+      'мисол (вовлик)' + (L.some(l => l[0] === '§') ? ', маҳмуз' : '') + ', фақат мажҳул ишлатилади', '18, 33–34');
   }
   // солим, маҳмуз, мазид ва рубоъий: охиргидан олдинги ҳарф касрали шакл берилган
   if (L.slice(0, -1).some(l => WK.test(l[0])) || /[ىيو]/.test(ch(n - 1))) return null;
@@ -1009,9 +1494,10 @@ function openSheet(f, e, btn) {
     derivedBlock(f, e),
     tasghirBlock(f, e),
     (f.translations || []).length ? h('ol', { class: 'mean' }, f.translations.map(t => h('li', {}, t.meaning)))
-      : (f.equivalent_to ? h('p', {}, '= ' + f.equivalent_to.join(', ') + ' боб билан бир хил') : ''),
+      : (f.equivalent_to ? h('p', {}, '= ' + f.equivalent_to.join(', ') + (f.equivalent_to.every(r => /^[IVX]+/.test(String(r).trim())) ? ' боб билан бир хил' : '')) : ''),
+    refsBlock(f, e),
     exs.length ? h('h3', {}, 'Мисоллар') : '',
-    exs.length ? h('div', { class: 'exs' }, exs.map(x => h('div', { class: 'ex' }, h('div', { class: 'p' }, ...textToNodes(x.phrase, f, e)), h('div', {}, (x.sense ? `${x.sense}) ` : '') + (x.translation || '…'))))) : '',
+    exs.length ? h('div', { class: 'exs' }, exs.map(x => h('div', { class: 'ex' }, h('div', { class: 'p' }, ...textToNodes(x.phrase, f, e)), h('div', {}, (x.tag ? x.tag + ' ' : '') + (x.sense ? `${x.sense}) ` : '') + (x.translation || '…'))))) : '',
     others.length ? h('h3', {}, 'Шу ўзакнинг бошқа шакллари') : '',
     others.length ? h('div', { class: 'rels' }, others.map(x => h('button', { class: 'rel', onclick: () => openSheet(x, e, null) },
       h('span', { class: 'l' }, lab(x)), h('span', { class: 'g' }, ((x.translations || [])[0] || {}).meaning || (x.equivalent_to ? '= ' + x.equivalent_to.join(', ') : '')),
@@ -1032,8 +1518,9 @@ function entryRow(e) {
 }
 function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
+  if (active === 'sarf' || active === 'nahv') active = 'gram';
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('guide', '#guide', 'info', 'Қўлланма'), t('sarf', '#sarf', 'book', 'Сарф'), t('nahv', '#nahv', 'scroll', 'Наҳв'), t('profile', '#profile', 'user', 'Профил'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'), t('more', '#more', 'grid', 'Қўшимча'));
 }
 function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !active); renderTabs(active); view.replaceChildren(...kids.flat(Infinity)); window.scrollTo(0, 0); }
 
@@ -1107,10 +1594,29 @@ function renderHome() {
     if (active) {
       const items = results();
       body.replaceChildren(
-        letter ? h('div', { class: 'lbl' }, `«${letter}» ҳарфи`) : '',
+        letter ? h('div', { class: 'lbl' }, `«${letter}» ҳарфи`) : ((HAS_AR.test(query) && arAlt(query.trim())) ? h('div', { class: 'count', style: 'color:var(--gold)' }, `«${query.trim()}» топилмади — «${arAlt(query.trim())}» бўйича кўрсатилмоқда`) : ''),
         ...(() => {
           // аниқ мос сўзлар тепада, қолганлари ёпиқ бўлимда
-          const wh = (!letter && HAS_AR.test(query)) ? wordHits(query.trim()) : [];
+          const wh0 = (!letter && HAS_AR.test(query)) ? wordHits(effQ(query.trim())) : [];
+          const whx = (!letter && HAS_AR.test(query)) ? hamzaAlts(query.trim()).flatMap(w => wordHits(w).filter(x => x.sc >= 4)) : [];
+          const wh = wh0.concat(whx.filter(x => !wh0.some(y => y.f === x.f)));
+          const qv = isLat(query) ? latCyr(query) : query;
+          const vh = (!letter && !HAS_AR.test(query)) ? verbHits(qv) : [];
+          if (!letter && !HAS_AR.test(query)) { const U = uzView(qv, vh, items); if (U) return U; }
+          if (vh.length) return [h('div', { class: 'lbl' }, `Феъл шакллари (${vh.length})`), h('div', { class: 'list' }, vh.slice(0, 20).map(verbCard)),
+            h('div', { class: 'count' }, `${items.length} та мақола`), h('div', { class: 'list' }, cards(items))];
+          const nqa = HAS_AR.test(query) ? normAr(query) : '';
+          const rawq = arRaw(query), marked = !!nqa && nqa.length < rawq.length;
+          const exactW = wh.some(x => x.sc === 4.5 || (marked ? arRaw(x.f.arabic_word) === rawq : normAr(x.f.arabic_word) === nqa));
+          let ah = (!letter && nqa) ? arFormHits(query) : [], viaX = false;
+          if (!ah.length && !letter && nqa && !exactW) { ah = arFormHitsX(query.trim()); viaX = ah.length > 0; }
+          const xb = (viaX && !arAlt(query.trim())) ? h('div', { class: 'count', 'data-vx': '1', style: 'color:var(--gold)' }, `«${query.trim()}» — «${XST.get(nqa) || ''}» бўйича кўрсатилмоқда`) : '';
+          const ahSec = ah.length ? [h('div', { class: 'lbl' }, `Феъл шакллари (${ah.length})`), h('div', { class: 'list' }, ah.slice(0, 20).map(arFormCard))] : [];
+          if (ah.length && !exactW && !(viaX && wh.length) && !whx.length) return [xb, ...ahSec,
+            wh.length ? h('details', { class: 'more' }, h('summary', {}, `Сўзлар (${wh.length})`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard))) : '',
+            items.length ? h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items))) : ''];
+          if (ah.length) return [xb, h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)), ...ahSec,
+            h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items)))];
           if (wh.length) return [h('div', { class: 'count' }, `${wh.length} та сўз`), h('div', { class: 'list' }, wh.slice(0, 30).map(wordCard)),
             h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items)))];
           const lim = items.some(e => e._score >= 3) ? 3 : 2;
@@ -1122,22 +1628,35 @@ function renderHome() {
         })(),
         items.length ? ''
           : h('div', { class: 'empty' }, letter ? 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.' : 'Ҳеч нарса топилмади. Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзиб кўринг.'));
+      if (body.querySelector('.wc, .card')) { const em = body.querySelector('.empty'); if (em) em.remove(); body.querySelectorAll('details.more').forEach(d => { if (/\(0\)/.test(d.querySelector('summary').textContent)) d.remove(); }); }
+      if (!letter && HAS_AR.test(query)) { const vx = !!body.querySelector('[data-vx]'); let xh = exHits(query.trim()); if (!xh.length && !vx) xh = exHits(effQ(query.trim())); if (xh.length) { const sec = [h('div', { class: 'lbl' }, `Мисолларда (${xh.length})`), h('div', { class: 'list', style: 'margin-bottom:14px' }, xh.map(exCard))];
+        const firstList = body.querySelector('.list'); const exact = ALLW.has(normAr(effQ(query.trim()))); if (vx) body.append(...sec); else if (exact && firstList) firstList.after(...sec); else { const c0 = body.querySelector('.count, .lbl'); if (c0 && /кўрсатилмоқда/.test(c0.textContent)) c0.after(...sec); else body.prepend(...sec); } } }
       return;
     }
+    const hist = (S.hist || []);
     body.replaceChildren(
-      h('div', { class: 'lbl' }, 'Ҳарфлар бўйича'),
-      h('div', { class: 'letters' }, LETTERS.map(l => h('button', { class: 'letter', lang: 'ar', onclick: () => { letter = l; fillAll(); } }, l))),
-      h('div', { class: 'quad' },
-        h('button', { class: 'geo', onclick: () => go('geo'), 'aria-label': 'Географик номлар' }, h('span', { class: 'fl', 'aria-hidden': 'true' }, '🇸🇦'), h('span', {}, 'Географик номлар')),
-        ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', onclick: () => go('extra-' + i) }, h('span', {}, l[1])))));
+      hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
+        h('div', { class: 'chips' }, hist.map(x => h('button', { class: 'chip', onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
+      '');
   };
   const fillAll = () => { input.value = query; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); };
   const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
   const clearBtn = h('button', { class: 'link', style: 'padding:0;min-height:44px', hidden: true, onclick: () => { query = ''; letter = ''; fillAll(); input.focus(); } }, 'Тозалаш');
-  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); clearTimeout(fillTimer); fillTimer = setTimeout(fill, query.trim() ? 260 : 0); });
+  let ht = null;
+  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); clearTimeout(fillTimer); fillTimer = setTimeout(fill, query.trim() ? 260 : 0);
+    clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card')) pushHist(query); }, 1800); });
+  input.addEventListener('change', () => { if (query.trim()) pushHist(query); });
   page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: 'icons/logo-kanz-sm.png', alt: 'كنز' })),
-      h('a', { class: 'round', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22))),
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
+      h('div', { class: 'acts' },
+        h('a', { class: 'round', 'data-l': 'Қўлланма', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
+        h('a', { class: 'round', 'data-l': 'География', href: '#geo', 'aria-label': 'Географик номлар', title: 'Географик номлар' }, h('span', { 'aria-hidden': 'true', style: 'font-size:21px;line-height:1' }, '🇸🇦')),
+        h('a', { class: 'round star', 'data-l': 'Сақланган', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
+        (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          const b = h('button', { class: 'round', 'data-l': 'Режим', 'aria-label': 'Ёруғ ёки қоронғи' });
+          const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.contrast, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
+          b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })(),
+        h('a', { class: 'round', 'data-l': 'Профил', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22)))),
     backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body);
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
 }
@@ -1155,7 +1674,7 @@ function renderEntry(e) {
     h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => (history.length > 1 ? history.back() : go('home')) }, '← Орқага'), mark),
     h('div', { class: 'entry-head' }, h('div', { class: 'root', lang: 'ar' }, rootOf(e)), h('div', { class: 'src' }, `стр. ${e.source_page} · арабча сўзни босинг`)),
     h('div', {}, runs.map(r => r.v ? h('p', { class: 'book' }, r.items.flatMap((f, i) => [i ? '; ' : '', ...formNodes(f, e)]))
-      : h('p', { class: 'book' + (r.items[0].form_type === 'derived' ? ' sub' : '') }, r.items[0].form_type === 'derived' ? '– ' : '', ...formNodes(r.items[0], e)))),
+      : h('p', { class: 'book' + ((r.items[0].dash != null ? r.items[0].dash : r.items[0].form_type === 'derived') ? ' sub' : '') }, (r.items[0].dash != null ? r.items[0].dash : r.items[0].form_type === 'derived') ? '– ' : '', ...formNodes(r.items[0], e)))),
     e.continues_on_next_page ? h('div', { class: 'cont' }, 'Мақола кейинги саҳифада давом этади.') : '');
   if (pending) { const p = pending; pending = null; openSheet(p, e, null); }
   if (pendingAt) { const p = pendingAt; pendingAt = null; requestAnimationFrame(() => scrollToForm(p)); }
@@ -1164,7 +1683,7 @@ function renderEntry(e) {
 // ---------- сақланганлар ва профил ----------
 function renderSaved() {
   const items = S.saved.map(byId).filter(Boolean);
-  page('profile', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('profile') }, '← Профил')), h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
+  page('profile', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => (history.length > 1 ? history.back() : go('home')) }, '← Орқага')), h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
     items.length ? h('div', { class: 'group', style: 'margin-top:8px' }, items.map(entryRow))
       : h('div', { class: 'empty' }, 'Ҳали ҳеч нарса сақланмади. Мақолани очиб, юқоридаги белги тугмасини босинг.'));
 }
@@ -1173,10 +1692,93 @@ function seg(options, current, onPick) {
   options.forEach(([val, label]) => wrap.append(h('button', { 'aria-pressed': String(current === val), onclick: () => { onPick(val); } }, label)));
   return wrap;
 }
+// ---------- кун сўзи (китобдан мисоли билан) ----------
+let DAYPOOL = null;
+function dayPick() {
+  if (!DAYPOOL) { DAYPOOL = []; DATA.forEach(e => e.derivatives.forEach(f => {
+    if (f.uncertain || !f.arabic_word || /[,،\ufffd]|ёки/.test(f.arabic_word)) return;
+    const m = String(((f.translations || [])[0] || {}).meaning || '').trim(); if (m.length < 3 || /^=|\ufffd/.test(m)) return;
+    const x = (f.examples || []).find(z => z.translation && /[\u0600-\u06FF]/.test(z.phrase || '') && !/\ufffd/.test(z.phrase + z.translation) && !/~[\u064B-\u0652\u0640]|\u0640|\.\.\./.test(z.phrase)); if (!x) return;
+    DAYPOOL.push({ e, f, m, x }); })); }
+  if (!DAYPOOL.length) return null;
+  const d = new Date(); const day = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) + d.getFullYear() * 366;
+  return DAYPOOL[(day * 7919) % DAYPOOL.length];
+}
+function dayCard() {
+  const p = dayPick(); if (!p) return '';
+  return h('button', { class: 'day', onclick: () => openAt(p.e, p.f) },
+    h('div', { class: 'k' }, 'Кун сўзи'), h('div', { class: 'w', lang: 'ar' }, p.f.arabic_word), h('div', { class: 'm' }, p.m),
+    h('div', { class: 'x' }, h('div', { class: 'k' }, 'Китобдан мисол'), h('div', { class: 'p', lang: 'ar' }, p.x.phrase.replace(/~/g, '\u200f~\u200f')), h('div', {}, p.x.translation)));
+}
+// ---------- «=» ва «қар.» ишоралари: босиладиган ҳавола ----------
+function refsBlock(f, e) {
+  const seen = new Set(), out = [];
+  const push = (w, lab) => { w = String(w || '').trim(); if (!w || seen.has(w)) return; seen.add(w); const t = lookup(w, e); if (!t || t.f === f || (t.f._of || t.f) === f) return;
+    out.push(h('button', { class: 'rel', onclick: () => openSheet(t.f, t.e, null) }, h('span', { class: 'l' }, lab), h('span', { class: 'g' }, ((t.f.translations || [])[0] || {}).meaning || ''), h('span', { class: 'w', lang: 'ar' }, dA(t.f.arabic_word)))); };
+  (f.equivalent_to || []).forEach(r => String(r).split(/[,،]/).forEach(w => { if (/[\u0600-\u06FF]/.test(w)) push(w, '='); }));
+  (f.translations || []).forEach(t => { const m = String(t.meaning || ''); let g; const R = /(қар\.|сол\.|=)\s*([\u0600-\u06FF\u064B-\u0652]+)/g; while ((g = R.exec(m))) push(g[2], g[1] === '=' ? '=' : g[1]); });
+  return out.length ? [h('h3', {}, 'Боғлиқ сўзлар'), h('div', { class: 'rels' }, out)] : '';
+}
+// ---------- тезкор тест (саволлар луғатнинг ўзидан) ----------
+let QP = null, QZ = null;
+const shuf = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function quizPool() {
+  if (QP) return QP; QP = { w: [], v: [] };
+  DATA.forEach(e => e.derivatives.forEach(f => {
+    if (f.uncertain || !f.arabic_word) return; const w = f.arabic_word;
+    if (/[,،~\ufffd]|ёки/.test(w) || !/[\u064B-\u0652]/.test(w)) return;
+    const t = (f.translations || [])[0]; if (!t || t.label) return; const m = String(t.meaning || '').trim();
+    if (m.length < 3 || m.length > 42 || /[\u0600-\u06FF=~\ufffd(]/.test(m) || /^(қар|сол|шунингдек)/.test(m)) return;
+    QP.w.push({ e, f, m });
+    if (f.form_type === 'verb' && f.sarf_form === 'I' && /^[аиу]$/.test(String(f.vocaliz || '').trim())) QP.v.push({ e, f, m });
+  }));
+  return QP;
+}
+function quizMake() {
+  const P = quizPool(), qs = []; let guard = 0;
+  while (qs.filter(q => q.kind === 'v').length < 4 && guard++ < 400) {
+    const it = P.v[Math.floor(Math.random() * P.v.length)]; if (!it || qs.some(q => q.it === it)) continue;
+    let tl = []; try { tl = tasrifList(it.f); } catch (x) {} if (tl.length !== 1 || tl[0].type !== 'солим') continue;
+    const ok = tl[0].muzore[0][0], L = splitLetters(ok); if (L.length !== 4) continue;
+    const opts = [FA, KA, DA].map(v => { const B = cl(L); B[2] = setV(B[2], v); return joinL(B); });
+    qs.push({ kind: 'v', it, ok, opts: shuf(opts) });
+  }
+  guard = 0;
+  while (qs.length < 10 && guard++ < 400) {
+    const it = P.w[Math.floor(Math.random() * P.w.length)]; if (!it || qs.some(q => q.it === it)) continue;
+    const same = P.w.filter(x => x.f.form_type === it.f.form_type && x.m !== it.m); const wrong = [];
+    let g2 = 0; while (wrong.length < 3 && g2++ < 60) { const c = same[Math.floor(Math.random() * same.length)]; if (c && !wrong.includes(c.m)) wrong.push(c.m); }
+    if (wrong.length < 3) continue;
+    qs.push({ kind: 'w', it, ok: it.m, opts: shuf([it.m, ...wrong]) });
+  }
+  return { qs: shuf(qs), i: 0, score: 0, pick: null };
+}
+function renderQuiz() {
+  if (!QZ) QZ = quizMake();
+  const bar = h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => { QZ = null; go('home'); } }, '← Бош саҳифа'));
+  if (QZ.i >= QZ.qs.length) {
+    const n = QZ.score, t = QZ.qs.length;
+    return page('home', bar, h('div', { class: 'qz-end' }, h('div', { class: 'n' }, `${n} / ${t}`), h('p', { style: 'font-size:17px' }, n === t ? 'Баракалла, ҳаммаси тўғри!' : n >= t * 0.7 ? 'Яхши натижа.' : 'Яна бир уриниб кўринг.')),
+      h('div', { style: 'display:grid;gap:10px' }, h('button', { class: 'btn', onclick: () => { QZ = quizMake(); renderQuiz(); } }, 'Яна 10 та савол'), h('button', { class: 'btn line', onclick: () => { QZ = null; go('home'); } }, 'Бош саҳифа')));
+  }
+  const q = QZ.qs[QZ.i], done = QZ.pick != null;
+  const opt = (o) => h('button', { class: 'opt' + (q.kind === 'v' ? ' ar' : '') + (done ? (o === q.ok ? ' ok' : (o === QZ.pick ? ' no' : '')) : ''), lang: q.kind === 'v' ? 'ar' : null, disabled: done ? '' : null,
+    onclick: () => { if (QZ.pick != null) return; QZ.pick = o; if (o === q.ok) QZ.score++; renderQuiz(); } }, o);
+  page('home', bar,
+    h('div', { class: 'qz-top' }, h('span', {}, `Савол ${QZ.i + 1} / ${QZ.qs.length}`), h('span', {}, `Тўғри: ${QZ.score}`)),
+    h('div', { class: 'qz-bar' }, h('i', { style: `width:${Math.round(QZ.i / QZ.qs.length * 100)}%` })),
+    h('div', { class: 'qz-q' }, h('div', { class: 't' }, q.kind === 'v' ? 'Бу феълнинг музореъси қайси?' : 'Бу сўзнинг маъноси қайси?'), h('div', { class: 'w', lang: 'ar' }, q.it.f.arabic_word), q.kind === 'v' ? h('div', { class: 'g' }, q.it.m) : ''),
+    q.opts.map(opt),
+    done ? h('div', { style: 'display:grid;gap:10px;margin-top:8px' },
+      h('p', { style: 'margin:0;font-size:14px;color:var(--muted)' }, `Луғатда: ${rootOf(q.it.e)} мақоласи, стр. ${q.it.e.source_page}`),
+      h('button', { class: 'btn', onclick: () => { QZ.i++; QZ.pick = null; renderQuiz(); } }, QZ.i + 1 < QZ.qs.length ? 'Кейингиси' : 'Натижа'),
+      h('button', { class: 'btn line', onclick: () => openAt(q.it.e, q.it.f) }, 'Луғатда очиш')) : '');
+}
 function renderProfile() {
   const saved = S.saved.map(byId).filter(Boolean).slice(0, 3);
   const sw = h('button', { class: 'sw', role: 'switch', 'aria-checked': String(S.harakat), 'aria-label': 'Огласовкаларни кўрсатиш', onclick: () => { S.harakat = !S.harakat; save(); renderProfile(); } });
   page('profile',
+    h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
     h('div', { class: 'me' }, h('div', { class: 'av' }, svg(ICON.user, 30)),
       h('div', {}, h('div', { style: 'font-size:22px;font-weight:600;line-height:1.2' }, 'Меҳмон'), h('div', { style: 'font-size:14px;color:var(--muted)' }, 'Сақланганлар шу қурилмада сақланади'))),
     h('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, h('div', { class: 'lbl' }, 'Сақланганлар'), h('a', { class: 'link', href: '#saved', style: 'display:flex;align-items:center;font-size:14px' }, 'Барчаси')),
@@ -1187,6 +1789,13 @@ function renderProfile() {
       h('div', { class: 'set' }, h('span', {}, 'Огласовкалар'), sw),
       h('div', { class: 'set' }, h('span', {}, 'Мавзу'), seg([['system', 'Тизим'], ['light', 'Ёруғ'], ['dark', 'Қоронғи']], S.theme, v => { S.theme = v; save(); applyPrefs(); renderProfile(); })),
       h('div', { class: 'set' }, h('span', {}, 'Арабча шрифт'), seg([[0.85, 'Кичик'], [1, 'Ўртача'], [1.2, 'Катта']], S.size, v => { S.size = v; save(); applyPrefs(); renderProfile(); }))),
+    h('div', { class: 'lbl' }, 'Дизайн синови'),
+    h('div', { class: 'group' },
+      h('div', { class: 'set col' }, h('span', {}, 'Ранглар (ёруғ мавзуда)'), seg([['A', 'Фил суяги'], ['B', 'Қоғоз'], ['C', 'Зайтун'], ['O', 'Эски']], S.pal, v => { S.pal = v; save(); applyPrefs(); renderProfile(); })),
+      h('div', { class: 'set col' }, h('span', {}, 'Арабча ёзув'), seg([['naskh', 'Насх'], ['amiri', 'Амирий'], ['sans', 'Текис 1'], ['plex', 'Текис 2'], ['kufi', 'Куфий']], S.far, v => { S.far = v; save(); applyPrefs(); renderProfile(); }),
+        h('div', { style: 'font-family:var(--font-ar);font-size:30px;line-height:1.9;direction:rtl;align-self:stretch;text-align:center' }, 'كَتَبَ يَكْتُبُ · مُهَنْدِسٌ')),
+      h('div', { class: 'set col' }, h('span', {}, 'Ўзбекча ёзув'), seg([['plex', 'Plex'], ['inter', 'Inter'], ['noto', 'Noto'], ['pt', 'PT Sans'], ['roboto', 'Roboto']], S.fui, v => { S.fui = v; save(); applyPrefs(); renderProfile(); }),
+        h('div', { style: 'font-size:16px;color:var(--muted)' }, 'ёзмоқ, тузмоқ; ўқимоқ; ҳалок бўлмоқ, қувмоқ, ғойиб бўлмоқ'))),
     h('div', { style: 'display:grid;gap:10px;margin-top:20px' },
       h('button', { class: 'btn line', onclick: () => go('w1') }, 'Танишув экранларини қайта кўрсатиш')),
     h('p', { class: 'foot' }, 'Прототип. Маълумот китобдан киритилган, текширув давом этмоқда.'));
@@ -1281,6 +1890,12 @@ function renderBook(key) {
     h('div', { class: 'tiles' }, b.lessons.map((l, i) =>
       h('button', { class: 'tile', onclick: () => go(`${key}-${i}`) }, h('span', { class: 'n' }, l[0]), h('span', { class: 't' }, l[1] || '')))));
 }
+// дарс видеолари: фақат «▶» босилганда юкланади (preload="none")
+const VIDEOS = { 'sarf-1': { src: 'videos/sarf_01.mp4', poster: 'videos/sarf_01.jpg' }, 'sarf-11': { src: 'videos/sarf_10.mp4', poster: 'videos/sarf_10.jpg' } };
+function lessonVideo(key, i) {
+  const v = VIDEOS[key + '-' + i]; if (!v) return '';
+  return h('div', { class: 'lvid' }, h('video', { controls: '', preload: 'none', playsinline: '', poster: v.poster, src: v.src }), h('p', { class: 'bk-sub' }, 'Видео дарс. Кўриш учун ▶ ни босинг (интернет керак).'));
+}
 function renderLesson(key, i) {
   const b = BOOKS[key], l = b.lessons[i]; if (!l) return go(key);
   const nav = h('div', { class: 'lnav' },
@@ -1288,6 +1903,7 @@ function renderLesson(key, i) {
     b.lessons[i + 1] ? h('button', { class: 'link', onclick: () => go(`${key}-${i + 1}`) }, b.lessons[i + 1][0] + ' →') : h('span', {}));
   page(key, h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go(key === 'extra' ? 'home' : key) }, key === 'extra' ? '← Бош' : '← ' + b.title)),
     h('h1', { style: 'margin:4px 0 0;font-size:22px' }, `${l[0]}${l[1] ? ': ' + l[1] : ''}`), h('p', { class: 'bk-sub' }, b.full),
+    lessonVideo(key, i),
     h('p', { class: 'bk-sub' }, 'Бетни катта қилиб кўриш учун расмни босинг.'),
     h('div', { class: 'pages' }, lessonPages(b, i).map(p => h('figure', {},
       h('a', { href: b.dir + String(p).padStart(3, '0') + '.jpg', target: '_blank', rel: 'noopener' }, h('img', { src: b.dir + String(p).padStart(3, '0') + '.jpg', alt: `${b.title}, ${(b.cap && b.cap[p]) || p + '-бет'}`, loading: 'lazy', width: '992', height: '1404' })),
@@ -1295,6 +1911,69 @@ function renderLesson(key, i) {
 }
 
 // ---------- маршрут ----------
+// ---------- феъл шакллари (I–X) ва «Феълни туслаш» ----------
+const SFORMS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+let SFC = null;
+function sformCount() { if (SFC) return SFC; SFC = {}; DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type === 'verb' && f.sarf_form) SFC[f.sarf_form] = (SFC[f.sarf_form] || 0) + 1; })); return SFC; }
+function verbItem(e, f, onclick) {
+  const m = ((f.translations || [])[0] || {}).meaning || (f.equivalent_to ? '= ' + f.equivalent_to.join(', ') : '—');
+  return h('button', { class: 'card', onclick }, h('span', { class: 'gloss' }, m), h('span', { class: 'root', lang: 'ar' }, f.arabic_word),
+    h('span', { class: 'meta' }, `${f.sarf_form ? f.sarf_form + ' шакл · ' : ''}${rootOf(e)} · стр. ${e.source_page}`));
+}
+function openTasrif(e, f) { openSheet(f, e); requestAnimationFrame(() => {
+  const ds = [...document.querySelectorAll('#sheet details.tsr-box')].filter(d => /^(Тусланиши|Етти феъл|Фақат мажҳул)/.test((d.querySelector('summary') || {}).textContent || ''));
+  ds.forEach(d => { d.open = true; }); if (ds[0]) ds[0].scrollIntoView({ block: 'start' }); }); }
+function renderBob(k) {
+  const all = []; DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type === 'verb' && f.sarf_form === k) all.push({ e, f }); }));
+  const list = h('div', { class: 'list' }); let n = 0;
+  const more = h('button', { class: 'btn', style: 'margin:12px 0' }, 'Яна кўрсатиш');
+  const add = () => { all.slice(n, n + 60).forEach(x => list.append(verbItem(x.e, x.f, () => openTasrif(x.e, x.f)))); n += 60; more.hidden = n >= all.length; };
+  more.addEventListener('click', add);
+  page('home', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
+    h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, `${k} шакл феъллари`)),
+    h('p', { class: 'count' }, `${all.length} та феъл, китоб тартибида. Феълни боссангиз, туслаш жадвали очилади.`), list, more);
+  add();
+}
+let tq = '';
+function renderTasrif() {
+  const input = h('input', { id: 'tq', type: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Феъл: كَتَبَ, ёзмоқ, yozmoq', value: tq, 'aria-label': 'Феъл' });
+  const out = h('div', {});
+  const fill = () => {
+    const t = tq.trim(); if (!t) { out.replaceChildren(h('p', { class: 'count' }, 'Арабча феълни ёки ўзбекча «-моқ» шаклини ёзинг. Топилган феълни боссангиз, етти феъл жадвали очилади.')); return; }
+    let hits = [];
+    if (HAS_AR.test(t)) hits = wordHits(t).filter(x => x.f.form_type === 'verb').map(x => ({ e: x.e, f: x.f }));
+    else {
+      const q = normUz(isLat(t) ? latCyr(t) : t).replace(/[^a-zа-я ]+/g, ' ').trim(); const seen = new Set();
+      DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type !== 'verb') return;
+        let ps = []; try { ps = uzParts(f); } catch (x) {}
+        if (ps.some(x => normUz(x.p) === q) && !seen.has(f)) { seen.add(f); hits.push({ e, f }); } }));
+      if (!hits.length) verbHits(isLat(t) ? latCyr(t) : t).forEach(x => { if (!seen.has(x.f)) { seen.add(x.f); hits.push({ e: x.e, f: x.f }); } });
+    }
+    if (!HAS_AR.test(t)) { const rk = new Map(); search(isLat(t) ? latCyr(t) : t).forEach((x, i) => rk.set(x, i)); const R = (x) => rk.has(x.e) ? rk.get(x.e) : 1e9;
+      const q0 = normUz(isLat(t) ? latCyr(t) : t).replace(/[^a-zа-я ]+/g, ' ').trim(); const P = (x) => { try { const ps = uzParts(x.f); return ps.length && normUz(ps[0].p) === q0 ? 0 : 1; } catch (z) { return 1; } };
+      hits.sort((a, b) => P(a) - P(b) || R(a) - R(b) || a.e.derivatives.indexOf(a.f) - b.e.derivatives.indexOf(b.f)); }
+    out.replaceChildren(h('div', { class: 'count' }, hits.length ? `${hits.length} та феъл` : 'Топилмади'), h('div', { class: 'list' }, hits.slice(0, 50).map(x => verbItem(x.e, x.f, () => openTasrif(x.e, x.f)))));
+  };
+  input.addEventListener('input', () => { tq = input.value; fill(); });
+  page('home', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
+    h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Феълни туслаш')),
+    h('div', { class: 'search' }, svg(ICON.find, 20), input), out);
+  fill(); setTimeout(() => input.focus(), 50);
+}
+function renderMore() {
+  page('more', h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' }))),
+    h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Қўшимча'),
+    h('div', { class: 'quad', style: 'grid-template-columns:1fr' },
+      ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('extra-' + i) }, h('span', {}, l[1]))),
+      h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар'))));
+}
+function renderGram() {
+  page('gram', h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' }))),
+    h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Грамматика'),
+    h('div', { class: 'quad' },
+      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('sarf') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'الصَّرْفُ'), h('span', {}, 'Сарф')),
+      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('nahv') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'النَّحْوُ'), h('span', {}, 'Наҳв'))));
+}
 function route() {
   const hsh = location.hash.replace(/^#/, '');
   if (!S.seen && !/^w[1234]$/.test(hsh)) return go('w1');
@@ -1304,8 +1983,12 @@ function route() {
   const gm = hsh.match(/^(guide|extra)-(\d+)$/);
   if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
   const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
+  if (hsh === 'gram') return renderGram();
+  if (hsh === 'more') return renderMore();
   if (hsh === 'saved') return renderSaved();
   if (hsh === 'geo') return renderGeo();
+  if (hsh === 'tasrif') return renderTasrif();
+  const bb = hsh.match(/^bob-([IVX]+)$/); if (bb) return renderBob(bb[1]);
   if (hsh === 'profile') return renderProfile();
   query = hsh === 'home' ? query : ''; return renderHome();
 }
