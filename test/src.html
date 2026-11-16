@@ -1432,7 +1432,7 @@ function ismOf(f, sv) {
     else if (/^ажваф/.test(ty) && L.length === 3 && ch(1) === 'ا') { const F = ch(0), M = ch(2), mid = Mz[2] && Mz[2][0]; zm = mid === 'ي' ? 'مَ' + F + KA + 'ي' + M + TD : 'مَ' + F + FA + 'ا' + M + TD;
       if (/вовлик/.test(ty)) tf = 'أَ' + F + SU + 'وَ' + M + DA; else if (/ёлик/.test(ty)) tf = 'أَ' + F + SU + 'يَ' + M + DA; }
     else if (/^(ноқис|лафиф|мултавий)/.test(ty) && L.length === 3) { const F = ch(0), A = ch(1); zm = 'مَ' + F + SU + A + TF + 'ى'; tf = 'أَ' + F + SU + A + FA + 'ى'; }
-    return { foil: seat(foil), maful: maful && seat(maful), zm: zm && seat(zm), zmNote, tf: tf && seat(tf).replace(/^أَأْ/, 'آ'), pages: '58, 60–61' };
+    return { foil: foil && seat(foil).replace(/اءِ/, 'ائِ'), maful: maful && seat(maful), zm: zm && seat(zm), zmNote, tf: tf && seat(tf).replace(/^أَأْ/, 'آ'), pages: '58, 60–61' };
   } catch (z) { return null; }
 }
 function sevenBlock(f) {
