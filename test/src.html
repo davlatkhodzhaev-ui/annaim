@@ -239,6 +239,9 @@ p.s { margin: 0; color: var(--muted); }
 .wc.acc .chv { color: var(--muted); font-size: 18px; line-height: 1; transition: transform .15s; }
 .wc.acc.open .chv { transform: rotate(180deg); }
 .wc.acc.open { border-color: var(--accent); }
+.wc.acc.pin { border-color: var(--line); }
+.wc.acc.pin .hd { cursor: default; }
+.wc.acc.pin .chv { display: none; }
 .wc.acc.open .m1 { -webkit-line-clamp: unset; }
 .wc.acc .bd { padding: 2px 14px 12px; border-top: 1px solid var(--line); }
 .wc.acc .bd .chips2 { padding-top: 8px; }
@@ -1719,7 +1722,8 @@ function muzGuess(n) {
   return out.slice(0, 6);
 }
 let WCQ = '';
-function wordCard(x) {
+function wordCard(x, idx) {
+  const pin = idx < 2;
   const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
   if (f.form_type === 'verb') {
     let muz = [], amr = '', bobs = [];
@@ -1737,13 +1741,13 @@ function wordCard(x) {
   const tg = { verb: 'феъл', noun: 'исм', adjective: 'сифат' }[f.form_type] || '';
   const qk = WCQ ? uzKey(WCQ) : ''; let hi = qk ? ms.findIndex(m => uzKey(m).includes(qk)) : -1; if (hi < 0) hi = 0;
   const sum = ms.length ? ms[hi] : (base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—');
-  const body = h('div', { class: 'bd', hidden: true },
+  const body = h('div', { class: 'bd', hidden: !pin },
     chips.length ? h('div', { class: 'chips2' }, chips) : '',
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
     ms.length ? h('ul', {}, ms.map((m, i) => h('li', { class: i === hi && qk ? 'hit' : null }, m))) : '',
     h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), h('button', { class: 'go', onclick: (ev) => { ev.stopPropagation(); openAt(x.e, f); } }, 'Мақолани очиш →')));
-  const box = h('div', { class: 'wc acc' },
-    h('button', { class: 'hd', 'aria-expanded': 'false', onclick: () => { const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
+  const box = h('div', { class: pin ? 'wc acc open pin' : 'wc acc' },
+    h('button', { class: 'hd', 'aria-expanded': pin ? 'true' : 'false', onclick: () => { if (pin) return; const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open:not(.pin)').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
         if (op) { body.hidden = false; box.classList.add('open'); box.querySelector('.hd').setAttribute('aria-expanded', 'true'); } } },
       h('span', { class: 'sm' }, h('span', { class: 'm1' }, sum), h('span', { class: 'm2' }, [tg, f.form_type === 'verb' && f.sarf_form ? f.sarf_form + ' шакл' : '', ms.length > 1 ? ms.length + ' та маъно' : ''].filter(Boolean).join(' · '))),
       h('span', { class: 'w', lang: 'ar' }, f.arabic_word), h('span', { class: 'chv', 'aria-hidden': 'true' }, '⌄')),
