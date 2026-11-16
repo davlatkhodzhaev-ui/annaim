@@ -522,6 +522,11 @@ const FEM7 = new Set(['p211_hadat_v1', 'p211_tahayyadat_v5', 'p211_istuhidat_v10
 const femMask = (T) => (T || []).map(([t, g]) => [t, g.map((r, ri) => r.map((c, i) => (i === 0 || (i === 2 && ri !== 1)) ? '' : c))]);   // тасниядаги мухотоб шакли икки жинсга умумий — қолади
 const FEMNOTE = (w) => ' Китобда бу феъл муаннас шаклда босилган (' + w + '); муаллиф қарори билан жадвалда фақат муаннас ва мутакаллим шакллар кўрсатилади.';
 const FIXJ = {
+  p136_tajanana_v7: { nm: 1, n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал ҳам идғомсиз, солим феъл каби тузилди («Жаноҳ ут-толиб» 31-бет: саноқли феъллар идғом қонунига хилоф равишда айтилади).' },
+  p152_tahababa_v6: { nm: 1, n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал ҳам идғомсиз, солим феъл каби тузилди («Жаноҳ ут-толиб» 31-бет: саноқли феъллар идғом қонунига хилоф равишда айтилади).' },
+  p235_khalala_v17: { nm: 1, n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал ҳам идғомсиз, солим феъл каби тузилди («Жаноҳ ут-толиб» 31-бет: саноқли феъллар идғом қонунига хилоф равишда айтилади).' },
+  p465_tasamama_v5: { nm: 1, n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал ҳам идғомсиз, солим феъл каби тузилди («Жаноҳ ут-толиб» 31-бет: саноқли феъллар идғом қонунига хилоф равишда айтилади).' },
+  p666_qasasa_v3b: { nm: 1, n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал ҳам идғомсиз, солим феъл каби тузилди («Жаноҳ ут-толиб» 31-бет: саноқли феъллар идғом қонунига хилоф равишда айтилади).' },
   barra_v1b: { voc: 'и', n: 'Луғатда бу феълнинг қавсдаги ҳарфи босилмаган; муаллиф қарори билан музореъ айни касрали (يَبِرُّ) тузилди.' },
   p186_haqqa_v8: { voc: 'и', n: 'Луғатда бу феълнинг қавсдаги ҳарфи босилмаган; муаллиф қарори билан музореъ айни касрали (يَحِقُّ) тузилди.' },
   p636_fahha_v1: { voc: 'и', n: 'Луғатда бу феълнинг қавсдаги ҳарфи босилмаган; муаллиф қарори билан музореъ айни касрали (يَفِهُّ) тузилди.' },
@@ -540,6 +545,9 @@ function fixjForm(f) { const x = FIXJ[f.form_id]; if (!x) return null; const g =
   try { if (x.hz) { g.arabic_word = g.arabic_word.replace(/[أؤئء]/g, 'ع'); sv = sevenOf(g);
       if (sv) { const fin = (c) => c.replace(/ءَ$/, 'أَ').replace(/ءِ$/, 'ئِ').replace(/ءُ$/, 'ؤُ'); const fx = (T) => (T || []).map(([t, gr]) => [t, gr.map(r => r.map(c => c && c.split(' ').map(q => fin(hamzaSeat(q.replace(/ع/g, '§')))).join(' ')))]);
         sv = Object.assign({}, sv, { malum: fx(sv.malum), majhul: sv.majhul && fx(sv.majhul), type: String(sv.type || '') + ' + маҳмуз' }); } }
+    else if (x.nm) { const w0 = String(g.arabic_word), Lw = splitLetters(w0), lc = Lw[Lw.length - 1][0], dm = ['ظ', 'ض', 'غ', 'ث'].find(d => !w0.includes(d)); if (!dm || Lw[Lw.length - 2][0] !== lc) return null;
+      Lw[Lw.length - 1] = [dm, ...Lw[Lw.length - 1].slice(1)]; g.arabic_word = joinL(Lw); sv = sevenOf(g);
+      if (sv) { const re = new RegExp(dm, 'g'), fx = (T) => (T || []).map(([t, gr]) => [t, gr.map(r => r.map(c => c && c.replace(re, lc)))]); sv = Object.assign({}, sv, { malum: fx(sv.malum), majhul: sv.majhul && fx(sv.majhul), type: String(sv.type || '').replace('солим', 'музоъаф, идғомсиз') }); } }
     else sv = sevenOf(g); } catch (z) { sv = null; }
   if (!sv) return null; return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' ' + x.n).trim() }); }
 function guessForm(f) {
