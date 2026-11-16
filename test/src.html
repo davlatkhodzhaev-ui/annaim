@@ -1382,6 +1382,7 @@ function stemsXII(f) {
 }
 let RUBROOT = null;
 const RUB_MUJ = new Set(['p793_maknana_v1']);
+const RUB_AF = new Set(['atmata_v1']);   // муаллиф: рубоъий мужаррад (ҳамза аслий)
 function stemsRub(f) {
   if (f.sarf_form && !/^(Феъл|Q|XIV)/.test(f.sarf_form)) return null;
   const w0 = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w0 || /\s/.test(w0) || /[آ§]/.test(w0)) return null;
@@ -1393,7 +1394,7 @@ function stemsRub(f) {
   if (!kind) return null;
   if (kind === 1 && ch(0) === '§') {   // أَفْعَلَ шаклидаги сўз: фақат моддаси тўрт ҳарфли бўлса рубоъий (акс ҳолда ифъол боби бўлиши мумкин — тахмин қилинмайди)
     if (!RUBROOT) { RUBROOT = new Map(); DATA.forEach(e => e.derivatives.forEach(d => RUBROOT.set(d, String(e.root_search || e.root_display || '').replace(/[^\u0621-\u064A]/g, '').length))); }
-    if (RUBROOT.get(f) !== 4) return null; }
+    if (RUBROOT.get(f) !== 4 && !RUB_AF.has(f.form_id)) return null; }
   const madi = cl(L); if (kind === 3) madi[0] = ['ا'];
   let B = cl(kind === 3 ? L.slice(1) : L); if (kind !== 2) B[B.length - 2] = setV(B[B.length - 2], KA);
   B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
