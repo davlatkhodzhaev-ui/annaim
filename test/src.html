@@ -499,8 +499,11 @@ function takidTables(v) {
   v.malum = v.malum.concat([['Амр: ташдидли таъкид нуни билан (44-бет)', heavy], ['Амр: енгил таъкид нуни билан (44-бет; тасния ва муаннас жамъига қўшилмайди)', light]]);
 }
 const SHAPE15 = { p198_tahamala_v6: 'VI', p749_talasaqa_v6: 'VI', p911_tawaadaa_v6: 'VI', p231_akhtara_v4: 'IV', p314_rafatha_v3: 'IV', p329_araha_v4: 'IV', p877_ahjara_v4: 'IV', p816_anjaa_v4: 'IV', p843_anasha_v4: 'IV', p205_hawasa_v2: 'III', p861_nakafa_v3: 'III', p314_rafata_v2: 'VII', p614_farasa_v8: 'VII', p113_ijtabara_v8: 'VIII', p121_ijtaraa_v4: 'VIII' };
+const TANW6 = new Set(['p095_tarifa_v4', 'p247_ikhtana_v8', 'p574_itat_v13', 'p621_farhad_v5', 'p742_ljaa_v8', 'p746_lahwas_v1']);
 function guessForm(f) {
   if (f.__g || f.form_type !== 'verb') return null;
+  if (TANW6.has(f.form_id)) { const w2 = String(f.arabic_word).replace(/[\u064B\u064C\u064D]/g, '\u064E'); let sv = null; try { const g = Object.assign({}, f, { arabic_word: w2, __g: 1 }); sv = sevenOf(g); } catch (z) {} if (!sv) return null;
+    return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' Китобда бу феъл охирида танвин босилган (' + f.arabic_word + '); жадвал танвинсиз ' + w2 + ' шаклидан тузилди (муаллиф тасдиғи).').trim() }); }
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w) || /[\ufffd?ًٌٍ]/.test(w)) return null;
   const tryF = (sf, word) => { let sv = null; try { sv = sevenOf(Object.assign({}, f, { sarf_form: sf, arabic_word: word || f.arabic_word, __g: 1 })); } catch (z) {} return sv; };
   const L0 = splitLetters(w), n0 = L0.length, c0 = (i) => L0[i] && L0[i][0], full = L0.every(l => l.length > 1 || l[0] === 'ا' || l[0] === 'ى');
