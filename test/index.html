@@ -2306,8 +2306,7 @@ function renderGram() {
     h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Грамматика'),
     h('div', { class: 'quad' },
       h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('sarf') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'الصَّرْفُ'), h('span', {}, 'Сарф')),
-      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('nahv') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'النَّحْوُ'), h('span', {}, 'Наҳв')),
-      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('qoida') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'القَوَاعِدُ'), h('span', {}, 'Қоидалар кўрсаткичи'))));
+      h('button', { class: 'geo', style: 'min-height:96px', onclick: () => go('nahv') }, h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:26px;color:var(--gold)' }, 'النَّحْوُ'), h('span', {}, 'Наҳв'))));
 }
 function route() {
   const hsh = location.hash.replace(/^#/, '');
@@ -2317,7 +2316,7 @@ function route() {
   if (e) return renderEntry(e);
   const gm = hsh.match(/^(guide|extra)-(\d+)$/);
   if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
-  const bm = hsh.match(/^(sarf|nahv|qoida|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
+  const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'gram') return renderGram();
   if (hsh === 'alif') return renderAlif();
   if (hsh === 'more') return renderMore();
