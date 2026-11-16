@@ -1098,6 +1098,19 @@ function mazidAjwaf(f) {
     malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(mapK(raf, nasbCell), 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(jazm, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(jazm, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(jazm, 'لَا ')]],
     majhul: [['Мозий мажҳули', mMozi], ['Музореъ мажҳули', mRaf], ['Нафий феъли мажҳули', pfx(mRaf, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(mapK(mRaf, nasbCell), 'لَنْ ')], ['Жаҳд феъли мажҳули', pfx(mJazm, 'لَمْ ')], ['Амр феъли мажҳули', pfx(mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(mJazm, 'لَا ')]] };
 }
+// маҳмуз мазид (32-бет): ҳамза солим ҳарф каби тусланади; икки ҳамза ёнма-ён келиб иккинчиси сукунли бўлса, биринчисининг ҳаракатига мос ҳарфга айланади (10-қоида)
+function mazidHamza(f) {
+  const bob = MAZID[f.sarf_form]; if (!bob) return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (/\s/.test(w) || w.includes('§') || !/[آأإؤئء]/.test(w)) return null;
+  const conv = (x) => x.replace(/آَ?/g, '§َا').replace(/[أإؤئء]/g, '§'); let w2;
+  if (bob === 1) { if (w[0] === 'آ') w2 = 'أَ§ْ' + conv(w.slice(1).replace(/^َ/, '')); else if (w[0] === 'أ') w2 = 'أ' + conv(w.slice(1)); else return null; } else w2 = conv(w);
+  if (!w2.includes('§')) return null;
+  let sv = null; try { sv = sevenOf(Object.assign({}, f, { arabic_word: w2 })); } catch (z) {}
+  if (!sv || !sv.malum) return null;
+  const fxw = (x, amr) => hamzaSeat(x.replace(/([َُِ])ّ§/g, 'ّ$1§').replace(/(^|\s)ا§ْ/g, amr ? '$1اِي' : '$1ائْ').replace(/أَ§ْ/g, 'آ').replace(/أُ§ْ/g, 'أُو').replace(/([او])§ِ/g, '$1ئِ'));
+  const fx = (c, amr) => c && c.split(' ёки ').map(x => fxw(x, amr)).join(' ёки '), G = (T) => (T || []).map(([t, g], i) => [t, g.map(r => r.map(c => fx(c, i === 5)))]);
+  return Object.assign({}, sv, { type: (sv.type || '').replace('солим', 'маҳмуз (саҳиҳ каби тусланади, 32–33-бет)').replace(/, (ноқис|мисол|ажваф|лафиф|музоъаф)/, ', маҳмуз + $1'), pages: '32–33, ' + (sv.pages || ''), malum: G(sv.malum), majhul: G(sv.majhul) });
+}
 // мисол мазид (34-бет): вов ҳазф қилинмайди, саҳиҳ каби тусланади; сокин ё олди заммали бўлса вовга алмашади (қалбнинг 3-қонуни)
 function mazidMithal(f) {
   if (MITH_OK || !MAZID[f.sarf_form]) return null; let sv = null;
@@ -1175,7 +1188,7 @@ function mazidIX(f) {
 }
 function sevenOf(f) {
   let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
-  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f) || mazidNaqis(f) || mazidMud(f) || mazidMithal(f); if (a) return a; }
+  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f) || mazidNaqis(f) || mazidMud(f) || mazidMithal(f) || mazidHamza(f); if (a) return a; }
   if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
   if (!st) return null;
   const mB = st.majMuzB || majB(st.muzB);
