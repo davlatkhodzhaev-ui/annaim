@@ -1372,7 +1372,7 @@ function ismOf(f, sv) {
         if (foil && !last.includes(SH) && vOf(L[n - 2]) === FA && L[n - 2][0] !== 'ا') L[n - 2] = setV(L[n - 2], KA);   // مُتَكَبِّرٌ، مُتَغَافِلٌ
         return seat(joinL(endN(L))); };
       const foil = mk(mz, true), maful = mk(mj, false); if (!foil && !maful) return null;
-      return { foil, maful, pages: '58–59, 60–62' };
+      return { foil, maful, zm: maful, zmNote: 'мазидларда исми мафъул вазнида, 68-бет', pages: '58–59, 60–62' };
     }
     const t = tasrifOf(f); if (!t || /\+/.test(t.type)) return null; const w = one(String(f.arabic_word || '').split(/[,،]/)[0]); const L = splitLetters(un(w)); const ch = (i) => L[i] && L[i][0];
     const ty = t.type; let foil = null, maful = null;
@@ -1382,7 +1382,17 @@ function ismOf(f, sv) {
     else if (/^(ноқис|лафиф|мултавий)/.test(ty) && L.length === 3) { const F = ch(0), A = ch(1), M = ch(2); foil = F + FA + 'ا' + A + TK;
       if (M === 'ى' && vOf(L[1]) === FA) maful = 'مَ' + F + SU + A + KA + 'ي' + SH + TD; else if (M === 'ا' && vOf(L[1]) === FA) maful = 'مَ' + F + SU + A + DA + 'و' + SH + TD; }
     if (!foil) return null;
-    return { foil: seat(foil), maful: maful && seat(maful), pages: '58, 60–61' };
+    let zm = null, tf = null, zmNote = '66–67-бет';
+    const Mz = splitLetters(un(one(t.muzore[0][0])));
+    if (/^(солим|маҳмуз|мисол|ажваф \(қалб)/.test(ty) && L.length === 3) { const [F, A, M] = [ch(0), ch(1), ch(2)]; const mv = vOf(Mz[Mz.length - 2]);
+      const EX = ['سجد', 'طلع', 'شرق', 'غرب', 'رفق', 'فرق', 'سكن', 'نسك', 'نبت', 'جزر', 'سقط'].includes(F + A + M) && mv === DA;   // 67-бет: 11 исм
+      const k = mv === KA || /^мисол \(вовлик\)/.test(ty) || EX; zm = 'مَ' + F + SU + A + (k ? KA : FA) + M + TD; if (EX) zmNote = '67-бет: қоидадан ташқари 11 исмдан бири';
+      tf = 'أَ' + F + SU + A + FA + M + DA; }
+    else if (ty === 'музоъаф' && L.length === 2) { const F = ch(0), M = ch(1), mv = vOf(Mz[1]); zm = 'مَ' + F + (mv === KA ? KA : FA) + M + SH + TD; tf = 'أَ' + F + FA + M + SH + DA; }
+    else if (/^ажваф/.test(ty) && L.length === 3 && ch(1) === 'ا') { const F = ch(0), M = ch(2), mid = Mz[2] && Mz[2][0]; zm = mid === 'ي' ? 'مَ' + F + KA + 'ي' + M + TD : 'مَ' + F + FA + 'ا' + M + TD;
+      if (/вовлик/.test(ty)) tf = 'أَ' + F + SU + 'وَ' + M + DA; else if (/ёлик/.test(ty)) tf = 'أَ' + F + SU + 'يَ' + M + DA; }
+    else if (/^(ноқис|лафиф|мултавий)/.test(ty) && L.length === 3) { const F = ch(0), A = ch(1); zm = 'مَ' + F + SU + A + TF + 'ى'; tf = 'أَ' + F + SU + A + FA + 'ى'; }
+    return { foil: seat(foil), maful: maful && seat(maful), zm: zm && seat(zm), zmNote, tf: tf && seat(tf).replace(/^أَأْ/, 'آ'), pages: '58, 60–61' };
   } catch (z) { return null; }
 }
 function sevenBlock(f) {
@@ -1397,7 +1407,7 @@ function sevenBlock(f) {
   const el = h('details', { class: 'tsr-box' }, h('summary', {}, 'Етти феъл (маълум ва мажҳул)'),
     h('p', { class: 'tsr-note' }, `Тури: ${s.type}.` + (s.approx ? ' Маҳмуз ул-ломнинг мажҳул жадвали китобда йўқ: ҳамза ёзилиши 28 ва 32-бетлар бўйича қўйилди, муаллим билан текширинг.' : '') + (s.cfg ? ` Масдар вазни: ` : ''), s.cfg ? h('span', { lang: 'ar', class: 'arw' }, s.cfg.masdar) : '',
       `${s.cfg ? '. ' : ' '}«Жаноҳ ут-толиб», ${s.pages}-бетлар бўйича ясалган.${s.xnote ? ' ' + s.xnote : ''} Лозим (ўтимсиз) феъллардан мажҳул ясалмайди (19-бет).`,
-      ...(() => { const im = ismOf(f, s); if (!im) return []; const A = (x) => h('span', { lang: 'ar', class: 'arw' }, x); return [' Исми фоил: ', A(im.foil || '—'), im.maful ? '; исми мафъул (феъл ўтимли бўлса): ' : '', im.maful ? A(im.maful) : '', ` («Жаноҳ ут-толиб», ${im.pages}-бет қоидаси бўйича ясалган).`]; })(),
+      ...(() => { const im = ismOf(f, s); if (!im) return []; const A = (x) => h('span', { lang: 'ar', class: 'arw' }, x); return [' Исми фоил: ', A(im.foil || '—'), im.maful ? '; исми мафъул (феъл ўтимли бўлса): ' : '', im.maful ? A(im.maful) : '', ` (${im.pages}-бет)`, im.zm ? '; исми замон ва макон: ' : '', im.zm ? A(im.zm) : '', im.zm ? ` (${im.zmNote})` : '', im.tf ? '; исми тафзил: ' : '', im.tf ? A(im.tf) : '', im.tf ? ' (64–65-бет; ранг ва айб сифатларидан ясалмайди)' : '', '. Булар «Жаноҳ ут-толиб» қоидаси бўйича ясалган шакллар, луғатдан олинган эмас.']; })(),
       (() => { const u = uzVerb(f); if (!u) return ' Луғатда бу феълнинг «-моқ» шаклидаги таржимаси йўқ, шунинг учун ўзбекчаси қўйилмади.';
         return ` Таржима луғатдаги «${u.src}» маъносидан${u.via ? ` (${u.via} сўзидан олинди)` : ''}, китобдаги жадваллар (26–28-бет) намунасида ясалган.` +
           (!u.pas ? ' Бу феълнинг ўтимли маъноси йўқ, шунинг учун мажҳулнинг ўзбекчаси қўйилмади.' : u.pasOther ? ` Мажҳулнинг ўзбекчаси ўтимли «${u.pasSrc}» маъноси бўйича.` : ''); })()),
