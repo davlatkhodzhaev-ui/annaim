@@ -637,13 +637,14 @@ function search(text) {
 }
 
 // ---------- DOM ----------
+const MARKFIX = (c) => typeof c === 'string' && /[~—][\u064B-\u0652]/.test(c) ? c.replace(/([~—])([\u064B-\u0652])/g, '$1\u0640$2') : c;
 function h(tag, props, ...kids) {
   const n = document.createElement(tag);
   Object.entries(props || {}).forEach(([k, v]) => {
     if (k === 'class') n.className = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
     else if (v !== null && v !== undefined && v !== false) n.setAttribute(k, v === true ? '' : v);
   });
-  kids.flat(Infinity).forEach(c => { if (c !== null && c !== undefined && c !== false) n.append(c instanceof Node ? c : document.createTextNode(c)); });
+  kids.flat(Infinity).forEach(c => { if (c !== null && c !== undefined && c !== false) n.append(c instanceof Node ? c : document.createTextNode(MARKFIX(c))); });
   return n;
 }
 const svg = (d, w = 24) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('width', w); s.setAttribute('height', w); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '1.9'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); s.innerHTML = d; return s; };
