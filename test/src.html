@@ -498,6 +498,7 @@ function takidTables(v) {
   const light = [['', '', b + 'نْ', fsS + 'نْ', ''], ['', '', '', '', ''], ['', '', mpS + 'نْ', '', '']];
   v.malum = v.malum.concat([['Амр: ташдидли таъкид нуни билан (44-бет)', heavy], ['Амр: енгил таъкид нуни билан (44-бет; тасния ва муаннас жамъига қўшилмайди)', light]]);
 }
+const SHAPE15 = { p198_tahamala_v6: 'VI', p749_talasaqa_v6: 'VI', p911_tawaadaa_v6: 'VI', p231_akhtara_v4: 'IV', p314_rafatha_v3: 'IV', p329_araha_v4: 'IV', p877_ahjara_v4: 'IV', p816_anjaa_v4: 'IV', p843_anasha_v4: 'IV', p205_hawasa_v2: 'III', p861_nakafa_v3: 'III', p314_rafata_v2: 'VII', p614_farasa_v8: 'VII', p113_ijtabara_v8: 'VIII', p121_ijtaraa_v4: 'VIII' };
 function guessForm(f) {
   if (f.__g || f.form_type !== 'verb') return null;
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w) || /[\ufffd?ًٌٍ]/.test(w)) return null;
@@ -513,6 +514,8 @@ function guessForm(f) {
     if (!sf) return null; const sv = tryF(sf); if (!sv) return null;
     return Object.assign({}, sv, { guess: sf, xnote: ((sv.xnote || '') + ' Луғатда бу феъл олдида шакл рақами босилмаган; ' + (sf === 'I' ? 'қавсдаги ҳарфга кўра сулосий мужаррад деб тусланди (луғатдан фойдаланиш қоидаси, 12-банд).' : 'шаклига кўра (' + sf + ', «Жаноҳ ут-толиб» 13-бет) тусланди.')).trim() });
   }
+  const shp = SHAPE15[f.form_id];
+  if (shp) { const sv = tryF(shp); if (!sv) return null; return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' Китобда бу феъл олдида «' + f.sarf_form + '» босилган; жадвал сўз шаклига кўра ' + shp + ' шакл бўйича тузилди (муаллиф тасдиғи).').trim() }); }
   const bob = MAZID[f.sarf_form]; if (!bob || full) return null;
   let x = w; if ([4, 5, 10].includes(bob)) x = x.replace(/^[إأا][َِ]?/, 'ا'); else if (bob === 1) x = x.replace(/^[اأ]َ?/, 'أَ');
   const L = splitLetters(x), n = L.length, last = L[n - 1];
