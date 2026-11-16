@@ -157,6 +157,12 @@ ol.mean li { margin: 3px 0; }
 #tabs { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 480px; z-index: 30; display: flex; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
 #tabs a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 64px; color: var(--muted); font-size: 12px; }
 #tabs a.on { color: var(--accent); font-weight: 600; }
+.tab-ar { font-family: var(--font-ar); font-size: 17px; line-height: 22px; height: 22px; direction: rtl; white-space: nowrap; }
+.alif-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; direction: rtl; }
+.alif-b { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 72px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--ink, inherit); }
+.alif-b:hover { border-color: var(--accent); }
+.alif-l { font-family: var(--font-ar); font-size: 30px; line-height: 1.3; color: var(--gold); }
+.alif-n { font-size: 11px; color: var(--muted); direction: ltr; }
 #tabs a { font-size: 11px; }
 .bk-sub { color: var(--muted); font-size: 14px; margin: -2px 0 12px; }
 .lessons { display: grid; gap: 8px; }
@@ -1820,8 +1826,8 @@ function entryRow(e) {
 function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
   if (active === 'sarf' || active === 'nahv') active = 'gram';
-  const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'), t('more', '#more', 'grid', 'Қўшимча'));
+  const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, icon === 'alif' ? h('span', { class: 'tab-ar', lang: 'ar', 'aria-hidden': 'true' }, 'ا ـ ب') : svg(ICON[icon]), text);
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'), t('alif', '#alif', 'alif', 'Алифбо'), t('more', '#more', 'grid', 'Қўшимча'));
 }
 const goBack = () => { if (!sheet.hidden) return closeSheet(); const hsh = location.hash.replace(/^#/, '');
   if (hsh === '' || hsh === 'home') { if (query || letter) { query = ''; letter = ''; route(); } return; }
@@ -2287,6 +2293,14 @@ function renderMore() {
       ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('extra-' + i) }, h('span', {}, l[1]))),
       h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар'))));
 }
+const ALIFBO = 'ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي'.split(' ');
+function renderAlif() {
+  const cnt = {}; DATA.forEach(e => { const c = normAr(e.root_search || '')[0]; if (c) cnt[c] = (cnt[c] || 0) + 1; });
+  page('alif', h('h1', { style: 'font-size:24px;margin:8px 0 6px' }, 'Алифбо'),
+    h('p', { class: 'bk-sub' }, 'Ҳарфни босинг: шу ҳарфдан бошланадиган сўзлар китобдаги тартибда чиқади.'),
+    h('div', { class: 'alif-grid' }, ALIFBO.map(L => h('button', { class: 'alif-b', onclick: () => { letter = L; query = ''; if (location.hash === '#home') route(); else go('home'); } },
+      h('span', { lang: 'ar', class: 'alif-l' }, L), h('span', { class: 'alif-n' }, String(cnt[normAr(L)[0]] || 0))))));
+}
 function renderGram() {
   page('gram', h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' }))),
     h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Грамматика'),
@@ -2305,6 +2319,7 @@ function route() {
   if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
   const bm = hsh.match(/^(sarf|nahv|qoida|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'gram') return renderGram();
+  if (hsh === 'alif') return renderAlif();
   if (hsh === 'more') return renderMore();
   if (hsh === 'saved') return renderSaved();
   if (hsh === 'geo') return renderGeo();
