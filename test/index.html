@@ -478,7 +478,8 @@ const AR_WEAK = /[اويءؤئ]/g;
 const ACELLS = [['gm', 0, 0], ['gf', 0, 1], ['mm', 0, 2], ['mf', 0, 3], ['s1', 0, 4], ['gm2', 1, 0], ['gf2', 1, 1], ['m2', 1, 2], ['p1', 1, 4], ['gmp', 2, 0], ['gfp', 2, 1], ['mmp', 2, 2], ['mfp', 2, 3]];
 const APERS = { gm: 'ғоиб муз. муфрад', gf: 'ғоиб муан. муфрад', mm: 'мухотоб муз. муфрад', mf: 'мухотоб муан. муфрад', s1: 'мутакаллим муфрад', gm2: 'ғоиб муз. тасния', gf2: 'ғоиб муан. тасния', m2: 'мухотоб тасния', p1: 'мутакаллим жамъ', gmp: 'ғоиб муз. жамъ', gfp: 'ғоиб муан. жамъ', mmp: 'мухотоб муз. жамъ', mfp: 'мухотоб муан. жамъ' };
 const SVC = new WeakMap(), FKEY = new WeakMap();
-function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f) || moziOnly2Of(f); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
+const IDG2 = (c) => c && c.replace(/([\u0621-\u064A])ْ\1([َُِ])/g, '$1ّ$2');
+function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f) || moziOnly2Of(f); if (v) ['malum', 'majhul'].forEach(k => { if (v[k]) v[k] = v[k].map(([t, g]) => [t, g.map(r => r.map(IDG2))]); }); } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
 function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++; if (i === a.length) return true; } return a.length === 0; }
 const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
 function arFormHits(text) {
@@ -919,7 +920,7 @@ function tasrifList(f) {
   let vz = String(f.vocaliz).replace(/\\/g, '/').replace(/\./g, ',');
   const pms = /[\u0621-\u064A]/.test(vz) ? [...new Set(vz.match(/[\u0621-\u0652]+/g))] : null;
   const words = (f.arabic_word || '').split(/[,،]|ёки/).map(x => x.trim()).filter(Boolean);
-  const fx = (g) => g.map(r => r.map(c => c && c.split(' ёки ').map(hamzaSeat).join(' ёки ')));
+  const fx = (g) => g.map(r => r.map(c => c && c.split(' ёки ').map(hamzaSeat).join(' ёки ').replace(/([\u0621-\u064A])ْ\1([َُِ])/g, '$1ّ$2')));
   const out = [], add = (t, label) => { if (!t || out.some(o => o.voc === label)) return; t.mozi = fx(t.mozi); t.muzore = fx(t.muzore); t.amr = fx(t.amr); if (t.x) ['nasb', 'jazm', 'mMozi', 'mRaf', 'mNasb', 'mJazm'].forEach(k => { if (t.x[k]) t.x[k] = fx(t.x[k]); }); t.voc = label; out.push(t); };
   if (pms) { pms.forEach(m => { const v = arVoc(m); if (v) add(conj1(f, v, words[0], null, m), m); }); return out; }
   const L0 = splitLetters(words[0] || '');
@@ -1186,10 +1187,58 @@ function mazidIX(f) {
     malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(nasb, 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(nasb, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(nasb, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(nasb, 'لَا ')]],
     majhul: [] };
 }
+// рубоъий (13-бет): دَحْرَجَ يُدَحْرِجُ دَحْرِجْ؛ تَدَحْرَجَ يَتَدَحْرَجُ تَدَحْرَجْ؛ اِبْرَنْشَقَ يَبْرَنْشِقُ اِبْرَنْشِقْ. Луғатда боби кўрсатилмаган феъллар шаклига қараб аниқланади.
+// 30-бет: ифъийлол (افْعَالَّ: اسْوَادَدَ → اسْوَادَّ, 1-қонун) ва рубоъий мазид ифъиллол (افْعَلَلَّ: اقْشَعْرَرَ → اقْشَعَرَّ, 2-қонун) — ифъилол (احْمَرَّ) жадвалидек
+function mazidXI(f) {
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w)) return null;
+  const hz = /[أؤئء]/.test(w.slice(1)), L = splitLetters(w[0].replace('إ', 'ا') + w.slice(1).replace(/[أؤئء]/g, '§'));
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) { L[i].push(FA); L[i + 1] = ['ا']; }
+  const n = L.length, ch = (i) => L[i] && L[i][0]; if (n !== 5 || ch(0) !== 'ا' || !L[1].includes(SU) || vOf(L[2]) !== FA || !L[4].includes(SH) || vOf(L[4]) !== FA) return null;
+  if ([1, 2, 4].some(i => /[اىآة§]/.test(ch(i))) || /[وي]/.test(ch(4))) return null;
+  const R = ch(4), pre = ch(1) + SU + ch(2) + FA; let Mm, Mu, Zm, Zu, nm, xn;
+  if (ch(3) === 'ا' && L[3].length === 1 && (!f.sarf_form || f.sarf_form === 'XI')) { Mm = pre + 'ا' + R + SH; Mu = pre + 'ا' + R + FA + R + SU; Zm = Mm; Zu = pre + 'ا' + R + KA + R + SU; nm = 'мазид, ифъийлол боби (افْعَالَّ يَفْعَالُّ), идғомли'; }
+  else if (vOf(L[3]) === FA && !L[3].includes(SH) && !/[اوي]/.test(ch(3)) && !f.sarf_form) { const H = ch(3); Mm = pre + H + FA + R + SH; Mu = pre + H + SU + R + FA + R + SU; Zm = pre + H + KA + R + SH; Zu = pre + H + SU + R + KA + R + SU; nm = 'рубоъий мазид, 3-боб (افْعَلَلَّ يَفْعَلِلُّ), идғомли'; }
+  else return null;
+  const fx = (c) => c && IDG2(hz ? c.split(' ёки ').map(hamzaSeat).join(' ёки ') : c), G = (g) => g.map(r => r.map(fx));
+  const mozi = moziShape('ا' + Mm, 'ا' + Mu), raf = rafShape((p) => p + FA + Zm, (p) => p + FA + Zu + 'نَ'), nasb = mapK(raf, nasbCell), A = 'اِ';
+  const amr = [[A + Zu + ' ёки ' + A + Zm + FA, A + Zm + KA + 'ي'], [A + Zm + FA + 'ا', ''], [A + Zm + DA + 'وا', A + Zu + 'نَ']];
+  return { type: nm + (hz ? ', маҳмуз' : ''), pages: '30, 13, 26–28', xnote: 'Жазмда идғом фатҳа билан берилди (30-бетдаги ифъилол амр жадвалидагидек: لِيَحْمَرَّ). Китобда бу боб учун мажҳул жадвали йўқ.',
+    malum: [['Феъли мозий', G(mozi)], ['Феъли музореъ (рафъ ҳолида)', G(raf)], ['Феъли нафий: لَا (рафъ ҳолида)', G(pfx(raf, 'لَا '))], ['لَنْ билан манфий музореъ (насб ҳолида)', G(pfx(nasb, 'لَنْ '))], ['Феъли жаҳд: لَمْ (жазм ҳолида)', G(pfx(nasb, 'لَمْ '))], ['Феъли амр (жазм ҳолида)', G(amr5(nasb, amr))], ['Феъли наҳий (жазм ҳолида)', G(pfx(nasb, 'لَا '))]], majhul: [] };
+}
+// 13-бет, 11-боб: افْعَوْعَلَ يَفْعَوْعِلُ اِفْعَوْعِلْ (احْدَوْدَبَ)
+function stemsXII(f) {
+  if (f.sarf_form && f.sarf_form !== 'XII') return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w)) return null; const L = splitLetters(w[0].replace('إ', 'ا') + w.slice(1));
+  const n = L.length, ch = (i) => L[i] && L[i][0]; if (L[0].length > 1 && L[0][0] === 'ا') L[0] = ['ا'];
+  if (n !== 6 || ch(0) !== 'ا' || !L[1].includes(SU) || vOf(L[2]) !== FA || ch(3) !== 'و' || !L[3].includes(SU) || vOf(L[4]) !== FA || vOf(L[5]) !== FA || ch(2) !== ch(4)) return null;
+  if (L.slice(1).some(l => l.includes(SH) || /[اىآأإءؤئة]/.test(l[0])) || /[وي]/.test(ch(5))) return null;
+  const B = cl(L.slice(1)); B[B.length - 2] = setV(B[B.length - 2], KA); B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
+  return { madi: cl(L), muzB: B, pre: FA, H: 'اِ', pages: '13, 18, 26–28', type: 'мазид, 11-боб (افْعَوْعَلَ يَفْعَوْعِلُ), солим' };
+}
+let RUBROOT = null;
+function stemsRub(f) {
+  if (f.sarf_form && !/^(Феъл|Q)/.test(f.sarf_form)) return null;
+  const w0 = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w0 || /\s/.test(w0) || /[آ§]/.test(w0)) return null;
+  const hz = /[أإؤئء]/.test(w0), L = splitLetters(w0.replace(/[أإؤئء]/g, '§'));
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) return null;
+  const n = L.length, ch = (i) => L[i] && L[i][0], sig = L.map((l, i) => l.includes(SH) ? 'x' : l.includes(SU) ? '0' : vOf(l) === FA ? 'a' : (l[0] === 'ا' && i === 0 && l.length === 1) ? 'A' : (l[0] === 'ا' && i === 0 && vOf(l) === KA) ? 'A' : 'x').join('');
+  if (L.some((l, i) => /[اىةآ]/.test(l[0]) && !(i === 0 && l[0] === 'ا')) || /[وي]/.test(ch(n - 1))) return null;
+  let kind = null; if (n === 4 && sig === 'a0aa') kind = 1; else if (n === 5 && sig === 'aa0aa' && ch(0) === 'ت') kind = 2; else if (n === 6 && sig === 'A0a0aa' && ch(3) === 'ن') kind = 3;
+  if (!kind) return null;
+  if (kind === 1 && ch(0) === '§') {   // أَفْعَلَ шаклидаги сўз: фақат моддаси тўрт ҳарфли бўлса рубоъий (акс ҳолда ифъол боби бўлиши мумкин — тахмин қилинмайди)
+    if (!RUBROOT) { RUBROOT = new Map(); DATA.forEach(e => e.derivatives.forEach(d => RUBROOT.set(d, String(e.root_search || e.root_display || '').replace(/[^\u0621-\u064A]/g, '').length))); }
+    if (RUBROOT.get(f) !== 4) return null; }
+  const madi = cl(L); if (kind === 3) madi[0] = ['ا'];
+  let B = cl(kind === 3 ? L.slice(1) : L); if (kind !== 2) B[B.length - 2] = setV(B[B.length - 2], KA);
+  B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
+  const nm = kind === 1 ? 'рубоъий мужаррад (فَعْلَلَ يُفَعْلِلُ)' : kind === 2 ? 'рубоъий мазид, 1-боб (تَفَعْلَلَ يَتَفَعْلَلُ)' : 'рубоъий мазид, 2-боб (افْعَنْلَلَ يَفْعَنْلِلُ)';
+  return { madi, muzB: B, pre: kind === 1 ? DA : FA, H: 'اِ', pages: '13, 18, 26–28' + (hz ? ', 32' : ''), type: nm + (hz ? ', маҳмуз' : ''), fix: (c) => (hz ? hamzaSeat(c) : c).replace(/ُيْ/g, 'ُوْ') };
+}
 function sevenOf(f) {
   let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
   if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f) || mazidNaqis(f) || mazidMud(f) || mazidMithal(f) || mazidHamza(f); if (a) return a; }
   if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
+  if (!st && !MAZID[f.sarf_form] && f.sarf_form !== 'I') { const a = mazidXI(f); if (a) return a; st = stemsXII(f) || stemsRub(f); }
   if (!st) return null;
   const mB = st.majMuzB || majB(st.muzB);
   const malum = [
