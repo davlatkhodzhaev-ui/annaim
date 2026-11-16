@@ -1838,6 +1838,16 @@ function majOnlyOf(f) {
       ['Мозий мажҳули', fx2(moziShape(F + KA + 'ي' + Lm, F + sv + Lm + SU))], ['Музореъ мажҳули', R], ['Нафий феъли мажҳули', pfx(R, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(Nn, 'لَنْ ')],
       ['Жаҳд феъли мажҳули', pfx(J, 'لَمْ ')], ['Амр феъли мажҳули', pfx(J, 'لِ')], ['Наҳий феъли мажҳули', pfx(J, 'لَا ')]] };
   }
+  if (L0.length >= 4 && L0[0][0] === 'ا' && ['VII', 'VIII', 'X'].includes(f.sarf_form) && L0.slice(1).some(l => l.includes(DA))) {   // MAJX
+    const K = L0.map(l => l.slice()); K[0] = ['ا']; const n0 = K.length;
+    for (let i = 1; i < n0; i++) { if (K[i].includes(DA)) K[i] = K[i].map(m => m === DA ? FA : m); }
+    if (K[n0 - 2][0] === 'ي' && !vOf(K[n0 - 2]) && K[n0 - 3].includes(KA)) { K[n0 - 3] = K[n0 - 3].map(m => m === KA ? FA : m); K[n0 - 2] = ['ا']; }
+    else if (K[n0 - 2].includes(KA)) K[n0 - 2] = K[n0 - 2].map(m => m === KA ? FA : m);
+    let sv = null; try { sv = sevenOf(Object.assign({}, f, { arabic_word: joinL(K), __g: 1 })); } catch (z) {}
+    const st = (x) => String(x || '').replace(/^اُ/, 'ا').replace(/ى/g, 'ي');
+    if (!sv || !sv.majhul || !sv.majhul.length || st(String(sv.majhul[0][1][0][0]).split(' ёки ')[0]) !== st(w)) return null;
+    return { only: true, type: String(sv.type || '').replace(/\s*\(.*$/, '') + ', фақат мажҳул ишлатилади', pages: sv.pages || '', majhul: sv.majhul };
+  }
   if (!L0.length || !L0[0].includes(DA)) return null;
   const sf = f.sarf_form || 'I', hz = (l) => HZ.test(l[0]) ? ['§', ...l.slice(1)] : l.slice();
   const L = L0.map(hz), n = L.length, ch = (i) => L[i][0];
