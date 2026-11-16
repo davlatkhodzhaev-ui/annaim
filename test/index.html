@@ -430,7 +430,7 @@ function verbCard(x) {
   return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
     h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers),
     h('span', { class: 'root', lang: 'ar' }, x.ar),
-    h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
+    h('span', { class: 'meta' }, `${x.f.arabic_word} (${verbKind(x.f)}) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
 // ---------- ўзбекча: аниқ сўз, қўшимчалар, имло ----------
 let UZI = null;
@@ -548,7 +548,7 @@ function arFormCard(x) {
   return h('button', { class: 'card', onclick: () => { pushHist(query); openAt(x.e, x.f); } },
     h('span', { class: 'gloss' }, (x.uz ? x.uz + ' · ' : '') + x.table.replace(/\s*\(.*\)$/, '') + ', ' + x.pers.join('; ')),
     h('span', { class: 'root', lang: 'ar' }, x.ar),
-    h('span', { class: 'meta' }, `${x.f.arabic_word} (${x.f.sarf_form || 'I'} шакл) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
+    h('span', { class: 'meta' }, `${x.f.arabic_word} (${verbKind(x.f)}) · ${rootOf(x.e)} · стр. ${x.e.source_page}`));
 }
 // ---------- қидирув тарихи ----------
 function pushHist(q) { q = (q || '').trim(); if (q.length < 2) return; S.hist = [q, ...(S.hist || []).filter(x => x.toLowerCase() !== q.toLowerCase())].slice(0, 12); save(); }
@@ -1781,18 +1781,25 @@ function majOnlyOf(f) {
     approx ? '18, 28' : '18', approx);
 }
 
+// шакл рақами бўлмаган феълнинг қисқа тури (рубоъий мужаррад, рубоъий мазид, мулҳақ ...)
+function verbKind(f) {
+  if (f.sarf_form) return `${f.sarf_form} шакл`;
+  let sv = null; try { sv = sevenCached(f); } catch (z) {}
+  if (sv && sv.type && !/^сулосий мужаррад/.test(sv.type)) return sv.type.split(' (')[0].replace(/, (солим|маҳмуз|идғомли).*$/, '').replace(/^сулосий мазид, /, '').replace(/^мазид, /, '');
+  return 'феъл';
+}
 // ---------- пастки панель ----------
 function openSheet(f, e, btn) {
   document.querySelectorAll('.aw.on').forEach(c => c.classList.remove('on')); if (btn) btn.classList.add('on');
   const kv = [];
   const add = (k, v, ar) => v && kv.push(h('span', {}, k + ': ', ar ? h('span', {}, ...textToNodes(v, f, e)) : h('b', {}, v)));
-  add('Музореъ ҳарфи', f.vocaliz); const bob = bobOf(f) || (tasrifOf(f) || {}).bob || null; add('Боб', bobText(f, bob)); add('Масдар', f.verbal_noun, true); add('Кўплик', f.plural_form, true); add('Жамловчи', f.collective_form, true); add('Белги', f.tag);
+  add('Музореъ ҳарфи', f.vocaliz); const bob = bobOf(f) || (tasrifOf(f) || {}).bob || null; add('Боб', bobText(f, bob)); if (f.form_type === 'verb' && !f.sarf_form) { const sv0 = sevenCached(f); if (sv0 && sv0.type && !/^сулосий мужаррад/.test(sv0.type)) add('Тури', sv0.type + (sv0.pages ? ` («Жаноҳ ут-толиб», ${sv0.pages.split(',')[0]}-бет)` : '')); } add('Масдар', f.verbal_noun, true); add('Кўплик', f.plural_form, true); add('Жамловчи', f.collective_form, true); add('Белги', f.tag);
   const exs = f.examples || [], others = e.derivatives.filter(x => x !== f);
   const lab = (x) => x.form_type === 'verb' ? x.sarf_form : (x.form_type === 'derived' ? '–' : '·');
   sheet.replaceChildren(h('div', { class: 'in' },
     h('div', { class: 'head' },
       h('div', { class: 'w', lang: 'ar' }, dA(f.arabic_word)),
-      h('div', { class: 'f' }, f.form_type === 'verb' ? ((f.sarf_form ? `${f.sarf_form} шакл` : 'феъл') + (bob ? ` · ${bob}-боб` : '')) : (f.form_type === 'derived' ? 'ҳосила сўз' : 'сўз')),
+      h('div', { class: 'f' }, f.form_type === 'verb' ? (verbKind(f) + (bob ? ` · ${bob}-боб` : '')) : (f.form_type === 'derived' ? 'ҳосила сўз' : 'сўз')),
       h('button', { class: 'close', onclick: closeSheet }, 'Ёпиш')),
     kv.length ? h('div', { class: 'kv' }, kv) : '',
     tasrifBlock(f),
