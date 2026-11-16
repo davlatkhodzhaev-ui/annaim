@@ -1303,6 +1303,7 @@ function stemsXII(f) {
   return { madi: cl(L), muzB: B, pre: FA, H: 'اِ', pages: '13, 18, 26–28', type: 'мазид, 11-боб (افْعَوْعَلَ يَفْعَوْعِلُ), солим' };
 }
 let RUBROOT = null;
+const RUB_MUJ = new Set(['p793_maknana_v1']);
 function stemsRub(f) {
   if (f.sarf_form && !/^(Феъл|Q|XIV)/.test(f.sarf_form)) return null;
   const w0 = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w0 || /\s/.test(w0) || /[آ§]/.test(w0)) return null;
@@ -1318,7 +1319,7 @@ function stemsRub(f) {
   const madi = cl(L); if (kind === 3) madi[0] = ['ا'];
   let B = cl(kind === 3 ? L.slice(1) : L); if (kind !== 2) B[B.length - 2] = setV(B[B.length - 2], KA);
   B[B.length - 1] = B[B.length - 1].filter(m => !VW.includes(m));
-  const r3 = ch(n - 1) === ch(n - 2) && ch(n - 1) !== ch(n - 4), r2 = !r3 && /[وي]/.test(ch(kind === 2 ? 2 : 1)) && kind !== 3;   // 17-бет: мулҳақда учинчи ҳарфнинг ўзидан яна битта қўшилган (شَمْلَلَ، جَلْبَبَ، اقْعَنْسَسَ)
+  const r3 = ch(n - 1) === ch(n - 2) && ch(n - 1) !== ch(n - 4) && !RUB_MUJ.has(f.form_id), r2 = !r3 && /[وي]/.test(ch(kind === 2 ? 2 : 1)) && kind !== 3;   // 17-бет: мулҳақда учинчи ҳарфнинг ўзидан яна битта қўшилган (شَمْلَلَ، جَلْبَبَ، اقْعَنْسَسَ)
   const nm = r2 ? (kind === 1 ? 'рубоъий мужаррад ёки унга мулҳақ (فَوْعَلَ / فَيْعَلَ; 17-бет)' : 'рубоъий мазид ёки унга мулҳақ (تَفَوْعَلَ / تَفَيْعَلَ; 17-бет)') : r3 ? (kind === 1 ? 'сулосий мазид, рубоъийга мулҳақ (دَحْرَجَ га; 17-бет)' : kind === 2 ? 'сулосий мазид, рубоъийга мулҳақ (تَدَحْرَجَ га; 17-бет)' : 'сулосий мазид, рубоъийга мулҳақ (اِحْرَنْجَمَ га: اِقْعَنْسَسَ; 17-бет)')
     : (kind === 1 ? 'рубоъий мужаррад (فَعْلَلَ يُفَعْلِلُ)' : kind === 2 ? 'рубоъий мазид, 1-боб (تَفَعْلَلَ يَتَفَعْلَلُ)' : 'рубоъий мазид, 2-боб (افْعَنْلَلَ يَفْعَنْلِلُ)');
   return { madi, muzB: B, pre: kind === 1 ? DA : FA, H: 'اِ', pages: (r3 ? '17, ' : '') + '13, 18, 26–28' + (hz ? ', 32' : ''), type: nm + (hz ? ', маҳмуз' : ''), fix: (c) => (hz ? hamzaSeat(c) : c).replace(/ُيْ/g, 'ُوْ') };
