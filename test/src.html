@@ -1382,7 +1382,7 @@ function stemsXII(f) {
 }
 let RUBROOT = null;
 const RUB_MUJ = new Set(['p793_maknana_v1']);
-const RUB_AF = new Set(['atmata_v1']);   // муаллиф: рубоъий мужаррад (ҳамза аслий)
+const RUB_AF = new Set(['atmata_v1', 'adraja_v1', 'arjaha_v1', 'aqlama_v1', 'akrata_v1', 'aksada_v1']);   // муаллиф: рубоъий мужаррад (ҳамза аслий)
 function stemsRub(f) {
   if (f.sarf_form && !/^(Феъл|Q|XIV)/.test(f.sarf_form)) return null;
   const w0 = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w0 || /\s/.test(w0) || /[آ§]/.test(w0)) return null;
