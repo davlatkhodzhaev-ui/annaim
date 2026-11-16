@@ -500,7 +500,7 @@ function takidTables(v) {
 }
 function guessForm(f) {
   if (f.__g || f.form_type !== 'verb') return null;
-  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w) || /[�?ًٌٍ]/.test(w)) return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w) || /[\ufffd?ًٌٍ]/.test(w)) return null;
   const tryF = (sf, word) => { let sv = null; try { sv = sevenOf(Object.assign({}, f, { sarf_form: sf, arabic_word: word || f.arabic_word, __g: 1 })); } catch (z) {} return sv; };
   const L0 = splitLetters(w), n0 = L0.length, c0 = (i) => L0[i] && L0[i][0], full = L0.every(l => l.length > 1 || l[0] === 'ا' || l[0] === 'ى');
   if (!f.sarf_form) {
