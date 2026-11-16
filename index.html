@@ -1117,7 +1117,7 @@ function mazidHamza(f) {
   if (!w2.includes('§')) return null;
   let sv = null; try { sv = sevenOf(Object.assign({}, f, { arabic_word: w2 })); } catch (z) {}
   if (!sv || !sv.malum) return null;
-  const fxw = (x, amr) => hamzaSeat(x.replace(/([َُِ])ّ§/g, 'ّ$1§').replace(/(^|\s)ا§ْ/g, amr ? '$1اِي' : '$1ائْ').replace(/أَ§ْ/g, 'آ').replace(/أُ§ْ/g, 'أُو').replace(/([او])§ِ/g, '$1ئِ'));
+  const fxw = (x, amr) => hamzaSeat(x.replace(/([َُِ])ّ§/g, 'ّ$1§').replace(/(^|\s)ا§ْ/g, amr ? '$1اِي' : '$1ائْ').replace(/أَ§ْ/g, 'آ').replace(/أُ§ْ/g, 'أُو'));
   const fx = (c, amr) => c && c.split(' ёки ').map(x => fxw(x, amr)).join(' ёки '), G = (T) => (T || []).map(([t, g], i) => [t, g.map(r => r.map(c => fx(c, i === 5)))]);
   return Object.assign({}, sv, { type: (sv.type || '').replace('солим', 'маҳмуз (саҳиҳ каби тусланади, 32–33-бет)').replace(/, (ноқис|мисол|ажваф|лафиф|музоъаф)/, ', маҳмуз + $1'), pages: '32–33, ' + (sv.pages || ''), malum: G(sv.malum), majhul: G(sv.majhul) });
 }
