@@ -1412,6 +1412,52 @@ function moziOnly2Of(f) {
     return mk(g.map(r => r.map(c => c && hamzaSeat(c))), 'маҳмуз ул-лом + мисол (вовлик): солим вазни, ҳамза ёзилиши 32-бет бўйича', '7–8, 32'); }
   return null;
 }
+function mazMasdar(f, sv) {
+  try {
+    if (!sv || sv.moziOnly || !sv.malum || /^сулосий мужаррад/.test(sv.type || '') || sv.guess) return null;
+    const TD = 'ٌ', TK = 'ٍ', ty = sv.type || '', un = (x) => x.replace(/آ/g, '§َا').replace(/[أإؤئء]/g, '§'), seat = (x) => hamzaSeat(x).replace(/أَا/g, 'آ');
+    const mozi = String(sv.malum[0][1][0][0] || '').split(' ёки ')[0].trim(); if (!mozi || mozi.includes(String.fromCharCode(0xFFFD)) || mozi.includes('?')) return null;
+    const L = splitLetters(un(mozi)), n = L.length, c = (i) => L[i] && L[i][0], bare = (l) => l.filter(m => !VW.includes(m));
+    const sah = /солим|саҳиҳ каби/.test(ty) && !/ноқис|лафиф|мултавий/.test(ty), naq = /ноқис/.test(ty) && !/лафиф|мултавий/.test(ty), ajw = /ажваф/.test(ty) && !/саҳиҳ каби/.test(ty), muz = /музоъаф/.test(ty);
+    const out = (x, pg) => ({ m: seat(x).replace(/^أِ/, 'إِ').replace(/^§ِ/, 'إِ'), pg });
+    const j = (arr) => arr.map(l => Array.isArray(l) ? l.join('') : l).join('');
+    if (/^рубоъий мужаррад \(/.test(ty) || /рубоъийга мулҳақ \(دَحْرَجَ/.test(ty)) { if (n !== 4) return null; return out(j([setV(L[0], FA), setV(L[1], SU), setV(L[2], FA), setV(L[3], FA)]) + 'ة' + TD, '13'); }
+    if (/^рубоъий мазид, 1-боб/.test(ty)) { if (n !== 5) return null; return out(j([L[0], L[1], L[2], setV(L[3], DA), bare(L[4])]) + TD, '13'); }
+    const bob = MAZID[f.sarf_form]; if (!bob) return null;
+    const last = L[n - 1];
+    if (bob === 1) {
+      if (c(0) !== '§') return null;
+      if (n === 4 && c(1) === 'ا' && L[1].length === 1 && /маҳмуз/.test(ty)) return out('§ِي' + c(2) + FA + 'ا' + c(3) + TD, '55');   // آمَنَ → إِيمَانٌ
+      if (sah && n === 4) { const F = c(1), A = c(2), M = c(3);
+        if (/мисол/.test(ty) && /[وي]/.test(F)) return out('§ِي' + A + FA + 'ا' + M + TD, '55');
+        return out('§ِ' + F + SU + A + FA + 'ا' + M + TD, '13'); }
+      if (/маҳмуз ул-фо/.test(ty) && n === 4 && c(1) === 'ا') return out('§ِي' + c(2) + FA + 'ا' + c(3) + TD, '55');   // آمَنَ → إِيمَانٌ
+      if (ajw && n === 4 && c(2) === 'ا') return out('§ِ' + c(1) + FA + 'ا' + c(3) + FA + 'ة' + TD, '55');          // أَرَادَ → إِرَادَةٌ
+      if (naq && n === 4 && /[ىا]/.test(c(3))) return out('§ِ' + c(1) + SU + c(2) + FA + 'ا§' + TD, '55');           // أَخْفَى → إِخْفَاءٌ
+      return null; }
+    if (bob === 2) { if (n !== 3) return null; const F = c(0), A = c(1), M = c(2);
+      if (naq) return out('تَ' + F + SU + A + KA + 'يَة' + TD, '55');                                             // رَبَّى → تَرْبِيَةٌ
+      if (/маҳмуз ул-лом/.test(ty) || M === '§') return out('تَ' + F + SU + A + KA + '§َة' + TD, '55 (аксар шу вазнда)');   // هَنَّأَ → تَهْنِئَةٌ
+      if (sah || muz) return out('تَ' + F + SU + A + KA + 'ي' + M + TD, '13'); return null; }
+    if (bob === 3) { if (c(1) !== 'ا') return null;
+      if (muz && n === 3) return out('مُ' + c(0) + FA + 'ا' + c(2) + SH + FA + 'ة' + TD, '55');                    // ضَارَّ → مُضَارَّةٌ
+      if (naq && n === 4) return out('مُ' + c(0) + FA + 'ا' + c(2) + FA + 'اة' + TD, '55');                         // نَادَى → مُنَادَاةٌ
+      if (sah && n === 4) return out('مُ' + c(0) + FA + 'ا' + c(2) + FA + c(3) + FA + 'ة' + TD, '13'); return null; }
+    if (bob === 6 || bob === 7) { if (c(0) !== 'ت') return null;
+      if (naq) { const A = L[n - 2].filter(m => m !== FA); return out(j(L.slice(0, n - 2)) + A[0] + TK + (A.includes(SH) ? SH : ''), '55'); }   // تَمَنَّى → تَمَنٍّ
+      if (sah) return out(j([...L.slice(0, n - 2), setV(L[n - 2].filter(m => m !== FA), DA).sort((x, y) => (x === SH ? 1 : 0) - (y === SH ? 1 : 0)), bare(last)]) + TD, '13'); return null; }
+    if (bob === 8) { if (n !== 4 || !last.includes(SH)) return null; return out('اِ' + c(1) + SU + c(2) + KA + c(3) + FA + 'ا' + c(3) + TD, '13'); }
+    if (bob === 4 || bob === 5 || bob === 10) {
+      if (c(0) !== 'ا' || n < 4) return null; const K = L.map(l => l.slice());
+      if (bob === 10 && ajw && n === 6 && c(4) === 'ا') return out('اِسْتِ' + c(3) + FA + 'ا' + c(5) + FA + 'ة' + TD, '55');   // اسْتَقَامَ → اِسْتِقَامَةٌ
+      if (!(sah || naq)) return null;
+      const ki = K[1].includes(SH) ? 1 : 2; K[ki] = K[ki].includes(SH) ? [K[ki][0], KA, SH] : setV(K[ki], KA);
+      const body = 'اِ' + j(K.slice(1, n - 1));
+      if (naq) return out(body + 'ا§' + TD, '55');                                                              // اخْتَفَى → اِخْتِفَاءٌ
+      return out(body + 'ا' + c(n - 1) + TD, '13'); }
+    return null;
+  } catch (z) { return null; }
+}
 function ismOf(f, sv) {
   try {
     const TD = 'ٌ', TK = 'ٍ', TF = 'ً', one = (c) => (c || '').split(' ёки ')[0].trim();
@@ -1465,6 +1511,7 @@ function sevenBlock(f) {
   const el = h('details', { class: 'tsr-box' }, h('summary', {}, 'Етти феъл (маълум ва мажҳул)'),
     h('p', { class: 'tsr-note' }, `Тури: ${s.type}.` + (s.approx ? ' Маҳмуз ул-ломнинг мажҳул жадвали китобда йўқ: ҳамза ёзилиши 28 ва 32-бетлар бўйича қўйилди, муаллим билан текширинг.' : '') + (s.cfg ? ` Масдар вазни: ` : ''), s.cfg ? h('span', { lang: 'ar', class: 'arw' }, s.cfg.masdar) : '',
       `${s.cfg ? '. ' : ' '}«Жаноҳ ут-толиб», ${s.pages}-бетлар бўйича ясалган.${s.xnote ? ' ' + s.xnote : ''} Лозим (ўтимсиз) феъллардан мажҳул ясалмайди (19-бет).`,
+      ...(() => { const mm = mazMasdar(f, s); if (!mm) return []; return [' Масдари: ', h('span', { lang: 'ar', class: 'arw' }, mm.m), ` (${mm.pg}-бет).`]; })(),
       ...(() => { const im = ismOf(f, s); if (!im) return []; const A = (x) => h('span', { lang: 'ar', class: 'arw' }, x); return [' Исми фоил: ', A(im.foil || '—'), im.maful ? '; исми мафъул (феъл ўтимли бўлса): ' : '', im.maful ? A(im.maful) : '', ` (${im.pages}-бет)`, im.zm ? '; исми замон ва макон: ' : '', im.zm ? A(im.zm) : '', im.zm ? ` (${im.zmNote})` : '', im.tf ? '; исми тафзил: ' : '', im.tf ? A(im.tf) : '', im.tf ? ' (64–65-бет; ранг ва айб сифатларидан ясалмайди)' : '', '. Булар «Жаноҳ ут-толиб» қоидаси бўйича ясалган шакллар, луғатдан олинган эмас.']; })(),
       (() => { const u = uzVerb(f); if (!u) return ' Луғатда бу феълнинг «-моқ» шаклидаги таржимаси йўқ, шунинг учун ўзбекчаси қўйилмади.';
         return ` Таржима луғатдаги «${u.src}» маъносидан${u.via ? ` (${u.via} сўзидан олинди)` : ''}, китобдаги жадваллар (26–28-бет) намунасида ясалган.` +
