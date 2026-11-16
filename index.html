@@ -516,12 +516,22 @@ function takidTables(v) {
   const light = [['', '', b + 'نْ', fsS + 'نْ', ''], ['', '', '', '', ''], ['', '', mpS + 'نْ', '', '']];
   v.malum = v.malum.concat([['Амр: ташдидли таъкид нуни билан (44-бет)', heavy], ['Амр: енгил таъкид нуни билан (44-бет; тасния ва муаннас жамъига қўшилмайди)', light]]);
 }
-const SHAPE15 = { p198_tahamala_v6: 'VI', p749_talasaqa_v6: 'VI', p911_tawaadaa_v6: 'VI', p231_akhtara_v4: 'IV', p314_rafatha_v3: 'IV', p329_araha_v4: 'IV', p877_ahjara_v4: 'IV', p816_anjaa_v4: 'IV', p843_anasha_v4: 'IV', p205_hawasa_v2: 'III', p861_nakafa_v3: 'III', p314_rafata_v2: 'VII', p614_farasa_v8: 'VII', p113_ijtabara_v8: 'VIII', p121_ijtaraa_v4: 'VIII' };
+const SHAPE15 = { p085_baza_v3: 'II', p252_tadathara_v5b: 'VI', p331_araa_v3: 'IV', p354_zayyana_v5: 'II', p163_hadhlaqa_v1: 'RUB', p163_tahadhlaqa_v2: 'RUB', p887_hafhaf_v1: 'RUB', p198_tahamala_v6: 'VI', p749_talasaqa_v6: 'VI', p911_tawaadaa_v6: 'VI', p231_akhtara_v4: 'IV', p314_rafatha_v3: 'IV', p329_araha_v4: 'IV', p877_ahjara_v4: 'IV', p816_anjaa_v4: 'IV', p843_anasha_v4: 'IV', p205_hawasa_v2: 'III', p861_nakafa_v3: 'III', p314_rafata_v2: 'VII', p614_farasa_v8: 'VII', p113_ijtabara_v8: 'VIII', p121_ijtaraa_v4: 'VIII' };
 const TANW6 = new Set(['p095_tarifa_v4', 'p247_ikhtana_v8', 'p574_itat_v13', 'p621_farhad_v5', 'p742_ljaa_v8', 'p746_lahwas_v1']);
 const FEM7 = new Set(['p211_hadat_v1', 'p211_tahayyadat_v5', 'p211_istuhidat_v10', 'p216_khadajat_v1', 'p216_akhdajat_v4', 'p656_aqrabat_v4', 'p943_awmasat_v4']);
 const femMask = (T) => (T || []).map(([t, g]) => [t, g.map((r, ri) => r.map((c, i) => (i === 0 || (i === 2 && ri !== 1)) ? '' : c))]);   // тасниядаги мухотоб шакли икки жинсга умумий — қолади
 const FEMNOTE = (w) => ' Китобда бу феъл муаннас шаклда босилган (' + w + '); муаллиф қарори билан жадвалда фақат муаннас ва мутакаллим шакллар кўрсатилади.';
 const FIXJ = {
+  ayisa_v1: { w: 'عَيِسَ', voc: 'а', back: [['ع', '§']], ty: 'сулосий мужаррад, 4-боб, маҳмуз ул-фо + ажваф (қалб қилинмайди)', n: '«Жаноҳ ут-толиб» 32–33-бет: маҳмуз феъллар саҳиҳ каби тусланади; ўртаси ё бўлгани учун қалб қилинмайдиган ажваф (عَوِرَ каби) бўйича тузилди.' },
+  p408_shaa_v1: { w: 'شَعَا', voc: 'у', back: [['ع', '§']], ov: { 'شَآ': 'شَأَى' }, ty: 'сулосий мужаррад, 2-боб, маҳмуз ул-айн + ноқис (вовлик)', n: '«Жаноҳ ут-толиб» 32–33-бет: маҳмуз феъллар саҳиҳ каби тусланади; қавсдаги (у) га кўра вовлик ноқис (دَعَا يَدْعُو каби, 35-бет) бўйича тузилди.' },
+  p209_istaha_v10b: { sf: 'VIII', rp: [['^$', '']], ty: 'мазид, 10-боб (истифъол боби), лафиф — қисқарган шакл (اسْتَحْيَا дан)', n: 'Луғатда X шакл деб босилган қисқарган шакл; ноқис қоидаси (35-бет) бўйича тузилди: يَسْتَحِي.' },
+  p279_iddana_v8: { w: 'ادْتَانَ', rp: [['دْت([َُِ])', 'دّ$1']], ty: 'мазид, 5-боб (ифтиъол боби), ажваф; ت → د (идғом)', n: '«Жаноҳ ут-толиб» 14-бет: фоси د бўлган феъл ифтиъол бобига кўчирилса, ت د га алмаштирилиб бириктирилади (ادَّرَأَ каби); ажваф қоидаси билан бирга тузилди.' },
+  p774_immaha_v3: { w: 'انْمَحَى', rp: [['نْم([َُِ])', 'مّ$1']], ty: 'мазид, 4-боб (инфиъол боби), ноқис; ن → م (идғом)', n: 'Инфиъол бобидаги ن кейинги م га кириштирилган (انْمَحَى = امَّحَى); жадвал инфиъол ноқиси бўйича тузилиб, идғом сақланди.' },
+  p795_immalasa_v7: { w: 'انْمَلَسَ', rp: [['نْم([َُِ])', 'مّ$1']], ty: 'мазид, 4-боб (инфиъол боби), солим; ن → م (идғом)', n: 'Инфиъол бобидаги ن кейинги م га кириштирилган (انْمَلَسَ = امَّلَسَ); жадвал инфиъол бўйича тузилиб, идғом сақланди.' },
+  p796_immalasa_v7b: { w: 'انْمَلَصَ', rp: [['نْم([َُِ])', 'مّ$1']], ty: 'мазид, 4-боб (инфиъол боби), солим; ن → م (идғом)', n: 'Луғатда бу сўзнинг ҳаракатлари тўлиқ босилмаган (امَّلص). Инфиъол бобидаги ن кейинги م га кириштирилган; жадвал инфиъол бўйича тузилди.' },
+  p492_tahawa_v1: { w: 'طَحَا', voc: 'у', rp: [['^$', '']], n: 'Луғатда бу феъл طَحَوَ деб (вов билан) босилган; жадвал вовлик ноқис қоидаси (دَعَا يَدْعُو каби, 35-бет) бўйича тузилди.' },
+  p576_ayya_v1: { w: 'عَيِيَ', voc: 'а', rp: [['^$', '']], n: 'Луғатда бу феъл идғомли шаклда (عَيَّ) босилган; жадвал очиқ шакли عَيِيَ бўйича, лафиф қоидаси (43–44-бет) билан тузилди.' },
+  p209_hayya_v1: { w: 'حَيِيَ', voc: 'а', rp: [['^$', '']], n: 'Луғатда икки шакл босилган (حَىَّ, حَيِىَ); жадвал очиқ шакли حَيِيَ бўйича, лафиф қоидаси (43–44-бет) билан тузилди.' },
   p136_tajanana_v7: { w: 'تَجَانَّ', n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал идғом билан тузилди («Жаноҳ ут-толиб» 29-бет: икки бир хил ҳарф олдида алиф бўлса ҳам идғом қилинади, حَابَبَ = حَابَّ).' },
   p152_tahababa_v6: { w: 'تَحَابَّ', n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал идғом билан тузилди («Жаноҳ ут-толиб» 29-бет: икки бир хил ҳарф олдида алиф бўлса ҳам идғом қилинади, حَابَبَ = حَابَّ).' },
   p235_khalala_v17: { w: 'خَالَّ', n: 'Китобда бу феъл идғомсиз босилган; муаллиф қарори билан жадвал идғом билан тузилди («Жаноҳ ут-толиб» 29-бет: икки бир хил ҳарф олдида алиф бўлса ҳам идғом қилинади, حَابَبَ = حَابَّ).' },
@@ -548,6 +558,11 @@ function fixjForm(f) { const x = FIXJ[f.form_id]; if (!x) return null; const g =
     else if (x.nm) { const w0 = String(g.arabic_word), Lw = splitLetters(w0), lc = Lw[Lw.length - 1][0], dm = ['ظ', 'ض', 'غ', 'ث'].find(d => !w0.includes(d)); if (!dm || Lw[Lw.length - 2][0] !== lc) return null;
       Lw[Lw.length - 1] = [dm, ...Lw[Lw.length - 1].slice(1)]; g.arabic_word = joinL(Lw); sv = sevenOf(g);
       if (sv) { const re = new RegExp(dm, 'g'), fx = (T) => (T || []).map(([t, gr]) => [t, gr.map(r => r.map(c => c && c.replace(re, lc)))]); sv = Object.assign({}, sv, { malum: fx(sv.malum), majhul: sv.majhul && fx(sv.majhul), type: String(sv.type || '').replace('солим', 'музоъаф, идғомсиз') }); } }
+    else if (x.rp || x.back || x.ov) { sv = sevenOf(g);
+      if (sv) { const fin = (c) => c.replace(/ءَ$/, 'أَ').replace(/ءِ$/, 'ئِ').replace(/ءُ$/, 'ؤُ');
+        const one = (q) => { let y = q; (x.rp || []).forEach(([a, b]) => { y = y.replace(new RegExp(a, 'g'), b); }); (x.back || []).forEach(([a, b]) => { y = y.replace(new RegExp(a, 'g'), b); }); if (y.includes('§')) y = fin(hamzaSeat(y)); return (x.ov && x.ov[y]) || y; };
+        const fx = (T) => (T || []).map(([t, gr]) => [t, gr.map(r => r.map(c => c && c.split(' ').map(one).join(' ')))]);
+        sv = Object.assign({}, sv, { malum: fx(sv.malum), majhul: sv.majhul && fx(sv.majhul), type: x.ty || sv.type }); } }
     else sv = sevenOf(g); } catch (z) { sv = null; }
   if (!sv) return null; return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' ' + x.n).trim() }); }
 function guessForm(f) {
@@ -571,7 +586,7 @@ function guessForm(f) {
     return Object.assign({}, sv, { guess: sf, xnote: ((sv.xnote || '') + ' Луғатда бу феъл олдида шакл рақами босилмаган; ' + (sf === 'I' ? 'қавсдаги ҳарфга кўра сулосий мужаррад деб тусланди (луғатдан фойдаланиш қоидаси, 12-банд).' : 'шаклига кўра (' + sf + ', «Жаноҳ ут-толиб» 13-бет) тусланди.')).trim() });
   }
   const shp = SHAPE15[f.form_id];
-  if (shp) { const sv = tryF(shp); if (!sv) return null; return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' Китобда бу феъл олдида «' + f.sarf_form + '» босилган; жадвал сўз шаклига кўра ' + shp + ' шакл бўйича тузилди (муаллиф тасдиғи).').trim() }); }
+  if (shp) { const sv = tryF(shp === 'RUB' ? null : shp); if (!sv) return null; return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' Китобда бу феъл олдида «' + f.sarf_form + '» босилган; жадвал сўз шаклига кўра ' + (shp === 'RUB' ? 'рубоъий феъл сифатида' : shp + ' шакл бўйича') + ' тузилди (муаллиф тасдиғи).').trim() }); }
   const bob = MAZID[f.sarf_form]; if (!bob || full) return null;
   let x = w; if ([4, 5, 10].includes(bob)) x = x.replace(/^[إأا][َِ]?/, 'ا'); else if (bob === 1) x = x.replace(/^[اأ]َ?/, 'أَ');
   const L = splitLetters(x), n = L.length, last = L[n - 1];
@@ -1882,7 +1897,7 @@ function majOnlyOf(f) {
     else if (K[n0 - 2].includes(KA)) K[n0 - 2] = K[n0 - 2].map(m => m === KA ? FA : m);
     let sv = null; try { sv = sevenOf(Object.assign({}, f, { arabic_word: joinL(K), __g: 1 })); } catch (z) {}
     const st = (x) => String(x || '').replace(/^اُ/, 'ا').replace(/ى/g, 'ي');
-    if (!sv || !sv.majhul || !sv.majhul.length || st(String(sv.majhul[0][1][0][0]).split(' ёки ')[0]) !== st(w)) return null;
+    const sm = (x) => st(x).replace(/[\u064B-\u0652]+/g, m => [...m].sort().join('')); if (!sv || !sv.majhul || !sv.majhul.length || sm(String(sv.majhul[0][1][0][0]).split(' ёки ')[0]) !== sm(w)) return null;
     return { only: true, type: String(sv.type || '').replace(/\s*\(.*$/, '') + ', фақат мажҳул ишлатилади', pages: sv.pages || '', majhul: sv.majhul };
   }
   if (!L0.length || !L0[0].includes(DA)) return null;
