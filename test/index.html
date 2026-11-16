@@ -974,7 +974,7 @@ const cl = (L) => L.map(l => l.slice());
 const setV = (l, v) => { const k = l.filter(m => !VW.includes(m)); const out = [k[0], ...k.slice(1)]; out.push(v); return out; };
 const joinL = (L) => L.map(l => l.join('')).join('');
 // 13-бет вазнларига мос келишини текширади; мос келмаса null (кўрсатилмайди)
-let MUD_OK = false;
+let MUD_OK = false, MITH_OK = false;
 function mazidCheck(bob, L) {
   const ch = (i) => L[i] && L[i][0], n = L.length, sh = (i) => L[i] && L[i].includes(SH);
   const pat = { // ҳар бобда вазн ҳарфлари турган ўринлар
@@ -989,7 +989,8 @@ function mazidCheck(bob, L) {
   if (!pat) return false;
   if (L.slice(0, -1).some(l => l.includes(DA))) return false;                 // луғатда мажҳул шаклда берилган (احْتُضِرَ)
   if (L.some((l, i) => !(l[0] === 'ا' && pat.includes(i)) && !vOf(l) && !l.includes(SU))) return false; // ҳаракати тушиб қолган
-  for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) { if ([2, 3, 6, 7].includes(bob) && i === n - 2 && /[وي]/.test(ch(i)) && vOf(L[i])) continue; return false; } }
+  let fr = 0; while (pat.includes(fr)) fr++;
+  for (let i = 0; i < n; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئةء]/.test(ch(i))) { if (MITH_OK && i === fr && /[وي]/.test(ch(i)) && (vOf(L[i]) || L[i].includes(SU))) continue; if ([2, 3, 6, 7].includes(bob) && i === n - 2 && /[وي]/.test(ch(i)) && vOf(L[i])) continue; return false; } }
   const rootL = L.filter((_, i) => !pat.includes(i)).map(l => l[0]);
   if (bob === 5 && n === 4) { /* ادّخر каби: ت ўзакнинг ҳарфига айланган */ }
   else if (rootL.length === 3 && rootL[1] === rootL[2] && ![2, 6].includes(bob) && !MUD_OK) return false; // музоъаф; 30-бет: тафъил ва тафаъъулда музоъаф саҳиҳдан фарқсиз тусланади
@@ -1097,6 +1098,14 @@ function mazidAjwaf(f) {
     malum: [['Феъли мозий', mozi], ['Феъли музореъ (рафъ ҳолида)', raf], ['Феъли нафий: لَا (рафъ ҳолида)', pfx(raf, 'لَا ')], ['لَنْ билан манфий музореъ (насб ҳолида)', pfx(mapK(raf, nasbCell), 'لَنْ ')], ['Феъли жаҳд: لَمْ (жазм ҳолида)', pfx(jazm, 'لَمْ ')], ['Феъли амр (жазм ҳолида)', amr5(jazm, amr)], ['Феъли наҳий (жазм ҳолида)', pfx(jazm, 'لَا ')]],
     majhul: [['Мозий мажҳули', mMozi], ['Музореъ мажҳули', mRaf], ['Нафий феъли мажҳули', pfx(mRaf, 'لَا ')], ['لَنْ билан манфий музореъ мажҳули', pfx(mapK(mRaf, nasbCell), 'لَنْ ')], ['Жаҳд феъли мажҳули', pfx(mJazm, 'لَمْ ')], ['Амр феъли мажҳули', pfx(mJazm, 'لِ')], ['Наҳий феъли мажҳули', pfx(mJazm, 'لَا ')]] };
 }
+// мисол мазид (34-бет): вов ҳазф қилинмайди, саҳиҳ каби тусланади; сокин ё олди заммали бўлса вовга алмашади (қалбнинг 3-қонуни)
+function mazidMithal(f) {
+  if (MITH_OK || !MAZID[f.sarf_form]) return null; let sv = null;
+  MITH_OK = true; try { sv = sevenOf(f); } catch (z) {} finally { MITH_OK = false; }
+  if (!sv || !sv.malum) return null;
+  const fx = (c) => c && c.replace(/ُيْ/g, 'ُوْ'), G = (T) => (T || []).map(([t, g]) => [t, g.map(r => r.map(fx))]);
+  return Object.assign({}, sv, { type: (sv.type || '').replace('солим', 'мисол (саҳиҳ каби тусланади, 34-бет)').replace(/ноқис/, 'лафифи мафруқ (мисол + ноқис)'), pages: '34, ' + (sv.pages || ''), malum: G(sv.malum), majhul: G(sv.majhul) });
+}
 // музоъаф мазид (29–30-бет): аввал идғомсиз асл вазн (أَحْبَبَ) солим каби тусланади, кейин идғом қоидаси қўлланади:
 // иккинчи бир хил ҳарф ҳаракатли бўлса идғом (олдидаги ҳарф сокин бўлса ҳаракат унга кўчади), сокин бўлса идғом қилинмайди
 function mazidMud(f) {
@@ -1133,7 +1142,8 @@ function mazidNaqis(f) {
     5: ch(0) === 'ا' && ((n === 5 && /[تطد]/.test(ch(2))) ? [0, 2] : (n === 4 && sh(1)) ? [0] : null), 6: n === 4 && ch(0) === 'ت' && sh(2) ? [0] : null, 7: n === 5 && ch(0) === 'ت' && ch(2) === 'ا' ? [0, 2] : null,
     10: n === 6 && ch(0) === 'ا' && ch(1) === 'س' && ch(2) === 'ت' ? [0, 1, 2] : null }[bob];
   if (!pat) return null;
-  for (let i = 0; i < n - 1; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئة]/.test(ch(i))) return null; }   // ўзакда бошқа иллат ёки ҳамза бўлса — лафиф/маҳмуз, бу ерда қилинмайди
+  let fr = 0; while (pat.includes(fr)) fr++;
+  for (let i = 0; i < n - 1; i++) { if (pat.includes(i)) continue; if (/[اوىيآأإءؤئة]/.test(ch(i))) { if (MITH_OK && i === fr && /[وي]/.test(ch(i)) && (vOf(L[i]) || L[i].includes(SU))) continue; return null; } }   // ўзакда бошқа иллат ёки ҳамза бўлса — лафиф/маҳмуз, бу ерда қилинмайди
   if (L.slice(0, n - 1).some((l, i) => l.includes(DA) || (!(l[0] === 'ا' && pat.includes(i)) && !vOf(l) && !l.includes(SU)))) return null;
   const tG = bob === 6 || bob === 7, S = cl(L.slice(0, n - 1)), Sx = cl(S); Sx[Sx.length - 1] = Sx[Sx.length - 1].filter(m => !VW.includes(m));
   const X = joinL(Sx), base = joinL(cfg.drop ? Sx.slice(1) : Sx);
@@ -1165,7 +1175,7 @@ function mazidIX(f) {
 }
 function sevenOf(f) {
   let st = (MAZID[f.sarf_form] ? stemsMazid(f) : (f.sarf_form === 'I' ? stemsI(f) : null));
-  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f) || mazidNaqis(f) || mazidMud(f); if (a) return a; }
+  if (!st && MAZID[f.sarf_form]) { const a = mazidAjwaf(f) || mazidIX(f) || mazidNaqis(f) || mazidMud(f) || mazidMithal(f); if (a) return a; }
   if (!st && f.sarf_form === 'I') { const t = tasrifOf(f); if (t && t.x) return sevenX(t); st = stemsWeak(f); }
   if (!st) return null;
   const mB = st.majMuzB || majB(st.muzB);
