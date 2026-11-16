@@ -1549,7 +1549,7 @@ function ismOf(f, sv) {
         if (vOf(last) !== DA) return null;
         if (foil && !last.includes(SH) && vOf(L[n - 2]) === FA && L[n - 2][0] !== 'ا') L[n - 2] = setV(L[n - 2], KA);   // مُتَكَبِّرٌ، مُتَغَافِلٌ
         return seat(joinL(endN(L))); };
-      const foil = mk(mz, true), maful = mk(mj, false); if (!foil && !maful) return null;
+      const foil0 = mk(mz, true), foil = foil0 && foil0.replace(/اءِ/, 'ائِ') /* sail2 */, maful = mk(mj, false); if (!foil && !maful) return null;
       return { foil, maful, zm: maful, zmNote: 'мазидларда исми мафъул вазнида, 68-бет', pages: '58–59, 60–62' };
     }
     const t = tasrifOf(f); if (!t || /\+/.test(t.type)) return null; const w = one(String(f.arabic_word || '').split(/[,،]/)[0]); const L = splitLetters(un(w)); const ch = (i) => L[i] && L[i][0];
@@ -1616,7 +1616,7 @@ function derivedOf(f) {
   if (MAZID[f.sarf_form]) {
     const st = stemsMazid(f); if (!st) return null;
     const B = st.muzB, mB = majB(B), last = B[B.length - 1][0];
-    const Bk = cl(B); Bk[Bk.length - 2] = setV(Bk[Bk.length - 2], KA); const foil = 'مُ' + joinL(Bk) + TN, maf = 'مُ' + joinL(mB) + TN;
+    const Bk = cl(B); Bk[Bk.length - 2] = setV(Bk[Bk.length - 2], KA); const foil = ('مُ' + joinL(Bk) + TN).replace(/اءِ/, 'ائِ'), maf = 'مُ' + joinL(mB) + TN;
     const fem = (w) => w.replace(/ٌ$/, FA + 'ةٌ');
     return { kind: 'mazid', st, foil, foilF: fem(foil), maf, mafF: fem(maf) };
   }
