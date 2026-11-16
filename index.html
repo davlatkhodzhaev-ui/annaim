@@ -498,8 +498,33 @@ function takidTables(v) {
   const light = [['', '', b + 'نْ', fsS + 'نْ', ''], ['', '', '', '', ''], ['', '', mpS + 'نْ', '', '']];
   v.malum = v.malum.concat([['Амр: ташдидли таъкид нуни билан (44-бет)', heavy], ['Амр: енгил таъкид нуни билан (44-бет; тасния ва муаннас жамъига қўшилмайди)', light]]);
 }
+function guessForm(f) {
+  if (f.__g || f.form_type !== 'verb') return null;
+  const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w) || /[�?ًٌٍ]/.test(w)) return null;
+  const tryF = (sf, word) => { let sv = null; try { sv = sevenOf(Object.assign({}, f, { sarf_form: sf, arabic_word: word || f.arabic_word, __g: 1 })); } catch (z) {} return sv; };
+  const L0 = splitLetters(w), n0 = L0.length, c0 = (i) => L0[i] && L0[i][0], full = L0.every(l => l.length > 1 || l[0] === 'ا' || l[0] === 'ى');
+  if (!f.sarf_form) {
+    if (!full) return null; let sf = null;
+    if (f.vocaliz && (n0 === 3 || (n0 === 2 && L0[1].includes(SH))) && !L0.slice(0, n0 - 1).some(l => l.includes(SH))) sf = 'I';
+    else if (!f.vocaliz && n0 === 3 && L0[1].includes(SH) && c0(0) !== 'أ') sf = 'II';
+    else if (!f.vocaliz && n0 === 4 && c0(1) === 'ا' && L0[1].length === 1 && c0(0) !== 'ت') sf = 'III';
+    else if (!f.vocaliz && n0 === 4 && c0(0) === 'ت' && vOf(L0[0]) === FA && L0[2].includes(SH)) sf = 'V';
+    else if (!f.vocaliz && n0 === 5 && c0(0) === 'ت' && vOf(L0[0]) === FA && c0(2) === 'ا' && L0[2].length === 1) sf = 'VI';
+    if (!sf) return null; const sv = tryF(sf); if (!sv) return null;
+    return Object.assign({}, sv, { guess: sf, xnote: ((sv.xnote || '') + ' Луғатда бу феъл олдида шакл рақами босилмаган; ' + (sf === 'I' ? 'қавсдаги ҳарфга кўра сулосий мужаррад деб тусланди (луғатдан фойдаланиш қоидаси, 12-банд).' : 'шаклига кўра (' + sf + ', «Жаноҳ ут-толиб» 13-бет) тусланди.')).trim() });
+  }
+  const bob = MAZID[f.sarf_form]; if (!bob || full) return null;
+  let x = w; if ([4, 5, 10].includes(bob)) x = x.replace(/^[إأا][َِ]?/, 'ا'); else if (bob === 1) x = x.replace(/^[اأ]َ?/, 'أَ');
+  const L = splitLetters(x), n = L.length, last = L[n - 1];
+  const T = { 2: n === 3 ? [FA, FA, FA] : null, 3: n === 4 ? [FA, null, FA, FA] : null, 1: n === 4 ? [FA, SU, FA, FA] : n === 3 ? [FA, FA, FA] : null, 6: n === 4 ? [FA, FA, FA, FA] : null, 7: n === 5 ? [FA, FA, null, FA, FA] : null,
+    4: n === 5 ? [null, SU, FA, FA, FA] : null, 5: n === 5 ? [null, SU, FA, FA, FA] : null, 10: n === 6 ? [null, SU, FA, SU, FA, FA] : null }[bob];
+  if (!T) return null;
+  for (let i = 0; i < n; i++) { const l = L[i]; if (T[i] === null || l[0] === 'ى' || (l[0] === 'ا' && i > 0)) continue; if (!vOf(l) && !l.includes(SU)) { if (l.includes(SH) || T[i] !== SU) l.push(T[i] === SU ? FA : T[i]); else l.push(SU); } }
+  const word = joinL(L); if (word === w) return null; const sv = tryF(f.sarf_form, word); if (!sv) return null;
+  return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' Луғатда бу сўзнинг баъзи ҳаракатлари босилмаган (' + w + '); жадвал боб вазни бўйича (' + word + ', «Жаноҳ ут-толиб» 13-бет) ясалди.').trim() });
+}
 const IDG2 = (c) => c && c.replace(/([\u0621-\u064A])ْ\1([َُِ])/g, '$1ّ$2');
-function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || moziOnlyOf(f) || moziOnly2Of(f); if (v) ['malum', 'majhul'].forEach(k => { if (v[k]) v[k] = v[k].map(([t, g]) => [t, g.map(r => r.map(IDG2))]); }); if (v) { try { takidTables(v); } catch (y) {} } } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
+function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || guessForm(f) || moziOnlyOf(f) || moziOnly2Of(f); if (v) ['malum', 'majhul'].forEach(k => { if (v[k]) v[k] = v[k].map(([t, g]) => [t, g.map(r => r.map(IDG2))]); }); if (v) { try { takidTables(v); } catch (y) {} } } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
 function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++; if (i === a.length) return true; } return a.length === 0; }
 const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
 function arFormHits(text) {
@@ -1785,6 +1810,7 @@ function majOnlyOf(f) {
 function verbKind(f) {
   if (f.sarf_form) return `${f.sarf_form} шакл`;
   let sv = null; try { sv = sevenCached(f); } catch (z) {}
+  if (sv && sv.guess) return `${sv.guess} шакл (луғатда рақами босилмаган)`;
   if (sv && sv.type && !/^сулосий мужаррад/.test(sv.type)) return sv.type.split(' (')[0].replace(/, (солим|маҳмуз|идғомли).*$/, '').replace(/^сулосий мазид, /, '').replace(/^мазид, /, '');
   return 'феъл';
 }
