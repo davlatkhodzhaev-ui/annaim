@@ -230,6 +230,21 @@ p.s { margin: 0; color: var(--muted); }
 .set + .set { border-top: 1px solid var(--line); }
 .wc { display: block; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px 10px; }
 .wc:hover { border-color: var(--accent); }
+.wc.acc { padding: 0; overflow: hidden; }
+.wc.acc .hd { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; padding: 10px 14px; color: inherit; font: inherit; cursor: pointer; }
+.wc.acc .sm { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.wc.acc .m1 { font-size: 15.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.wc.acc .m2 { font-size: 12px; color: var(--muted); }
+.wc.acc .hd .w { font-size: calc(28px * var(--ars, 1)); }
+.wc.acc .chv { color: var(--muted); font-size: 18px; line-height: 1; transition: transform .15s; }
+.wc.acc.open .chv { transform: rotate(180deg); }
+.wc.acc.open { border-color: var(--accent); }
+.wc.acc.open .m1 { -webkit-line-clamp: unset; }
+.wc.acc .bd { padding: 2px 14px 12px; border-top: 1px solid var(--line); }
+.wc.acc .bd .chips2 { padding-top: 8px; }
+.wc.acc li.hit { font-weight: 600; }
+.wc.acc .go { background: var(--accent); color: var(--surface); border: 0; border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .wc.acc .chv { transition: none; } }
 .wc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .wc .w { font-family: var(--font-ar); font-size: calc(34px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; }
 .wc .chips2 { display: flex; align-items: stretch; flex-wrap: wrap; min-width: 0; }
@@ -470,7 +485,7 @@ function uzAlt(n) {
   UZALT.set(n, out); return out;
 }
 function uzView(qv, vh, items) {
-  const n = uzKey(qv); if (n.length < 2) return null;
+  const n = uzKey(qv); if (n.length < 2) return null; WCQ = qv;
   let uw = uzWordHits(n), ban = '', its = items;
   if (!uw.length && !vh.length) { const a = uzAlt(n); if (a) { uw = uzWordHits(a.key); its = search(a.disp);
     ban = h('div', { class: 'count', style: 'color:var(--gold)' }, `«${qv.trim()}» — «${a.disp}» бўйича кўрсатилмоқда`); } }
@@ -1703,6 +1718,7 @@ function muzGuess(n) {
   [body, ...['ون', 'ان', 'ين', 'وا', 'ن', 'ا', 'ي'].filter(sf => body.endsWith(sf) && body.length - sf.length >= 3).map(sf => body.slice(0, -sf.length))].forEach(c => (VSK.get(c) || []).forEach(x => { if (!seen.has(x.f)) { seen.add(x.f); out.push({ e: x.e, f: x.f, sc: 2, via: 'музореъ шакли бўлиши мумкин' }); } }));
   return out.slice(0, 6);
 }
+let WCQ = '';
 function wordCard(x) {
   const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
   if (f.form_type === 'verb') {
@@ -1719,12 +1735,20 @@ function wordCard(x) {
   } else { if (f.plural_form) chips.push(cp(String(f.plural_form).split(/[,،]/).slice(0, 2).join('، '), 'кўплиги')); }
   const ms = (f.translations || []).map(t => (t.label ? t.label + ' ' : '') + t.meaning).filter(Boolean);
   const tg = { verb: 'феъл', noun: 'исм', adjective: 'сифат' }[f.form_type] || '';
-  return h('button', { class: 'wc', onclick: () => openAt(x.e, f) },
-    h('div', { class: 'top' }, h('div', { class: 'chips2' }, chips), h('div', { class: 'w', lang: 'ar' }, f.arabic_word)),
+  const qk = WCQ ? uzKey(WCQ) : ''; let hi = qk ? ms.findIndex(m => uzKey(m).includes(qk)) : -1; if (hi < 0) hi = 0;
+  const sum = ms.length ? ms[hi] : (base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—');
+  const body = h('div', { class: 'bd', hidden: true },
+    chips.length ? h('div', { class: 'chips2' }, chips) : '',
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
-    ms.length ? h('ul', {}, ms.slice(0, 3).map(m => h('li', {}, m)), ms.length > 3 ? h('li', { class: 'more' }, `яна ${ms.length - 3} та маъно`) : '')
-      : h('ul', {}, h('li', {}, base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—')),
-    h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), tg ? h('span', { class: 'tg' }, tg) : ''));
+    ms.length ? h('ul', {}, ms.map((m, i) => h('li', { class: i === hi && qk ? 'hit' : null }, m))) : '',
+    h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), h('button', { class: 'go', onclick: (ev) => { ev.stopPropagation(); openAt(x.e, f); } }, 'Мақолани очиш →')));
+  const box = h('div', { class: 'wc acc' },
+    h('button', { class: 'hd', 'aria-expanded': 'false', onclick: () => { const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
+        if (op) { body.hidden = false; box.classList.add('open'); box.querySelector('.hd').setAttribute('aria-expanded', 'true'); } } },
+      h('span', { class: 'sm' }, h('span', { class: 'm1' }, sum), h('span', { class: 'm2' }, [tg, f.form_type === 'verb' && f.sarf_form ? f.sarf_form + ' шакл' : '', ms.length > 1 ? ms.length + ' та маъно' : ''].filter(Boolean).join(' · '))),
+      h('span', { class: 'w', lang: 'ar' }, f.arabic_word), h('span', { class: 'chv', 'aria-hidden': 'true' }, '⌄')),
+    body);
+  return box;
 }
 function wordCardOld(x) {
   const m = (x.f.translations || []).map(t => t.meaning).filter(Boolean).slice(0, 6).join('; ') || (x.f.equivalent_to ? '= ' + x.f.equivalent_to.join(', ') : '—');
