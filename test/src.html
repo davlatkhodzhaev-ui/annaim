@@ -518,8 +518,13 @@ function takidTables(v) {
 }
 const SHAPE15 = { p198_tahamala_v6: 'VI', p749_talasaqa_v6: 'VI', p911_tawaadaa_v6: 'VI', p231_akhtara_v4: 'IV', p314_rafatha_v3: 'IV', p329_araha_v4: 'IV', p877_ahjara_v4: 'IV', p816_anjaa_v4: 'IV', p843_anasha_v4: 'IV', p205_hawasa_v2: 'III', p861_nakafa_v3: 'III', p314_rafata_v2: 'VII', p614_farasa_v8: 'VII', p113_ijtabara_v8: 'VIII', p121_ijtaraa_v4: 'VIII' };
 const TANW6 = new Set(['p095_tarifa_v4', 'p247_ikhtana_v8', 'p574_itat_v13', 'p621_farhad_v5', 'p742_ljaa_v8', 'p746_lahwas_v1']);
+const FEM7 = new Set(['p211_hadat_v1', 'p211_tahayyadat_v5', 'p211_istuhidat_v10', 'p216_khadajat_v1', 'p216_akhdajat_v4', 'p656_aqrabat_v4', 'p943_awmasat_v4']);
+const femMask = (T) => (T || []).map(([t, g]) => [t, g.map((r, ri) => r.map((c, i) => (i === 0 || (i === 2 && ri !== 1)) ? '' : c))]);   // тасниядаги мухотоб шакли икки жинсга умумий — қолади
+const FEMNOTE = (w) => ' Китобда бу феъл муаннас шаклда босилган (' + w + '); муаллиф қарори билан жадвалда фақат муаннас ва мутакаллим шакллар кўрсатилади.';
 function guessForm(f) {
   if (f.__g || f.form_type !== 'verb') return null;
+  if (FEM7.has(f.form_id)) { const w2 = String(f.arabic_word).replace(/تْ$/, ''); if (w2 === f.arabic_word) return null; let sv = null; try { sv = sevenOf(Object.assign({}, f, { arabic_word: w2, __g: 1 })); } catch (z) {} if (!sv || !sv.malum) return null;
+    return Object.assign({}, sv, { malum: femMask(sv.malum), majhul: sv.majhul ? femMask(sv.majhul) : sv.majhul, fem: true, xnote: ((sv.xnote || '') + FEMNOTE(f.arabic_word)).trim() }); }
   if (TANW6.has(f.form_id)) { const w2 = String(f.arabic_word).replace(/[\u064B\u064C\u064D]/g, '\u064E'); let sv = null; try { const g = Object.assign({}, f, { arabic_word: w2, __g: 1 }); sv = sevenOf(g); } catch (z) {} if (!sv) return null;
     return Object.assign({}, sv, { xnote: ((sv.xnote || '') + ' Китобда бу феъл охирида танвин босилган (' + f.arabic_word + '); жадвал танвинсиз ' + w2 + ' шаклидан тузилди (муаллиф тасдиғи).').trim() }); }
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w) || /[\ufffd?ًٌٍ]/.test(w)) return null;
@@ -1774,7 +1779,7 @@ function wordCard(x, idx) {
   const f = x.f, base = f._of || f, chips = []; const cp = (v, l, num) => h('span', { class: 'cp' }, h('b', { class: num ? 'n' : null, lang: num ? null : 'ar' }, v), h('i', {}, l));
   if (f.form_type === 'verb') {
     let muz = [], amr = '', bobs = [];
-    try { if (MAZID[f.sarf_form]) { const sv = sevenCached(f); if (sv) { const M = sv.malum.find(t => /музореъ \(рафъ/.test(t[0])), A = sv.malum.find(t => /^Феъли амр/.test(t[0])); if (M) muz = [M[1][0][0]]; if (A) amr = A[1][0][2] || ''; } }
+    try { if (MAZID[f.sarf_form]) { const sv = sevenCached(f); if (sv) { const M = sv.malum.find(t => /музореъ \(рафъ/.test(t[0])), A = sv.malum.find(t => /^Феъли амр/.test(t[0])); if (M) muz = [M[1][0][0] || M[1][0][1]].filter(Boolean); if (A) amr = A[1][0][2] || A[1][0][3] || ''; } }
       else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); bobs = [...new Set(tl.map(t => t.bob).filter(Boolean))]; if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
     const RB = ['', 'I', 'II', 'III', 'IV', 'V', 'VI']; let sb = f.sarf_form ? f.sarf_form + ' шакл' : '';
     // боб: китобда қавсда босилган ҳарф ва шунга мос боб рақами; мазидда боб номи
@@ -1822,6 +1827,8 @@ function scrollToForm(f) {
 let F2M = null;
 function majOnlyOf(f) {
   if (f.form_type !== 'verb') return null;
+  if (FEM7.has(f.form_id) && !f.__fm) { const w2 = String(f.arabic_word).replace(/تْ$/, ''); if (w2 === f.arabic_word) return null; const m = majOnlyOf(Object.assign({}, f, { arabic_word: w2, __fm: 1 })); if (!m) return null;
+    return Object.assign({}, m, { majhul: femMask(m.majhul), fem: true, type: m.type + '; муаннас шаклда босилган' }); }
   const w = (f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); const L0 = splitLetters(w);
   // ажваф, фақат мажҳул: إِيفَ = أُوِفَ (таскин 3 + қалб 4; قُوِلَ → قِيلَ каби, 31–32, 35–36-бетлар)
   if (L0.length === 3 && (f.sarf_form || 'I') === 'I' && !f.vocaliz && L0[0].includes(KA) && L0[1][0] === 'ي' && !vOf(L0[1]) && L0[2].includes(FA) && !L0[2].includes(SH)) {
