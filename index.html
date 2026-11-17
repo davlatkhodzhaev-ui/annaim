@@ -238,6 +238,14 @@ ol.mean li { margin: 3px 0; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px 18px; display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
 .mock { background: var(--bg); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
 .pill { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--accent-soft); font-size: 14px; color: var(--accent-deep); }
+.wdemo { gap: 12px; }
+.wres { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--bg); border-radius: 14px; padding: 14px; }
+.wres .wu { font-size: 17px; font-weight: 600; } .wt { font-size: 13px; color: var(--muted); } .wres .ws { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.wres .wa { font-family: var(--font-ar); font-size: 34px; line-height: 1.6; direction: rtl; color: var(--accent); white-space: nowrap; }
+.wnums { display: flex; gap: 10px; margin: 4px 0 0; } .wnums div { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; }
+.wnums b { font-size: 19px; } .wnums span { font-size: 12.5px; color: var(--muted); }
+.wtab { display: flex; gap: 8px; } .wtab div { flex: 1; background: var(--bg); border-radius: 14px; padding: 10px 4px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
+.wtab span { font-size: 12.5px; color: var(--muted); } .wtab b { font-family: var(--font-ar); font-weight: 400; font-size: 30px; line-height: 1.6; direction: rtl; color: var(--accent); }
 h1.t { margin: 20px 0 8px; font-size: 28px; line-height: 1.2; font-weight: 600; }
 p.s { margin: 0; color: var(--muted); }
 .dots { display: flex; gap: 6px; margin: 18px 0; }
@@ -2118,37 +2126,36 @@ function welcome(n) {
   const skip = h('button', { class: 'link', onclick: finishWelcome }, 'Ўтказиб юбориш');
   const back = n > 1 ? h('button', { class: 'link', onclick: () => goRep('w' + (n - 1)) }, '← Орқага') : h('span', {});
   const bar = h('div', { class: 'bar' }, back, skip);
+  // намуна карточкаси: қидирув қатори + натижа
+  const demo = (q, ar, uz, tag, src) => h('div', { class: 'panel wdemo' },
+    h('div', { class: 'search', style: 'margin:0;border-color:var(--accent)' }, svg(ICON.find, 20), h('span', { lang: /[؀-ۿ]/.test(q) ? 'ar' : null, style: /[؀-ۿ]/.test(q) ? 'font-family:var(--font-ar);font-size:24px;direction:rtl' : '' }, q)),
+    h('div', { class: 'wres' }, h('div', { class: 'wl' }, h('div', { class: 'wu' }, uz), h('div', { class: 'wt' }, tag), h('div', { class: 'ws' }, src)), h('div', { class: 'wa', lang: 'ar' }, ar)));
   if (n === 1) return page(null, bar,
     h('div', { class: 'hero cover' }, h('img', { src: 'icons/kanz-cover.jpg', alt: 'كنز — KANZ, арабча-ўзбекча луғат' })),
-    h('h1', { class: 't' }, 'Арабча-ўзбекча луғат'),
-    h('p', { class: 's' }, 'Китобдаги ҳар бир сўз, огласовкалари билан, бир босишда сизнинг чўнтагингизда.'),
+    h('h1', { class: 't' }, 'Бу оддий луғат эмас'),
+    h('p', { class: 's' }, 'Китобдаги 40 000 дан ортиқ сўз ва уларнинг ҳар бир шаклини танийдиган қидирув.'),
+    h('div', { class: 'wnums' }, [['40 000+', 'сўз'], ['11 700+', 'феъл'], ['29 000+', 'мисол']].map(([a, b]) => h('div', {}, h('b', {}, a), h('span', {}, b)))),
     dots(1), h('button', { class: 'btn', onclick: () => goRep('w2') }, 'Давом этиш'));
   if (n === 2) return page(null, bar,
-    h('div', { class: 'panel' },
-      h('div', { style: 'display:flex;align-items:center;gap:12px' }, h('b', { style: 'color:var(--muted);font-size:14px;width:22px' }, 'I'),
-        h('span', { class: 'arr', lang: 'ar', dir: 'rtl', style: 'font-size:40px;padding:0 16px;border-radius:14px;background:var(--accent-soft);border:1.5px solid var(--accent)' }, 'رَطُبَ'),
-        h('span', { style: 'font-size:13px;color:var(--muted)' }, '(у)')),
-      h('div', { class: 'mock' }, h('div', { class: 'lbl', style: 'margin:0' }, 'Маънолари'),
-        h('div', {}, '1. хўл бўлмоқ, нам бўлмоқ, зах бўлмоқ'), h('div', {}, '2. янги бўлмоқ'))),
-    h('h1', { class: 't' }, 'Сўзни босинг, таржимаси пастда'),
-    h('p', { class: 's' }, 'Ҳар бир арабча сўзни босинг: маънолари, масдари ва мисоллари пастдан чиқади.'),
+    demo('يكتبون', 'يَكْتُبُونَ', 'ёзадилар', 'Феъли музореъ, ғоиб муз. жамъ', 'كَتَبَ (I шакл) · стр. 703'),
+    h('h1', { class: 't' }, 'Феълнинг истаган шаклини ёзинг'),
+    h('p', { class: 's' }, 'Матнда учраган сўзни қандай бўлса шундай ёзинг. Илова унинг ўзагини, замонини ва шахсини ўзи айтиб беради. Ўзакни ўзингиз ажратиб ўтиришингиз шарт эмас.'),
     dots(2), h('button', { class: 'btn', onclick: () => goRep('w3') }, 'Давом этиш'));
   if (n === 3) return page(null, bar,
-    h('h1', { class: 't', style: 'margin-top:8px' }, 'Луғатдан ташқари ҳам кўп нарса бор'),
-    h('div', { class: 'group', style: 'margin:14px 0' }, [
-      ['Феълнинг тусланиши', 'Феълни очиб, унинг шаклларини кўринг: мозий, музореъ, амр ва бошқалар. Жадваллар «Жаноҳ ут-толиб» дарслиги бўйича ясалган.'],
-      ['Сарф ва Наҳв', 'Икки дарслик дарс-дарс, китоб саҳифалари билан.'],
-      ['Қўлланма ва иловалар', 'Луғатдан фойдаланиш қоидалари, шартли қисқартмалар ва китоб охиридаги рўйхатлар.'],
-      ['Сақлаб қўйиш', 'Мақолада белги тугмасини босинг, у Профилда сақланади.']
-    ].map(([t, d], i) => h('div', { style: 'padding:12px 16px;' + (i ? 'border-top:1px solid var(--line)' : '') }, h('div', { style: 'font-weight:600' }, t), h('div', { style: 'font-size:14px;color:var(--muted);margin-top:2px' }, d)))),
+    demo('ёздим', 'كَتَبْتُ', 'ёздим', 'Феъли мозий, мутакаллим, муфрад', 'كَتَبَ (I шакл) · стр. 703'),
+    h('h1', { class: 't' }, 'Ўзбекча тусланган феълдан ҳам топади'),
+    h('p', { class: 's' }, '«ёздим», «ёзасизлар» деб ёзсангиз, арабчасини тайёр шаклда кўрсатади. ў, қ, ғ, ҳ ҳарфларини оддий у, к, г, х билан ёзсангиз ҳам тушунади.'),
     dots(3), h('button', { class: 'btn', onclick: () => goRep('w4') }, 'Давом этиш'));
   return page(null, bar,
-    h('div', { class: 'panel' },
-      h('div', { class: 'search', style: 'margin:0;border-color:var(--accent)' }, svg(ICON.find, 20), h('span', {}, 'хул')),
-      h('div', { class: 'card', style: 'cursor:default' }, h('span', { class: 'gloss' }, 'хўл, нам; янги'), h('span', { class: 'root', lang: 'ar' }, 'رطب'), h('span', { class: 'meta' }, '10 шакл')),
-      h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px' }, ['ў ≈ у', 'қ ≈ к', 'ғ ≈ г', 'ҳ ≈ х'].map(x => h('span', { class: 'pill' }, x)))),
-    h('h1', { class: 't' }, 'Ўзбекча ёзсангиз ҳам топилади'),
-    h('p', { class: 's' }, 'Ў, қ, ғ, ҳ ўрнига у, к, г, х ёзса бўлади. Огласовкасиз ёзилган арабча сўз ҳам топилади.'),
+    h('div', { class: 'panel wdemo' },
+      h('div', { class: 'wtab' }, [['Мозий', 'كَتَبَ'], ['Музореъ', 'يَكْتُبُ'], ['Амр', 'اُكْتُبْ']].map(([l, a]) => h('div', {}, h('span', {}, l), h('b', { lang: 'ar' }, a)))),
+      h('div', { class: 'wt', style: 'text-align:center' }, 'маълум ва мажҳул · барча шахслар · «Жаноҳ ут-толиб» қоидалари бўйича')),
+    h('h1', { class: 't' }, 'Ҳар бир феълнинг тўлиқ жадвали'),
+    h('div', { class: 'group', style: 'margin:10px 0 0' }, [
+      ['Сарф ва наҳв дарсликлари', 'Икки китоб дарсма-дарс, видеодарслар билан.'],
+      ['Китобнинг ўзидек', 'Ҳар бир сўз ёнида китобдаги саҳифа рақами туради.'],
+      ['Интернетсиз ишлайди', 'Рўйхатдан ўтиш ҳам, реклама ҳам йўқ.']
+    ].map(([t, d], i) => h('div', { style: 'padding:10px 16px;' + (i ? 'border-top:1px solid var(--line)' : '') }, h('div', { style: 'font-weight:600' }, t), h('div', { style: 'font-size:14px;color:var(--muted);margin-top:2px' }, d)))),
     dots(4), h('button', { class: 'btn', onclick: finishWelcome }, 'Бошлаш'));
 }
 
