@@ -777,6 +777,7 @@ const ICON = {
 };
 const view = document.getElementById('view'), tabs = document.getElementById('tabs'), sheet = document.getElementById('sheet'), appEl = document.getElementById('app');
 const go = (hash) => { location.hash = hash; };
+const goRep = (hash) => { location.replace('#' + hash); };   // тарихга ёзмасдан ўтиш
 
 // ---------- матн китобдагидек ----------
 const EXACT = new Map(), LOOSE = new Map();
@@ -2095,16 +2096,16 @@ function page(active, ...kids) { closeSheet(); appEl.classList.toggle('bare', !a
 
 // ---------- танишув экранлари ----------
 const dots = (n) => h('div', { class: 'dots', 'aria-hidden': 'true' }, [1, 2, 3, 4].map(i => h('i', { class: i === n ? 'on' : '' })));
-function finishWelcome() { S.seen = true; save(); go('home'); }
+function finishWelcome() { S.seen = true; save(); goRep('home'); }
 function welcome(n) {
   const skip = h('button', { class: 'link', onclick: finishWelcome }, 'Ўтказиб юбориш');
-  const back = n > 1 ? h('button', { class: 'link', onclick: () => go('w' + (n - 1)) }, '← Орқага') : h('span', {});
+  const back = n > 1 ? h('button', { class: 'link', onclick: () => goRep('w' + (n - 1)) }, '← Орқага') : h('span', {});
   const bar = h('div', { class: 'bar' }, back, skip);
   if (n === 1) return page(null, bar,
     h('div', { class: 'hero cover' }, h('img', { src: 'icons/kanz-cover.jpg', alt: 'كنز — KANZ, арабча-ўзбекча луғат' })),
     h('h1', { class: 't' }, 'Арабча-ўзбекча луғат'),
     h('p', { class: 's' }, 'Китобдаги ҳар бир сўз, огласовкалари билан, бир босишда сизнинг чўнтагингизда.'),
-    dots(1), h('button', { class: 'btn', onclick: () => go('w2') }, 'Давом этиш'));
+    dots(1), h('button', { class: 'btn', onclick: () => goRep('w2') }, 'Давом этиш'));
   if (n === 2) return page(null, bar,
     h('div', { class: 'panel' },
       h('div', { style: 'display:flex;align-items:center;gap:12px' }, h('b', { style: 'color:var(--muted);font-size:14px;width:22px' }, 'I'),
@@ -2114,7 +2115,7 @@ function welcome(n) {
         h('div', {}, '1. хўл бўлмоқ, нам бўлмоқ, зах бўлмоқ'), h('div', {}, '2. янги бўлмоқ'))),
     h('h1', { class: 't' }, 'Сўзни босинг, таржимаси пастда'),
     h('p', { class: 's' }, 'Ҳар бир арабча сўзни босинг: маънолари, масдари ва мисоллари пастдан чиқади.'),
-    dots(2), h('button', { class: 'btn', onclick: () => go('w3') }, 'Давом этиш'));
+    dots(2), h('button', { class: 'btn', onclick: () => goRep('w3') }, 'Давом этиш'));
   if (n === 3) return page(null, bar,
     h('h1', { class: 't', style: 'margin-top:8px' }, 'Луғатдан ташқари ҳам кўп нарса бор'),
     h('div', { class: 'group', style: 'margin:14px 0' }, [
@@ -2123,7 +2124,7 @@ function welcome(n) {
       ['Қўлланма ва иловалар', 'Луғатдан фойдаланиш қоидалари, шартли қисқартмалар ва китоб охиридаги рўйхатлар.'],
       ['Сақлаб қўйиш', 'Мақолада белги тугмасини босинг, у Профилда сақланади.']
     ].map(([t, d], i) => h('div', { style: 'padding:12px 16px;' + (i ? 'border-top:1px solid var(--line)' : '') }, h('div', { style: 'font-weight:600' }, t), h('div', { style: 'font-size:14px;color:var(--muted);margin-top:2px' }, d)))),
-    dots(3), h('button', { class: 'btn', onclick: () => go('w4') }, 'Давом этиш'));
+    dots(3), h('button', { class: 'btn', onclick: () => goRep('w4') }, 'Давом этиш'));
   return page(null, bar,
     h('div', { class: 'panel' },
       h('div', { class: 'search', style: 'margin:0;border-color:var(--accent)' }, svg(ICON.find, 20), h('span', {}, 'хул')),
@@ -2556,7 +2557,7 @@ function renderGram() {
 }
 function route() {
   const hsh = location.hash.replace(/^#/, '');
-  if (!S.seen && !/^w[1234]$/.test(hsh)) return go('w1');
+  if (!S.seen && !/^w[1234]$/.test(hsh)) return goRep('w1');
   if (/^w[1234]$/.test(hsh)) return welcome(+hsh[1]);
   const m = hsh.match(/^e-(.+)$/); const e = m && DATA.find(x => hashOf(x) === 'e-' + m[1]);
   if (e) return renderEntry(e);
