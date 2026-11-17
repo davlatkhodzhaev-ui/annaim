@@ -667,11 +667,12 @@ const IDG2 = (c) => c && c.replace(/([\u0621-\u064A])ْ\1([َُِ])/g, '$1ّ$2')
 function sevenCached(f) { if (!SVC.has(f)) { let v = null; try { v = sevenOf(f) || guessForm(f) || moziOnlyOf(f) || moziOnly2Of(f); if (v) ['malum', 'majhul'].forEach(k => { if (v[k]) v[k] = v[k].map(([t, g]) => [t, g.map(r => r.map(IDG2))]); }); if (v) { try { takidTables(v); } catch (y) {} } } catch (x) {} SVC.set(f, v); } return SVC.get(f); }
 function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++; if (i === a.length) return true; } return a.length === 0; }
 const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
+const RKEYC = new WeakMap();
 function arFormHits(text) {
   const nq = normAr(text); if (nq.length < 2) return [];
   const out = new Map();
   DATA.forEach(e => {
-    const rs = normAr(e.root_search || '').replace(AR_WEAK, ''); const rOk = !!rs && isSubseq(rs, nq);
+    let rs = RKEYC.get(e); if (rs === undefined) { rs = normAr(e.root_search || '').replace(AR_WEAK, ''); RKEYC.set(e, rs); } const rOk = !!rs && isSubseq(rs, nq);
     e.derivatives.forEach(f => {
       if (f.form_type !== 'verb') return; if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 || !isSubseq(fk, nq)) return; } const sv = sevenCached(f); if (!sv) return;
       let exact = false; [sv.malum, sv.majhul].forEach(T => (T || []).forEach(tb => ACELLS.forEach(([k0, r, c]) => { const cl = tb[1][r] && tb[1][r][c]; if (cl && normAr(cl) === nq) exact = true; })));
@@ -1856,11 +1857,16 @@ function uzBasic(f) {
 }
 function uzDecl(w) { return [[w, w], ['икки ' + w, 'икки ' + w], [w + 'лар', w + 'лар']]; }
 // ---------- қидирув: ёзилган сўзнинг ўзи ----------
+const WHC = new WeakMap();   // сўз калитлари: бир марта ҳисобланади
+function whKeys(f) { let c = WHC.get(f); if (c) return c;
+  const own = [f.arabic_word, ...(f.alt_forms || []).map(a => a && (a.arabic_word || a))].filter(Boolean).flatMap(x => String(x).split(/[,،;=]|ёки/)).map(x => x.trim()).filter(Boolean);
+  const extra = [[f.verbal_noun, 'масдари'], [f.plural_form, 'кўплиги'], [f.collective_form, 'жамловчиси']].filter(x => x[0]).flatMap(([x, l]) => String(x).split(/[,،;=]|ёки/).map(y => [y.trim(), l]));
+  c = { own, extra, keys: new Set([...own.map(normAr), ...extra.map(x => normAr(x[0]))]) }; WHC.set(f, c); return c; }
 function wordHits(t) {
   const n = normAr(t), out = [];
   DATA.forEach(e => e.derivatives.forEach(f => {
-    const own = [f.arabic_word, ...(f.alt_forms || []).map(a => a && (a.arabic_word || a))].filter(Boolean).flatMap(x => String(x).split(/[,،;=]|ёки/)).map(x => x.trim()).filter(Boolean);
-    const extra = [[f.verbal_noun, 'масдари'], [f.plural_form, 'кўплиги'], [f.collective_form, 'жамловчиси']].filter(x => x[0]).flatMap(([x, l]) => String(x).split(/[,،;=]|ёки/).map(y => [y.trim(), l]));
+    const K = whKeys(f); if (!K.keys.has(n)) return;
+    const own = K.own, extra = K.extra;
     let sc = 0, via = '';
     if (own.includes(t)) sc = 5; else if (own.some(x => normAr(x) === n)) sc = 4;
     else { const hit = extra.find(([y]) => y === t) || extra.find(([y]) => normAr(y) === n); if (hit) { sc = (hit[0] === t && /[\u064B-\u0652]/.test(t)) ? 4.5 : 3; via = hit[1]; } }
@@ -2601,6 +2607,7 @@ function route() {
 document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeSheet(); });
 window.addEventListener('hashchange', route);
 applyPrefs(); route();
+setTimeout(() => { let i = 0; const step = () => { const t = performance.now(); while (i < DATA.length && performance.now() - t < 8) DATA[i++].derivatives.forEach(whKeys); if (i < DATA.length) setTimeout(step, 30); }; step(); }, 1500);
 </script>
 
 <script>
