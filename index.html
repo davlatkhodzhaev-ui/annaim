@@ -669,7 +669,7 @@ function isSubseq(a, b) { let i = 0; for (const ch of b) { if (ch === a[i]) i++;
 const arRaw = (t) => KB(t).replace(/[\sـ]/g, '');
 const RKEYC = new WeakMap();
 function arFormHits(text) {
-  const nq = normAr(text); if (nq.length < 2) return [];
+  const nq = normAr(text); if (nq.length < 1) return [];
   const out = new Map();
   DATA.forEach(e => {
     let rs = RKEYC.get(e); if (rs === undefined) { rs = normAr(e.root_search || '').replace(AR_WEAK, ''); RKEYC.set(e, rs); } const rOk = !!rs && isSubseq(rs, nq);
