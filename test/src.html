@@ -674,10 +674,11 @@ function arFormHits(text) {
   DATA.forEach(e => {
     let rs = RKEYC.get(e); if (rs === undefined) { rs = normAr(e.root_search || '').replace(AR_WEAK, ''); RKEYC.set(e, rs); } const rOk = !!rs && isSubseq(rs, nq);
     e.derivatives.forEach(f => {
-      if (f.form_type !== 'verb') return; if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 ? !!rs : !isSubseq(fk, nq)) return; } const sv = sevenCached(f) || majOnlyOf(f); if (!sv) return;
-      let exact = false; [sv.malum, sv.majhul].forEach(T => (T || []).forEach(tb => ACELLS.forEach(([k0, r, c]) => { const cl = tb[1][r] && tb[1][r][c]; if (cl && normAr(cl) === nq) exact = true; })));
+      if (f.form_type !== 'verb') return; if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 ? (!!fk && !nq.includes(fk)) : !isSubseq(fk, nq)) return; } const sv = sevenCached(f) || majOnlyOf(f); if (!sv) return;
+      let exact = false; [sv.malum, sv.majhul].forEach(T => (T || []).forEach(tb => ACELLS.forEach(([k0, r, c]) => { const cl = tb[1][r] && tb[1][r][c]; if (cl && String(cl).split(' ёки ').some(a => normAr(a) === nq)) exact = true; })));
       [['malum', sv.malum], ['majhul', sv.majhul]].forEach(([kind, T]) => (T || []).forEach((tb, ti) => {
-        ACELLS.forEach(([key, r, c]) => { const cell = tb[1][r] && tb[1][r][c]; if (!cell || !(normAr(cell) === nq || (kind === 'malum' && ti === 1 && /тафаъъул|тафоъул|تَفَعْلَلَ/.test(sv.type || '') && /^تَتَ/.test(cell) && normAr(cell.slice(2)) === nq) || (!exact && /\s/.test(cell.trim()) && normAr(cell.trim().split(/\s+/).pop()) === nq))) return;
+        ACELLS.forEach(([key, r, c]) => { const cell0 = tb[1][r] && tb[1][r][c]; if (!cell0) return;
+          const cell = String(cell0).split(' ёки ').map(x => x.trim()).find(a => a && (normAr(a) === nq || (kind === 'malum' && ti === 1 && /тафаъъул|тафоъул|تَفَعْلَلَ/.test(sv.type || '') && /^تَتَ/.test(a) && normAr(a.slice(2)) === nq) || (!exact && /\s/.test(a) && normAr(a.split(/\s+/).pop()) === nq))); if (!cell) return;
           const id = e.id + '|' + e.derivatives.indexOf(f) + '|' + kind + '|' + ti + '|' + cell;
           if (!out.has(id)) {
             let uz = ''; try { const u = uzVerb(f); const U = kind === 'malum' ? uzSeven(u.pre, u.s)[ti] : (u.pas ? uzSeven(u.pasPre || '', u.pas)[ti] : null); uz = U && U[r] && U[r][c] || ''; } catch (x) {}
