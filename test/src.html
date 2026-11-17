@@ -2176,7 +2176,6 @@ function renderHome() {
     h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
       h('div', { class: 'acts' },
         h('a', { class: 'round', 'data-l': 'Қўлланма', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
-        h('a', { class: 'round', 'data-l': 'География', href: '#geo', 'aria-label': 'Географик номлар', title: 'Географик номлар' }, h('span', { 'aria-hidden': 'true', style: 'font-size:21px;line-height:1' }, '🇸🇦')),
         h('a', { class: 'round star', 'data-l': 'Сақланган', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
         (() => { const dark = () => S.theme === 'dark' || (S.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           const b = h('button', { class: 'round', 'data-l': 'Режим', 'aria-label': 'Ёруғ ёки қоронғи' });
@@ -2364,7 +2363,7 @@ function renderGeo() {
     list.replaceChildren(...rows.map(x => exRow(x.r.uz, x.r.ar, x.r.note)));
   };
   q.addEventListener('input', fill);
-  page('home', backTo('home', 'Бош'), h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, 'Географик номлар'),
+  page('more', backTo('more', 'Қўшимча'), h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, 'Географик номлар'),
     h('div', { class: 'search' }, svg(ICON.find, 20), q), count, list);
   fill();
 }
@@ -2493,7 +2492,8 @@ function renderMore() {
     h('h1', { style: 'font-size:24px;margin:8px 0 14px' }, 'Қўшимча'),
     h('div', { class: 'quad', style: 'grid-template-columns:1fr' },
       ...BOOKS.extra.lessons.map((l, i) => h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('extra-' + i) }, h('span', {}, l[1]))),
-      h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар'))));
+      h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('guide-1') }, h('span', {}, 'Шартли қисқартмалар')),
+      /* geomore */ h('button', { class: 'geo', style: 'min-height:64px', onclick: () => go('geo') }, h('span', {}, 'Географик номлар'))));
 }
 const ALIFBO = 'ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي'.split(' ');
 function renderAlif() {
