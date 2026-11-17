@@ -268,7 +268,12 @@ p.s { margin: 0; color: var(--muted); }
 .wc.acc .bd { padding: 2px 14px 12px; border-top: 1px solid var(--line); }
 .wc.acc .bd .chips2 { padding-top: 8px; }
 .wc.acc li.hit { font-weight: 600; }
-.wc.acc .go { background: var(--accent); color: var(--surface); border: 0; border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.wc.acc .go { background: var(--accent); color: var(--surface); border: 0; border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.wc .ft .acts { display: flex; align-items: center; gap: 8px; flex: none; }
+.mark.sm { width: 32px; height: 32px; border-radius: 16px; padding: 0; cursor: pointer; color: inherit; }
+.mark.sm[aria-pressed="true"] svg { fill: var(--accent); stroke: var(--accent); }
+.row .g2 { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.row .g2 .k { font-size: 12px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .wc.acc .chv { transition: none; } }
 .wc .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .wc .w { font-family: var(--font-ar); font-size: calc(34px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; }
@@ -394,6 +399,15 @@ DATA.forEach(e => {
     .forEach(x => x && String(x).split(/[,،;=]+/).forEach(w => { w = w.trim(); if (w) { e._raw.add(w); const nw = normAr(w); e._words.add(nw); ALLW.add(nw); if (!WH.has(HKEY(nw))) WH.set(HKEY(nw), nw); const k2 = HK2(nw); if (!WH2.has(k2)) WH2.set(k2, []); if (!WH2.get(k2).includes(nw)) WH2.get(k2).push(nw); } })));
 });
 const byId = (id) => DATA.find(e => e.id === id);
+// сақланганлар: мақола (ўзак) = e.id; алоҳида сўз = e.id + '::' + form_id
+const savedKeyOf = (e, f) => e.id + '::' + (f._of || f).form_id;
+const savedItem = (k) => { const i = String(k).indexOf('::'); if (i < 0) { const e = byId(k); return e ? { e } : null; }
+  const e = byId(String(k).slice(0, i)), f = e && e.derivatives.find(d => d.form_id === String(k).slice(i + 2)); return f ? { e, f } : null; };
+function savedRow(it) { const lab = (g, t) => h('span', { class: 'g2' }, h('span', { class: 'g' }, g), h('span', { class: 'k' }, t));
+  if (!it.f) return h('button', { class: 'row', onclick: () => go(hashOf(it.e)) }, lab(firstGloss(it.e) || '—', 'ўзак · бутун мақола'), h('span', { class: 'r', lang: 'ar' }, rootOf(it.e)));
+  const f = it.f, g = ((f.translations || []).map(t => t.meaning).filter(Boolean)[0]) || (f.equivalent_to ? '= ' + f.equivalent_to.join(', ') : '—');
+  const tg = [{ verb: 'феъл', noun: 'исм', adjective: 'сифат' }[f.form_type] || 'сўз', f.form_type === 'verb' && f.sarf_form ? f.sarf_form + ' шакл' : ''].filter(Boolean).join(' · ');
+  return h('button', { class: 'row', onclick: () => openAt(it.e, f) }, lab(g, tg), h('span', { class: 'r', lang: 'ar' }, f.arabic_word)); }
 const hashOf = (e) => 'e-' + e.id.replace(/_/g, '-');
 function firstGloss(e) { for (const f of e.derivatives) if (f.translations && f.translations.length) return f.translations[0].meaning; return ''; }
 function rootOf(e) { return e.root_search || e.derivatives[0].arabic_word; }
@@ -1888,7 +1902,10 @@ function wordCard(x, idx) {
     chips.length ? h('div', { class: 'chips2' }, chips) : '',
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
     ms.length ? h('ul', {}, ms.map((m, i) => h('li', { class: i === hi && qk ? 'hit' : null }, m))) : '',
-    h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), h('button', { class: 'go', onclick: (ev) => { ev.stopPropagation(); openAt(x.e, f); } }, 'Мақолани очиш →')));
+    h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), h('span', { class: 'acts' }, (() => { const k = savedKeyOf(x.e, f), on = () => S.saved.includes(k);
+        const b = h('button', { class: 'mark sm', 'aria-label': 'Сўзни сақлаш', title: 'Сўзни сақлаш', 'aria-pressed': String(on()), onclick: (ev) => { ev.stopPropagation();
+          S.saved = on() ? S.saved.filter(v => v !== k) : [k, ...S.saved]; save(); b.setAttribute('aria-pressed', String(on())); } }, svg(ICON.mark, 17)); return b; })(),
+      h('button', { class: 'go', onclick: (ev) => { ev.stopPropagation(); openAt(x.e, f); } }, 'Мақолани очиш →'))));
   const box = h('div', { class: pin ? 'wc acc open pin' : 'wc acc' },
     h('button', { class: 'hd', 'aria-expanded': pin ? 'true' : 'false', onclick: () => { if (pin) return; const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open:not(.pin)').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
         if (op) { body.hidden = false; box.classList.add('open'); box.querySelector('.hd').setAttribute('aria-expanded', 'true'); } } },
@@ -2252,10 +2269,10 @@ function renderEntry(e) {
 
 // ---------- сақланганлар ва профил ----------
 function renderSaved() {
-  const items = S.saved.map(byId).filter(Boolean);
+  const items = S.saved.map(savedItem).filter(Boolean);
   page('profile', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => (history.length > 1 ? history.back() : go('home')) }, '← Орқага')), h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Сақланганлар')),
-    items.length ? h('div', { class: 'group', style: 'margin-top:8px' }, items.map(entryRow))
-      : h('div', { class: 'empty' }, 'Ҳали ҳеч нарса сақланмади. Мақолани очиб, юқоридаги белги тугмасини босинг.'));
+    items.length ? h('div', { class: 'group', style: 'margin-top:8px' }, items.map(savedRow))
+      : h('div', { class: 'empty' }, 'Ҳали ҳеч нарса сақланмади. Сўз карточкасидаги ёки мақола юқорисидаги белги тугмасини босинг.'));
 }
 function seg(options, current, onPick) {
   const wrap = h('div', { class: 'seg', role: 'group' });
@@ -2345,14 +2362,14 @@ function renderQuiz() {
       h('button', { class: 'btn line', onclick: () => openAt(q.it.e, q.it.f) }, 'Луғатда очиш')) : '');
 }
 function renderProfile() {
-  const saved = S.saved.map(byId).filter(Boolean).slice(0, 3);
+  const saved = S.saved.map(savedItem).filter(Boolean).slice(0, 3);
   const sw = h('button', { class: 'sw', role: 'switch', 'aria-checked': String(S.harakat), 'aria-label': 'Огласовкаларни кўрсатиш', onclick: () => { S.harakat = !S.harakat; save(); renderProfile(); } });
   page('profile',
     h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
     h('div', { class: 'me' }, h('div', { class: 'av' }, svg(ICON.user, 30)),
       h('div', {}, h('div', { style: 'font-size:22px;font-weight:600;line-height:1.2' }, 'Меҳмон'), h('div', { style: 'font-size:14px;color:var(--muted)' }, 'Сақланганлар шу қурилмада сақланади'))),
     h('div', { style: 'display:flex;justify-content:space-between;align-items:baseline' }, h('div', { class: 'lbl' }, 'Сақланганлар'), h('a', { class: 'link', href: '#saved', style: 'display:flex;align-items:center;font-size:14px' }, 'Барчаси')),
-    saved.length ? h('div', { class: 'group' }, saved.map(entryRow)) : h('div', { class: 'empty', style: 'padding-top:0' }, 'Ҳали ҳеч нарса сақланмади.'),
+    saved.length ? h('div', { class: 'group' }, saved.map(savedRow)) : h('div', { class: 'empty', style: 'padding-top:0' }, 'Ҳали ҳеч нарса сақланмади.'),
     h('div', { class: 'lbl' }, 'Созламалар'),
     h('div', { class: 'group' },
       h('div', { class: 'set' }, h('span', {}, 'Тил'), h('span', { style: 'color:var(--muted);font-size:15px' }, 'Ўзбекча (кирил)')),
