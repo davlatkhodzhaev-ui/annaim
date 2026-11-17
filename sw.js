@@ -1,10 +1,10 @@
 // ANNAIM service worker: луғатни телефонга сақлайди, интернетсиз ҳам очилади.
 // Версия make_web.py томонидан ҳар йиғишда алмаштирилади.
-const VERSION = '20261118-d15';
+const VERSION = '20261118-d16';
 const CACHE = 'annaim-' + VERSION;
 // Луғат маълумоти (23 МБ) алоҳида кэшда: фақат маълумот ўзгарганда (DATAV) қайта юкланади,
 // шунда илова янгиланиши енгил ва тез бўлади.
-const DATAV = '20261118l';
+const DATAV = '20261118m';
 const DCACHE = 'annaim-data-' + DATAV;
 const DATA = ['./data1.js', './data2.js', './extra.js'];
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo-kanz-sm.png', './icons/kanz-cover.jpg', './icons/kanz-mark-ink.png', './icons/kanz-mark-gold.png'];
