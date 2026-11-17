@@ -674,7 +674,7 @@ function arFormHits(text) {
   DATA.forEach(e => {
     let rs = RKEYC.get(e); if (rs === undefined) { rs = normAr(e.root_search || '').replace(AR_WEAK, ''); RKEYC.set(e, rs); } const rOk = !!rs && isSubseq(rs, nq);
     e.derivatives.forEach(f => {
-      if (f.form_type !== 'verb') return; if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 || !isSubseq(fk, nq)) return; } const sv = sevenCached(f); if (!sv) return;
+      if (f.form_type !== 'verb') return; if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 ? !!rs : !isSubseq(fk, nq)) return; } const sv = sevenCached(f) || majOnlyOf(f); if (!sv) return;
       let exact = false; [sv.malum, sv.majhul].forEach(T => (T || []).forEach(tb => ACELLS.forEach(([k0, r, c]) => { const cl = tb[1][r] && tb[1][r][c]; if (cl && normAr(cl) === nq) exact = true; })));
       [['malum', sv.malum], ['majhul', sv.majhul]].forEach(([kind, T]) => (T || []).forEach((tb, ti) => {
         ACELLS.forEach(([key, r, c]) => { const cell = tb[1][r] && tb[1][r][c]; if (!cell || !(normAr(cell) === nq || (kind === 'malum' && ti === 1 && /тафаъъул|тафоъул|تَفَعْلَلَ/.test(sv.type || '') && /^تَتَ/.test(cell) && normAr(cell.slice(2)) === nq) || (!exact && /\s/.test(cell.trim()) && normAr(cell.trim().split(/\s+/).pop()) === nq))) return;
