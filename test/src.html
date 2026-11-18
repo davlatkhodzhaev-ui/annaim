@@ -276,6 +276,10 @@ p.s { margin: 0; color: var(--muted); }
 .wc.acc .bd .chips2 { padding-top: 8px; }
 .wc.acc li.hit { font-weight: 600; }
 .wc.acc .go { background: var(--accent); color: var(--surface); border: 0; border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.wc.acc .go.sv { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; }
+.wc.acc .go.sv[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.wc.acc .go.sv[aria-pressed="true"] svg { fill: var(--accent); }
+.wc.acc .bd { cursor: pointer; }
 .wc .ft .acts { display: flex; align-items: center; gap: 8px; flex: none; }
 .mark.sm { width: 32px; height: 32px; border-radius: 16px; padding: 0; cursor: pointer; color: inherit; }
 .mark.sm[aria-pressed="true"] svg { fill: var(--accent); stroke: var(--accent); }
@@ -1921,11 +1925,12 @@ function wordCard(x, idx) {
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
     ms.length ? h('ul', {}, ms.map((m, i) => h('li', { class: i === hi && qk ? 'hit' : null }, m))) : '',
     h('div', { class: 'ft' }, h('span', { class: 'meta' }, `${rootOf(x.e)} · стр. ${x.e.source_page}`), h('span', { class: 'acts' }, (() => { const k = savedKeyOf(x.e, f), on = () => S.saved.includes(k);
-        const b = h('button', { class: 'mark sm', 'aria-label': 'Сўзни сақлаш', title: 'Сўзни сақлаш', 'aria-pressed': String(on()), onclick: (ev) => { ev.stopPropagation();
-          S.saved = on() ? S.saved.filter(v => v !== k) : [k, ...S.saved]; save(); b.setAttribute('aria-pressed', String(on())); } }, svg(ICON.mark, 17)); return b; })(),
-      h('button', { class: 'go', onclick: (ev) => { ev.stopPropagation(); openAt(x.e, f); } }, 'Мақолани очиш →'))));
+        const lb = h('span', {}, on() ? 'Сақланди' : 'Сақлаш');
+        const b = h('button', { class: 'go sv', 'aria-label': 'Сўзни сақлаш', 'aria-pressed': String(on()), onclick: (ev) => { ev.stopPropagation();
+          S.saved = on() ? S.saved.filter(v => v !== k) : [k, ...S.saved]; save(); b.setAttribute('aria-pressed', String(on())); lb.textContent = on() ? 'Сақланди' : 'Сақлаш'; } }, svg(ICON.mark, 14), lb); return b; })())));
+  body.addEventListener('click', () => openAt(x.e, f));
   const box = h('div', { class: pin ? 'wc acc open pin' : 'wc acc' },
-    h('button', { class: 'hd', 'aria-expanded': pin ? 'true' : 'false', onclick: () => { if (pin) return; const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open:not(.pin)').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
+    h('button', { class: 'hd', 'aria-expanded': pin ? 'true' : 'false', onclick: () => { if (pin || !body.hidden) { openAt(x.e, f); return; } const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open:not(.pin)').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
         if (op) { body.hidden = false; box.classList.add('open'); box.querySelector('.hd').setAttribute('aria-expanded', 'true'); } } },
       h('span', { class: 'sm' }, h('span', { class: 'm1' }, sum), h('span', { class: 'm2' }, [tg, f.form_type === 'verb' && f.sarf_form ? f.sarf_form + ' шакл' : '', ms.length > 1 ? ms.length + ' та маъно' : ''].filter(Boolean).join(' · '))),
       h('span', { class: 'w', lang: 'ar' }, f.arabic_word), h('span', { class: 'chv', 'aria-hidden': 'true' }, '⌄')),
