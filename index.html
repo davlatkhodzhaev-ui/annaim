@@ -2056,8 +2056,7 @@ function openSheet(f, e, btn) {
   sheet.replaceChildren(h('div', { class: 'in' },
     h('div', { class: 'head' },
       h('div', { class: 'w', lang: 'ar' }, dA(f.arabic_word)),
-      h('div', { class: 'f' }, f.form_type === 'verb' ? (verbKind(f) + (bob ? ` · ${bob}-боб` : '')) : (f.form_type === 'derived' ? 'ҳосила сўз' : 'сўз')),
-      h('button', { class: 'close', onclick: closeSheet }, 'Ёпиш')),
+      h('div', { class: 'f' }, f.form_type === 'verb' ? (verbKind(f) + (bob ? ` · ${bob}-боб` : '')) : (f.form_type === 'derived' ? 'ҳосила сўз' : 'сўз'))),
     kv.length ? h('div', { class: 'kv' }, kv) : '',
     tasrifBlock(f),
     sevenBlock(f),
@@ -2611,9 +2610,11 @@ function route() {
   if (hsh === 'tasrif') return renderTasrif();
   const bb = hsh.match(/^bob-([IVX]+)$/); if (bb) return renderBob(bb[1]);
   if (hsh === 'profile') return renderProfile();
-  query = hsh === 'home' ? query : ''; return renderHome();
+  query = (hsh === 'home' || hsh === '') ? query : ''; return renderHome();
 }
 document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeSheet(); });
+// сўз ойнасидан ташқарига босилса ёпилади
+document.addEventListener('click', (ev) => { if (sheet.hidden) return; const t = ev.target; if (sheet.contains(t) || !document.contains(t) || (t.closest && t.closest('.aw'))) return; closeSheet(); });
 window.addEventListener('hashchange', route);
 applyPrefs(); route();
 setTimeout(() => { let i = 0; const step = () => { const t = performance.now(); while (i < DATA.length && performance.now() - t < 8) DATA[i++].derivatives.forEach(whKeys); if (i < DATA.length) setTimeout(step, 30); }; step(); }, 1500);
