@@ -337,6 +337,32 @@ p.s { margin: 0; color: var(--muted); }
 .foot { margin: 22px 0 0; font-size: 12px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .sheet { animation: up .18s ease-out; } @keyframes up { from { transform: translateY(24px); opacity: 0; } } }
 @media (prefers-reduced-motion: reduce) { .sw::after { transition: none; } }
+</style><style id="hbandA">
+body{margin:0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0D2629;--surface:#12363A;--ink:#E8F1EF;--muted:#9DBAB6;--line:#1E4A4F;--accent:#E2BE5A;--accent-ink:#0D2629;--accent-soft:#174348;--accent-deep:#F0D58A;--dot:#2C5F64;--warn-soft:#2F3216;--gold:#E6C35C;color-scheme:dark;}}
+:root[data-theme="dark"]{--bg:#0D2629;--surface:#12363A;--ink:#E8F1EF;--muted:#9DBAB6;--line:#1E4A4F;--accent:#E2BE5A;--accent-ink:#0D2629;--accent-soft:#174348;--accent-deep:#F0D58A;--dot:#2C5F64;--warn-soft:#2F3216;--gold:#E6C35C;color-scheme:dark;}
+.hband{--hink:#F6F1E7;background:#1F6F78;color:var(--hink);margin:0 calc(-1 * max(16px, env(safe-area-inset-right, 0px))) 14px calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding:4px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px));border-radius:0 0 20px 20px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hband{background:#1B5F67}}
+:root[data-theme="dark"] .hband{background:#1B5F67}
+.hband .top{padding:12px 0 4px}
+.brand .logo2{height:44px;width:auto;display:block}
+.hband .round{background:transparent;border-color:rgba(246,241,231,.38);color:var(--hink)}
+.hband .round.star{color:#E8C66A}
+.hband .acts .round[data-l]::after{color:rgba(246,241,231,.85)}
+.hband .search{background:#FFFDF8;border:0;margin:6px 0 10px;color:#2B2620}
+.hband .search:focus-within{background:#FFFDF8}
+.hband .search input{color:#2B2620;color-scheme:light}
+.hband .search input::placeholder{color:#6B6255}
+.hband .search .link,.hband .search button,.hband .search button *{color:#1F6F78}
+.hband .search>svg{color:#2B2620}
+.hrec{display:flex;gap:8px;align-items:center;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.hrec::-webkit-scrollbar{display:none}
+.hrec span{font-size:12px;opacity:.85;flex-shrink:0}
+.hrec .chip{background:transparent;border:1px solid rgba(246,241,231,.38);color:var(--hink);padding:4px 12px;white-space:nowrap;flex-shrink:0;font-size:13px}
+.hrec .chip.ar{font-family:var(--font-ar);font-size:17px;line-height:1.3}
+.flt{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.flt button{height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line);background:transparent;font-size:13px;font-weight:500;color:var(--ink)}
+.flt button.on{background:#1F6F78;border-color:#1F6F78;color:#F6F1E7}
 </style>
 
 <div id="app"><div id="view"></div></div>
@@ -1929,7 +1955,7 @@ function wordCard(x, idx) {
         const b = h('button', { class: 'go sv', 'aria-label': 'Сўзни сақлаш', 'aria-pressed': String(on()), onclick: (ev) => { ev.stopPropagation();
           S.saved = on() ? S.saved.filter(v => v !== k) : [k, ...S.saved]; save(); b.setAttribute('aria-pressed', String(on())); lb.textContent = on() ? 'Сақланди' : 'Сақлаш'; } }, svg(ICON.mark, 14), lb); return b; })())));
   body.addEventListener('click', () => openAt(x.e, f));
-  const box = h('div', { class: pin ? 'wc acc open pin' : 'wc acc' },
+  const box = h('div', { class: pin ? 'wc acc open pin' : 'wc acc', 'data-g': (f.grammar_tag || { verb: 'v', noun: 'n', adjective: 'adj' }[f.form_type] || 'o') },
     h('button', { class: 'hd', 'aria-expanded': pin ? 'true' : 'false', onclick: () => { if (pin || !body.hidden) { openAt(x.e, f); return; } const op = body.hidden; box.parentNode.querySelectorAll('.wc.acc.open:not(.pin)').forEach(o => { o.classList.remove('open'); o.querySelector('.bd').hidden = true; o.querySelector('.hd').setAttribute('aria-expanded', 'false'); });
         if (op) { body.hidden = false; box.classList.add('open'); box.querySelector('.hd').setAttribute('aria-expanded', 'true'); } } },
       h('span', { class: 'sm' }, h('span', { class: 'm1' }, sum), h('span', { class: 'm2' }, [tg, f.form_type === 'verb' && f.sarf_form ? f.sarf_form + ' шакл' : '', ms.length > 1 ? ms.length + ' та маъно' : ''].filter(Boolean).join(' · '))),
@@ -2197,7 +2223,14 @@ function results() {
 function renderHome() {
   const input = h('input', { id: 'q', type: 'search', inputmode: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Арабча ёки ўзбекча сўз', value: query, 'aria-label': 'Қидириш' });
   const body = h('div', {});
-  const fill = () => {
+  const recEl = h('div', { class: 'hrec' });
+  const paintRec = () => { const hs = (S.hist || []).slice(0, 10); recEl.hidden = !hs.length; recEl.replaceChildren(h('span', {}, 'Яқинда:'), ...hs.map(x => h('button', { class: 'chip' + (HAS_AR.test(x) ? ' ar' : ''), onclick: () => { query = x; letter = ''; fillAll(); } }, x))); };
+  const fltEl = h('div', { class: 'flt', hidden: true }); let fk = 'all';
+  const applyF = () => body.querySelectorAll('.wc').forEach(e => { e.hidden = !(fk === 'all' || e.dataset.g === fk); });
+  const paintFlt = () => { const cs = [...body.querySelectorAll('.wc')]; if (!cs.length) { fltEl.hidden = true; return; } const c = { all: cs.length, v: 0, n: 0, adj: 0 }; cs.forEach(e => { if (c[e.dataset.g] !== undefined) c[e.dataset.g]++; }); fltEl.hidden = false;
+    fltEl.replaceChildren(...[['all', 'Ҳаммаси'], ['v', 'Феъл'], ['n', 'Исм'], ['adj', 'Сифат']].filter(([k]) => k === 'all' || c[k]).map(([k, l]) => h('button', { class: fk === k ? 'on' : '', onclick: () => { fk = k; applyF(); paintFlt(); } }, l + ' · ' + c[k]))); };
+  const fill = () => { fill0(); fk = 'all'; paintFlt(); paintRec(); };
+  const fill0 = () => {
     const active = query.trim() || letter;
     if (active) {
       const items = results();
@@ -2243,7 +2276,7 @@ function renderHome() {
     }
     const hist = (S.hist || []);
     body.replaceChildren(
-      hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
+      false ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирувлар', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тозалаш')),
         h('div', { class: 'chips' }, hist.map(x => h('button', { class: 'chip', onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
       '');
   };
@@ -2254,8 +2287,8 @@ function renderHome() {
   input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); clearTimeout(fillTimer); fillTimer = setTimeout(fill, query.trim() ? 260 : 0);
     clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card')) pushHist(query); }, 1800); });
   input.addEventListener('change', () => { if (query.trim()) pushHist(query); });
-  page('home',
-    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo', src: logoSrc(), alt: 'كنز' })),
+  page('home', h('div', { class: 'hband' },
+    h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo2', src: '../icons/kanz-mark-gold.png', alt: 'كنز' })),
       h('div', { class: 'acts' },
         h('a', { class: 'round', 'data-l': 'Қўлланма', href: '#guide', 'aria-label': 'Қўлланма', title: 'Қўлланма' }, svg(ICON.info, 22)),
         h('a', { class: 'round star', 'data-l': 'Сақланган', href: '#saved', 'aria-label': 'Сақланганлар', title: 'Сақланганлар' }, svg(ICON.crescent, 22), S.saved.length ? h('span', { class: 'cnt' }, String(S.saved.length)) : ''),
@@ -2264,7 +2297,7 @@ function renderHome() {
           const paint = () => { b.replaceChildren(svg(dark() ? ICON.sun : ICON.contrast, 22)); b.title = dark() ? 'Ёруғ режим' : 'Қоронғи режим'; };
           b.addEventListener('click', () => { S.theme = dark() ? 'light' : 'dark'; save(); applyPrefs(); paint(); }); paint(); return b; })(),
         h('a', { class: 'round', 'data-l': 'Профил', href: '#profile', 'aria-label': 'Профил' }, svg(ICON.user, 22)))),
-    backBar, h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), body, h('div', { class: 'fbsp' }),
+    h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), recEl), backBar, fltEl, body, h('div', { class: 'fbsp' }),
     h('button', { class: 'fbbar', onclick: openFb }, h('span', { class: 'dotg' }), h('span', {}, 'Эътибор қилинг!'), h('span', { class: 'sub' }, 'Илова тест режимида')));
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
 }
