@@ -364,6 +364,12 @@ body{margin:0}
 .flt{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
 .flt button{height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line);background:transparent;font-size:13px;font-weight:500;color:var(--ink)}
 .flt button.on{background:#1F6F78;border-color:#1F6F78;color:#F6F1E7}
+#tabs{background:#1F6F78;border-top:0;border-radius:20px 20px 0 0;box-shadow:0 -4px 16px rgba(13,38,41,.18)}
+#tabs a{color:rgba(246,241,231,.72)}
+#tabs a.on{color:#FFFFFF}
+#tabs a.on svg,#tabs a.on .tab-ar{color:#E8C66A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #tabs{background:#1B5F67}}
+:root[data-theme="dark"] #tabs{background:#1B5F67}
 </style>
 
 <div id="app"><div id="view"></div></div>
