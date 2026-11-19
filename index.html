@@ -2232,7 +2232,9 @@ function renderHome() {
   const recEl = h('div', { class: 'hrec' });
   const paintRec = () => { const hs = (S.hist || []).slice(0, 10); recEl.hidden = !hs.length; recEl.replaceChildren(h('span', {}, 'Яқинда:'), ...hs.map(x => h('button', { class: 'chip' + (HAS_AR.test(x) ? ' ar' : ''), onclick: () => { query = x; letter = ''; fillAll(); } }, x))); };
   const fltEl = h('div', { class: 'flt', hidden: true }); let fk = 'all';
-  const applyF = () => body.querySelectorAll('.wc').forEach(e => { e.hidden = !(fk === 'all' || e.dataset.g === fk); });
+  const applyF = () => body.querySelectorAll('.wc').forEach(e => { const on = fk === 'all' || e.dataset.g === fk; e.hidden = !on; const bd = e.querySelector('.bd'), hd = e.querySelector('.hd');
+    if (fk !== 'all' && on && bd && bd.hidden) { bd.hidden = false; e.classList.add('open'); e.dataset.fo = '1'; if (hd) hd.setAttribute('aria-expanded', 'true'); }
+    else if (fk === 'all' && e.dataset.fo) { delete e.dataset.fo; if (!e.classList.contains('pin') && bd) { bd.hidden = true; e.classList.remove('open'); if (hd) hd.setAttribute('aria-expanded', 'false'); } } });
   const paintFlt = () => { const cs = [...body.querySelectorAll('.wc')]; if (!cs.length) { fltEl.hidden = true; return; } const c = { all: cs.length, v: 0, n: 0, adj: 0 }; cs.forEach(e => { if (c[e.dataset.g] !== undefined) c[e.dataset.g]++; }); fltEl.hidden = false;
     fltEl.replaceChildren(...[['all', 'Ҳаммаси'], ['v', 'Феъл'], ['n', 'Исм'], ['adj', 'Сифат']].filter(([k]) => k === 'all' || c[k]).map(([k, l]) => h('button', { class: fk === k ? 'on' : '', onclick: () => { fk = k; applyF(); paintFlt(); } }, l + ' · ' + c[k]))); };
   const fill = () => { fill0(); fk = 'all'; paintFlt(); paintRec(); };
