@@ -2147,7 +2147,7 @@ function renderTabs(active) {
   tabs.hidden = !active; if (!active) return;
   if (active === 'sarf' || active === 'nahv') active = 'gram';
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, icon === 'alif' ? h('span', { class: 'tab-ar', lang: 'ar', 'aria-hidden': 'true' }, 'ا ـ ب') : svg(ICON[icon]), text);
-  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('gram', '#gram', 'book', 'Грамматика'), t('alif', '#alif', 'alif', 'Фиҳрист'), t('more', '#more', 'grid', 'Қўшимча'));
+  tabs.replaceChildren(Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } }), t('alif', '#alif', 'alif', 'Фиҳрист'), t('more', '#more', 'grid', 'Қўшимча'));
 }
 const goBack = () => { if (!sheet.hidden) return closeSheet(); const hsh = location.hash.replace(/^#/, '');
   if (hsh === '' || hsh === 'home') { if (query || letter) { query = ''; letter = ''; route(); } return; }
@@ -2645,6 +2645,7 @@ function route() {
   if (e) return renderEntry(e);
   const gm = hsh.match(/^(guide|extra)-(\d+)$/);
   if (gm) { const i = +gm[2]; return gm[1] === 'guide' ? (i === 0 ? renderRules() : renderAbbr()) : renderExtra(i); }
+  if (/^(gram|sarf|nahv|qoida)(-\d+)?$/.test(hsh)) return goRep('home');   // Грамматика бўлими вақтинча яширилган (2026-11-20)
   const bm = hsh.match(/^(sarf|nahv|guide|extra)(?:-(\d+))?$/); if (bm) return bm[2] === undefined ? renderBook(bm[1]) : renderLesson(bm[1], +bm[2]);
   if (hsh === 'gram') return renderGram();
   if (hsh === 'alif') return renderAlif();
