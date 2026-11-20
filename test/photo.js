@@ -45,11 +45,26 @@
       el('div', { class: 'big' }, el('button', { class: 'b', onclick: () => camIn.click() }, 'Суратга олиш'), el('button', { class: 'b s', onclick: () => galIn.click() }, 'Галереядан танлаш')));
     foot.replaceChildren();
   }
-  function load(file) {
-    const url = URL.createObjectURL(file), im = new Image();
-    im.onload = () => { img = im; sel = null; pick(); };
-    im.onerror = () => { body.replaceChildren(el('p', {}, 'Суратни очиб бўлмади. Бошқа сурат танлаб кўринг.')); foot.replaceChildren(el('button', { class: 'b', onclick: start }, 'Бошқа сурат')); };
-    im.src = url;
+  const HEIC = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+  const addScript = (src) => new Promise((ok, no) => { const sc = el('script', { src }); sc.onload = () => ok(); sc.onerror = () => no(new Error('юкланмади: ' + src)); document.head.append(sc); });
+  const toImg = (blob) => new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => no(new Error('decode')); im.src = URL.createObjectURL(blob); });
+  async function load(file) {
+    body.replaceChildren(el('p', {}, 'Сурат очилмоқда…')); foot.replaceChildren();
+    const isHeic = /hei[cf]/i.test(file.type || '') || /\.hei[cf]$/i.test(file.name || '');
+    try {
+      let im;
+      try { im = await toImg(file); }
+      catch (e) {
+        // iPhone'нинг HEIC формати: кўп браузерлар оча олмайди — аввал JPEG га айлантирамиз
+        if (!window.heic2any) await addScript(HEIC);
+        let jpg = await window.heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 }); if (Array.isArray(jpg)) jpg = jpg[0];
+        im = await toImg(jpg);
+      }
+      img = im; sel = null; pick();
+    } catch (e) {
+      body.replaceChildren(el('p', {}, 'Суратни очиб бўлмади' + (isHeic ? ' (iPhone HEIC формати).' : '.')), el('p', {}, 'Нима қилиш мумкин: шу тугма орқали «Суратга олиш»ни танланг, ёки суратни скриншот қилиб, ўша скриншотни танланг.'), el('p', {}, 'Файл: ' + (file.name || '?') + ' · ' + (file.type || 'тури номаълум') + ' · ' + String(e && e.message || e)));
+      foot.replaceChildren(el('button', { class: 'b', onclick: start }, 'Бошқа сурат'));
+    }
   }
   function pick() {
     const W = Math.min(1200, img.naturalWidth), H = Math.round(img.naturalHeight * W / img.naturalWidth);
