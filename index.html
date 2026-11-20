@@ -913,6 +913,70 @@ function limList(arr, fn, n, sec, attrs) {
 }
 function limGrow(L, n) { const add = L._all.slice(L._r, L._r + n), r0 = L._r; L._r += add.length; L._more.remove(); L.append(...add.map((x, i) => L._fn(x, r0 + i))); if (L._r < L._all.length) L.append(L._more); limLabel(L); }
 function limLabel(L) { if (!L._more) return; const k = L._all.slice(L._r).filter(x => LFK === 'all' || secG(L._sec, x) === LFK).length; L._more.hidden = !k; L._more.textContent = `Яна ${k} тасини кўрсатиш`; }
+// ---------- uzx9 (2026-11-21): ўзбекча феъл шакллари, мисоллар таржимасида қидирув, «Яқин сўзлар» ----------
+// Ҳамма шакллар normUz кўринишида (ў→у, қ→к, ғ→г, ҳ→х, ё→е).
+const UZ_VC = ['мок', 'ди', 'дим', 'динг', 'дик', 'дилар', 'иб', 'ган', 'гани', 'ганда', 'ганлар', 'ганини', 'аетган', 'аетир', 'япти', 'ади', 'адилар', 'адиган',
+  'ар', 'мас', 'масдан', 'мокда', 'мокчи', 'са', 'син', 'инг', 'ай', 'айлик', 'гач', 'гунча', 'увчи', 'иш', 'ишга', 'ишни', 'иши', 'ишда', 'ишдан', 'мади', 'маган', 'май'];
+const UZ_DER = ['ган', 'аетган', 'адиган', 'увчи', 'иш'];   // сифат ва исм ясайдиган қўшимчалар
+function uzSuf(st, sf) {   // ўзак + қўшимча (унли билан тугаган ўзак ва к/г мослашуви)
+  if (/[аеиоуэюя]$/.test(st)) {
+    if (sf === 'увчи') return /и$/.test(st) ? st.slice(0, -1) + 'увчи' : /а$/.test(st) ? st.slice(0, -1) + 'овчи' : st + 'вчи';
+    if (/^(иб|инг)$/.test(sf)) return st + sf.slice(1);
+    if (/^иш/.test(sf)) return st + sf.slice(1);
+    if (/^а(етган|етир)$/.test(sf)) return st + sf.slice(1);
+    if (/^ади/.test(sf)) return st + 'й' + sf.slice(1);
+    if (/^а(р|й|йлик)$/.test(sf)) return st + (sf === 'ар' ? 'р' : 'й' + sf.slice(2));
+    return st + sf;
+  }
+  if (/к$/.test(st) && /^г/.test(sf)) return st + 'к' + sf.slice(1);
+  return st + sf;
+}
+const UZVF = new Map();
+function uzVForms(st) { if (!UZVF.has(st)) UZVF.set(st, new Set(UZ_VC.map(sf => uzSuf(st, sf)))); return UZVF.get(st); }
+const uzDerForms = (st) => UZ_DER.map(sf => uzSuf(st, sf));
+// ишончли ўзак: луғатда «ўзак+моқ» феъли бор ва сўз шу ўзакнинг маълум шаклига айнан тенг; бўлмаса null
+function uzVStem(n) {
+  if (!n || /\s/.test(n)) return null; const V = vstemIndex();
+  for (let L = n.length - 1; L >= 2; L--) { const st = n.slice(0, L); if (V.has(st) && uzVForms(st).has(n)) return st; }
+  return null;
+}
+// мисоллар таржимаси: сўз → мисоллар
+let UZEX = null;
+function uzExIndex() {
+  if (UZEX) return UZEX; const tok = new Map(), all = [];
+  DATA.forEach(e => (e.derivatives || []).forEach(f => (f.examples || []).forEach(x => { if (!x.translation) return; const w = uzWords(x.translation); const r = { e, f, x, sc: 0, w }; all.push(r);
+    new Set(w.trim().split(' ')).forEach(t => { if (!t) return; if (!tok.has(t)) tok.set(t, []); tok.get(t).push(r); }); })));
+  return UZEX = { tok, all };
+}
+function uzExHits(n) {
+  if (!n || n.length < 2) return []; const I = uzExIndex();
+  if (/\s/.test(n)) { const k = ' ' + n + ' '; return I.all.filter(r => r.w.includes(k)); }
+  const exact = I.tok.get(n) || [], seen = new Set(exact), out = exact.slice(), st = uzVStem(n);
+  if (st) uzVForms(st).forEach(t => { if (t === n) return; (I.tok.get(t) || []).forEach(r => { if (!seen.has(r)) { seen.add(r); out.push(r); } }); });
+  return out;
+}
+// «Яқин сўзлар»: феълдан ясалган сифат ва исмлар — маъно айнан шу шаклнинг ўзи бўлса («келиш», «келувчи»); «олиб келиш» каби қўшма феъллар олинмайди
+function uzRelHits(n) {
+  const st = uzVStem(n); if (!st) return []; const seg = uzIndex().seg, best = new Map();
+  uzDerForms(st).forEach(d => (seg.get(d) || []).forEach(x => {
+    if (x.f.form_type === 'verb' || wordG(x.f) === 'v') return;
+    if (!best.has(x.f) || best.get(x.f).sc < x.sc) best.set(x.f, { e: x.e, f: x.f, sc: x.sc, via: '' }); }));
+  return [...best.values()].sort((a, b) => b.sc - a.sc);
+}
+// натижалар тайёр бўлгач: «Яқин сўзлар» ва мисоллар бўлими «Мақолалар»дан олдин қўшилади
+function uzExtra(body, qv) {
+  const n = uzKey(qv); if (n.length < 2) return;
+  const shown = new Set(uzWordHits(n).map(x => x.f));
+  const rel = uzRelHits(n).filter(x => !shown.has(x.f));
+  let xs = uzExHits(n); if (S.look !== 'toza') xs = xs.slice(0, 12);
+  const secs = [];
+  if (rel.length) secs.push(h('div', { class: 'relsec', 'data-sec': 'w' }, h('div', { class: 'lbl' }, `Яқин сўзлар (${rel.length})`), limList(rel, (x) => wordCard(x, 99), 10, 'w')));
+  if (xs.length) secs.push(h('div', { class: 'exsec', 'data-sec': 'ex', 'data-ex': true }, h('div', { class: 'lbl' }, `Мисолларда (${xs.length})`, h('span', { class: 'srcb' }, 'китобдан')), limList(xs, exCard, 12, 'ex', { style: 'margin-bottom:14px' })));
+  if (!secs.length) return;
+  const em = body.querySelector(':scope > .empty'); if (em) em.remove();
+  const art = [...body.children].find(el => (el.matches('details.more') && /^(Мақолалар|Бошқа)/.test((el.querySelector('summary') || {}).textContent || '')) || (el.matches('.count') && /та мақола$/.test(el.textContent)));
+  if (art) art.before(...secs); else body.append(...secs);
+}
 function exCard(h0) {
   return h('button', { class: 'card', style: 'grid-template-columns:1fr', onclick: () => openAt(h0.e, h0.f) },
     h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:calc(26px * var(--ars, 1));line-height:1.7;direction:rtl;text-align:right;color:var(--accent)' }, ((h0.sc === 3 || h0.sc === 1.5) && !/~[\u064B-\u0652\u0640]/.test(h0.x.phrase)) ? ((t) => /\s/.test(String(query).trim()) ? t : t.replace(/\s+/g, ''))(h0.x.phrase.replace(/~/g, String(h0.f.arabic_word).split(/[,،]|ёки/)[0])) : h0.x.phrase),
@@ -2454,6 +2518,7 @@ function renderHome() {
         items.length ? ''
           : (letter ? h('div', { class: 'empty' }, 'Бу ҳарфгача ҳали етиб келмадик: китоб аста-секин киритиляпти.') : notFound(query.trim())));
       if (body.querySelector('.wc, .card')) { const em = body.querySelector('.empty'); if (em) em.remove(); body.querySelectorAll('details.more').forEach(d => { if (/\(0\)/.test(d.querySelector('summary').textContent)) d.remove(); }); }
+      if (!letter && !HAS_AR.test(query) && hasL(query)) { try { uzExtra(body, isLat(query) ? latCyr(query) : query); } catch (z) { console.warn('uzExtra', z); } }   // uzx9
       if (!letter && HAS_AR.test(query)) { const vx = !!body.querySelector('[data-vx]'); let xh = exHits(query.trim()); if (!xh.length && !vx) xh = exHits(effQ(query.trim())); if (S.look !== 'toza') xh = xh.slice(0, 12); if (xh.length) { const sec = [h('div', { class: 'lbl', 'data-ex': true, 'data-sec': 'ex' }, `Мисолларда (${xh.length})`, h('span', { class: 'srcb' }, 'китобдан')), limList(xh, exCard, 12, 'ex', { 'data-ex': true, style: 'margin-bottom:14px' })];
         const firstList = body.querySelector('.list'); const exact = ALLW.has(normAr(effQ(query.trim()))); const vfList = body.querySelector('.list[data-vf]'); if (vx) body.append(...sec); else if (vfList && !vfList.closest('details')) vfList.after(...sec); else if (exact && firstList) firstList.after(...sec); else { const c0 = body.querySelector('.count, .lbl'); if (c0 && /кўрсатилмоқда/.test(c0.textContent)) c0.after(...sec); else body.prepend(...sec); } } }
       return;
