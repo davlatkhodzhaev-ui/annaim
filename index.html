@@ -2865,7 +2865,7 @@ function verbItem(e, f, onclick) {
     h('span', { class: 'meta' }, `${f.sarf_form ? f.sarf_form + ' шакл · ' : ''}${rootOf(e)} · бет ${pgOf(e, f)}`));
 }
 function openTasrif(e, f) { openSheet(f, e); requestAnimationFrame(() => {
-  const ds = [...document.querySelectorAll('#sheet details.tsr-box')].filter(d => /^(Тусланиши|Етти феъл|Фақат мажҳул)/.test((d.querySelector('summary') || {}).textContent || ''));
+  const ds = [...document.querySelectorAll('#sheet details.tsr-box')].filter(   /* latfix: лотин номлари ҳам */ d => /^(Тусланиши|Етти феъл|Фақат мажҳул|Tuslanishi|Yetti fe’l|Faqat majhul)/.test((d.querySelector('summary') || {}).textContent || ''));
   ds.forEach(d => { d.open = true; }); if (ds[0]) ds[0].scrollIntoView({ block: 'start' }); }); }
 function renderBob(k) {
   const all = []; DATA.forEach(e => e.derivatives.forEach(f => { if (f.form_type === 'verb' && f.sarf_form === k) all.push({ e, f }); }));
@@ -2944,14 +2944,17 @@ function cyrLat(s) {
 // qulayB (2026-11-23): луғат матни ҳам кўрсатиш пайтида ўгирилади (json кириллда қолади); ўгирилмайди: арабча, ёзув танлови, кириш майдонлари
 const BOOKSEL = '[lang="ar"], [data-nolat], script, style, noscript';   // кириш майдонларининг қиймати ўгирилмайди (у DOM матни эмас), фақат placeholder
 const LATTR = ['placeholder', 'aria-label', 'title', 'data-l'];
+// latfix: арабча катак ичидаги ўзбекча орол (<td lang="ar"> … <span lang="uz">) ўгирилади: энг яқин аждод lang="uz" бўлса — ўгир
+const noLat = (el) => { const b = el.closest(BOOKSEL + ', [lang="uz"]'); return !!b && !b.matches('[lang="uz"]'); };
+const uzIsland = (el) => el.matches('[lang="ar"]') && !!el.querySelector('[lang="uz"]');
 function latNode(n) {
   if (S.lang !== 'lat' || !n) return;
-  if (n.nodeType === 3) { const p = n.parentElement; if (p && !p.closest(BOOKSEL)) { const v = cyrLat(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; } return; }
+  if (n.nodeType === 3) { const p = n.parentElement; if (p && !noLat(p)) { const v = cyrLat(n.nodeValue); if (v !== n.nodeValue) n.nodeValue = v; } return; }
   if (n.nodeType !== 1) return;
   if (!n.closest(BOOKSEL)) LATTR.forEach(a => { const v = n.getAttribute(a); if (v) { const w = cyrLat(v); if (w !== v) n.setAttribute(a, w); } });
-  if (n.matches(BOOKSEL)) return;
-  const tw = document.createTreeWalker(n, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, { acceptNode: (x) => x.nodeType === 1 && x.matches(BOOKSEL) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
-  let x; while ((x = tw.nextNode())) { if (x.nodeType === 3) latNode(x); else LATTR.forEach(a => { const v = x.getAttribute(a); if (v) { const w = cyrLat(v); if (w !== v) x.setAttribute(a, w); } }); }
+  if (n.matches(BOOKSEL) && !uzIsland(n)) return;
+  const tw = document.createTreeWalker(n, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, { acceptNode: (x) => x.nodeType === 1 && x.matches(BOOKSEL) ? (uzIsland(x) ? NodeFilter.FILTER_SKIP : NodeFilter.FILTER_REJECT) : NodeFilter.FILTER_ACCEPT });
+  let x; while ((x = tw.nextNode())) { if (x.nodeType === 3) latNode(x); else if (!noLat(x)) LATTR.forEach(a => { const v = x.getAttribute(a); if (v) { const w = cyrLat(v); if (w !== v) x.setAttribute(a, w); } }); }
 }
 new MutationObserver(ms => { if (S.lang !== 'lat') return; ms.forEach(m => { if (m.type === 'childList') m.addedNodes.forEach(latNode); else if (m.type === 'characterData') latNode(m.target); else if (m.type === 'attributes' && !m.target.closest(BOOKSEL)) { const v = m.target.getAttribute(m.attributeName); if (v) { const w = cyrLat(v); if (w !== v) m.target.setAttribute(m.attributeName, w); } } }); })
   .observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: LATTR });
