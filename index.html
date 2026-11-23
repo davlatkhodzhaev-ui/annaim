@@ -19,12 +19,12 @@
    a bottom sheet for the tapped Arabic word, Saved, Profile. Tab bar fixed to the bottom of the column. */
 /* yagona-css (2026-11-21): ранглар фақат шу ерда — ёруғ мавзу (:root) ва тунги мавзу; бошқа жойда фақат var(--…) */
 :root {
-  --bg:#EFEAE0; --surface:#F8F4EC; --line:#DDD6C8; --ink:#212427; --muted:#5E6460; --accent:#0B6B4F; --accent-ink:#F8F4EC; --accent-soft:#DDE8DF; --accent-deep:var(--accent); --gold:var(--accent); --dot:var(--line); --warn:var(--accent); --warn-soft:var(--accent-soft); --hink:var(--ink); color-scheme: light;
+  --bg:#EFEAE0; --surface:#F8F4EC; --line:#DDD6C8; --ink:#212427; --muted:#5E6460; --accent:#0B6B4F; --accent-ink:#F8F4EC; --accent-soft:#DDE8DF; --accent-deep:var(--accent); --gold:var(--accent); --dot:var(--line); --warn:var(--accent); --warn-soft:var(--accent-soft); --hink:var(--ink); --band:#1F6F78; --band-ink:#F6F1E7; color-scheme: light;
   --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-ar: "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", serif;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#080F0D; --surface:#14221D; --line:#22332C; --ink:#F5F7F6; --muted:#A5B0AA; --accent:#20C997; --accent-ink:#06251B; --accent-soft:#183329; color-scheme: dark; } }
-:root[data-theme="dark"] { --bg:#080F0D; --surface:#14221D; --line:#22332C; --ink:#F5F7F6; --muted:#A5B0AA; --accent:#20C997; --accent-ink:#06251B; --accent-soft:#183329; color-scheme: dark; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#080F0D; --surface:#14221D; --line:#22332C; --ink:#F5F7F6; --muted:#A5B0AA; --accent:#20C997; --accent-ink:#06251B; --accent-soft:#183329; --band:#1B5F67; --band-ink:#F6F1E7; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg:#080F0D; --surface:#14221D; --line:#22332C; --ink:#F5F7F6; --muted:#A5B0AA; --accent:#20C997; --accent-ink:#06251B; --accent-soft:#183329; --band:#1B5F67; --band-ink:#F6F1E7; color-scheme: dark; }
 * { box-sizing: border-box; }
 html, body { min-height: 100%; }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 16px; line-height: 1.5;
@@ -165,7 +165,7 @@ ol.mean li { margin: 3px 0; }
 .fbcard .send[disabled] { opacity: .5; }
 .fbcard .cls { min-height: 48px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 15px; }
 /* fb11: «Эътибор қилинг!» — фақат бўш бош экранда, кўтарилган «Қўшимча» тугмасидан юқорида */
-.fbbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(72px + 36px + 12px + env(safe-area-inset-bottom, 0px)); width: auto; max-width: calc(100% - 32px); white-space: nowrap; z-index: 29; display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 600; }
+.fbbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(72px + 12px + env(safe-area-inset-bottom, 0px)); width: auto; max-width: calc(100% - 32px); white-space: nowrap; z-index: 29; display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 600; }
 .bar:not([hidden]) ~ .fbbar, .bar:not([hidden]) ~ .fbsp { display: none; }
 .fbbar .dotg { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
 .fbbar .sub { color: var(--muted); font-weight: 500; }
@@ -319,30 +319,31 @@ body{margin:0}
 
 /* ---------- илованинг кўриниши (2026-11-21; аввал «Янги (синов)»). <html data-look="toza"> доим ---------- */
 /* бош қисм фон рангида */
-:root[data-look="toza"] .hband { --hink: var(--ink); background: var(--bg); color: var(--ink); border-radius: 0; }
-:root[data-look="toza"] .hband .round { background: var(--surface); border-color: var(--line); color: var(--ink); }
-:root[data-look="toza"] .hband .round.star { color: var(--accent); }
-:root[data-look="toza"] .hband .acts .round[data-l]::after { color: var(--muted); }
+/* ozak-4: тепа қисм зангори (d58 нусхасидаги ранг); устидаги ёзув ва белгилар --band-ink (тўлиқ, 4.5:1 дан юқори) */
+:root[data-look="toza"] .hband { --hink: var(--band-ink); background: var(--band); color: var(--band-ink); border-radius: 0 0 20px 20px; }
+:root[data-look="toza"] .hband .round { background: transparent; border-color: color-mix(in srgb, var(--band-ink) 38%, transparent); color: var(--band-ink); }
+:root[data-look="toza"] .hband .round.star { color: var(--band-ink); }
+:root[data-look="toza"] .hband .round .cnt { background: var(--band-ink); color: var(--band); }
+:root[data-look="toza"] .hband .acts .round[data-l]::after { color: var(--band-ink); }
+:root[data-look="toza"] .hband .brand .logo2 { background: var(--band-ink); }
 :root[data-look="toza"] .hband .search { background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
 :root[data-look="toza"] .hband .search:focus-within { background: var(--surface); border-color: var(--accent); }
 :root[data-look="toza"] .hband .search input { color: var(--ink); color-scheme: normal; }
 :root[data-look="toza"] .hband .search input::placeholder { color: var(--muted); }
 :root[data-look="toza"] .hband .search .link, :root[data-look="toza"] .hband .search button, :root[data-look="toza"] .hband .search button * { color: var(--accent); }
 :root[data-look="toza"] .hband .search > svg { color: var(--ink); }
+:root[data-look="toza"] .hband .search { margin-top: 6px; }
 :root[data-look="toza"] .hrec .chip { border-color: var(--line); color: var(--ink); background: var(--surface); }
 :root[data-look="toza"] .brand .logo2, :root[data-look="toza"] .brand .logo { content: url(icons/kanz-mark-ink.png); object-position: -9999px 0; background: var(--ink);
   -webkit-mask: url(icons/kanz-mark-ink.png) center / contain no-repeat; mask: url(icons/kanz-mark-ink.png) center / contain no-repeat; }
 /* пастки меню */
-:root[data-look="toza"] #tabs { background: var(--surface); border-top: 1px solid var(--line); border-radius: 0; box-shadow: none; overflow: visible; }
-:root[data-look="toza"] #tabs a { min-height: 72px; gap: 4px; font-size: 12px; font-weight: 500; color: var(--muted); }
+/* ozak-4/5: пастки панел зангори; учала тугма бир хил (кўтарилган «Қўшимча» йўқ); очиқ бўлим — қалин ёзув ва тепасида чизиқ */
+:root[data-look="toza"] #tabs { background: var(--band); border-top: 0; border-radius: 20px 20px 0 0; box-shadow: none; }
+:root[data-look="toza"] #tabs a { position: relative; min-height: 72px; gap: 4px; font-size: 12px; font-weight: 500; color: var(--band-ink); }
 :root[data-look="toza"] #tabs a svg { color: inherit; }
-:root[data-look="toza"] #tabs a.on, :root[data-look="toza"] #tabs a.on svg { color: var(--accent); font-weight: 600; }
-:root[data-look="toza"] #tabs a.fab { position: relative; justify-content: flex-end; padding-bottom: 12px; }
-:root[data-look="toza"] #tabs .fabc { position: absolute; top: -32px; left: 50%; transform: translateX(-50%); width: 58px; height: 58px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; background: var(--accent); color: var(--accent-ink); box-shadow: 0 0 0 4px var(--bg); }
-:root[data-look="toza"] #tabs .fabc svg, :root[data-look="toza"] #tabs a.fab.on .fabc svg { color: var(--accent-ink); }
-/* Г. кўтарилган тугма ва панел охирги қаторни тўсмасин: 72 панел + 36 кўтарилган қисм + 28 бўш жой + safe-area */
-:root[data-look="toza"] #app { padding-bottom: calc(136px + env(safe-area-inset-bottom, 0px)); }
+:root[data-look="toza"] #tabs a.on, :root[data-look="toza"] #tabs a.on svg { color: var(--band-ink); font-weight: 700; }
+:root[data-look="toza"] #tabs a.on::before { content: ""; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 28px; height: 3px; border-radius: 2px; background: var(--band-ink); }
+:root[data-look="toza"] #app { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
 :root[data-look="toza"] #app.bare { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
 /* toza10b: палитрадан ташқари қолган жойлар */
 :root[data-look="toza"] .search { background: var(--surface); border-color: var(--line); color: var(--ink); }
@@ -380,7 +381,11 @@ body{margin:0}
 .wt .tg2 { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); justify-self: start; }
 .wt .m1 { font-size: 19px; line-height: 1.35; font-weight: 600; color: var(--ink); }
 .wt .fb { font-size: 14px; color: var(--muted); }
-.wt .m1.cl2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.wt ol.mn { list-style: none; padding-left: 0; margin: 12px 0 4px; }
+.wt ol.mn li { display: flex; gap: 6px; }
+.wt ol.mn .n { flex: none; min-width: 1.6em; font-weight: 600; color: var(--accent); }
+.wt .gm { margin-top: 8px; font-size: 14px; color: var(--muted); }
+.wt .gm span { font-family: var(--font-ar); font-size: calc(20px * var(--ars, 1)); color: var(--ink); }
 .wt .w { grid-column: 2; grid-row: 1 / span 3; font-family: var(--font-ar); font-size: calc(36px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; align-self: center; }
 .wt .cells { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 .wt .cl { flex: 1 1 0; min-width: 96px; display: flex; flex-direction: column; align-items: center; padding: 6px 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
@@ -571,7 +576,7 @@ function vfCardToza(x, pers) {
   return h('div', { class: 'card vft', role: 'button', tabindex: '0', onclick: open, onkeydown: (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); open(); } } },
     h('span', { class: 'gloss' }, x.uz ? x.uz + ' · ' : '', h('b', { class: 'tn' }, x.table.replace(/\s*\(.*\)$/, '')), ', ' + pers),
     h('span', { class: 'root', lang: 'ar' }, x.ar),
-    h('span', { class: 'vfa' }, h('span', { class: 'meta' }, `${x.f.arabic_word} (${verbKind(x.f)}) · ${rootOf(x.e)} · бет ${x.e.source_page}`), sv));
+    h('span', { class: 'vfa' }, h('span', { class: 'meta' }, `${x.f.arabic_word} (${verbKind(x.f)}) · ${rootOf(x.e)} · бет ${pgOf(x.e, x.f)}`), sv));
 }
 function verbCard(x) { return vfCardToza(x, x.pers); }
 // ---------- ўзбекча: аниқ сўз, қўшимчалар, имло ----------
@@ -912,10 +917,72 @@ function uzExtra(body, qv) {
   const art = [...body.children].find(el => (el.matches('details.more') && /^(Мақолалар|Бошқа)/.test((el.querySelector('summary') || {}).textContent || '')) || (el.matches('.count') && /та мақола$/.test(el.textContent)));
   if (art) art.before(...secs); else body.append(...secs);
 }
+// ozak (2026-11-23) ---------- «Жаноҳ ут-толиб» 13-бет: сулосий мазиднинг ўн икки боби (мозий, музореъ, амр, масдар); 14-бет: ифтиъолда ت алмашиши ----------
+// 2-иш: II–X шакл феъли масдари қоида бўйича (китобда босилмаган бўлса). Луғатдаги шакл → дарсликдаги боб рақами (13-бет).
+const MSD = { II: [2, 'تَفْعِيلٌ', 3, []], III: [3, 'مُفَاعَلَةٌ', 4, [1]], IV: [1, 'إِفْعَالٌ', 4, [0]], V: [6, 'تَفَعُّلٌ', 4, [0]], VI: [7, 'تَفَاعُلٌ', 5, [0, 2]],
+  VII: [4, 'اِنْفِعَالٌ', 5, [0, 1]], VIII: [5, 'اِفْتِعَالٌ', 5, [0, 2]], IX: [8, 'اِفْعِلَالٌ', 4, [0]], X: [10, 'اِسْتِفْعَالٌ', 6, [0, 1, 2]] };   // [боб, масдар вазни, мозий ҳарфлари сони, зоида ҳарфлар ўрни]
+function masdarGen(f) {
+  if (f.form_type !== 'verb' || !MSD[f.sarf_form]) return null;
+  const [bob, pat, len, pos] = MSD[f.sarf_form], R0 = { bob };
+  if (f.uncertain) return { ...R0, skip: 'ўқилиши шубҳали (uncertain)' };
+  const w = String(f.arabic_word || '').split(/[,،]|ёки/)[0].trim(); if (!w || /\s/.test(w)) return { ...R0, skip: 'китобдаги ёзуви бир сўз эмас' };
+  const L = splitLetters(w);
+  for (let i = 0; i + 1 < L.length; i++) if (L[i].length === 1 && L[i + 1][0] === 'ا' && L[i + 1].length === 2 && L[i + 1][1] === FA) { L[i].push(FA); L[i + 1] = ['ا']; }
+  const n = L.length;
+  if (bob === 5 && n === 4 && L[1].includes(SH)) return { ...R0, skip: 'ифтиъол: ت ўзак ҳарфига идғом қилинган (اِدَّخَرَ каби) — масдар қолипи дарсликда кўрсатилмаган' };
+  if (n === len - 1 && L[n - 1].includes(SH)) return { ...R0, skip: 'музоъаф' };
+  if (n !== len) return { ...R0, skip: 'китобдаги ёзуви 13-бет вазнига тушмади (ҳарфлар сони)' };
+  const R = L.filter((_, i) => !pos.includes(i)).map(l => l[0]);
+  if (R.some(c => /[أإءؤئآ]/.test(c))) return { ...R0, skip: 'маҳмуз' };
+  if (R.some(c => /[اوىي]/.test(c))) return { ...R0, skip: 'муътал' };
+  if (R[1] === R[2]) return { ...R0, skip: 'музоъаф' };
+  const ok = bob === 8 ? (L[0][0] === 'ا' && L[1].includes(SU) && L[3].includes(SH)) : mazidCheck(bob, L);
+  if (!ok) return { ...R0, skip: 'китобдаги ёзуви 13-бет вазнига тушмади (ҳаракат ёки зоида ҳарф)' };
+  let p = pat, pg = '13';
+  if (bob === 5 && /[طد]/.test(L[2][0])) { p = p.replace('ت', L[2][0]); pg = '13, 14'; }   // 14-бет: ифтиъолда ت → ط / د
+  const mp = { 'ف': R[0], 'ع': R[1], 'ل': R[2] }; const m = p.replace(/[فعل]/g, c => mp[c]);
+  if (normAr(m) === normAr(w)) return { ...R0, m, skip: 'ҳаракатсиз ёзуви феълнинг ўзи билан бир хил (қидирувда феълнинг ўзи чиқади)' };
+  if (ALLW.has(normAr(m))) return { ...R0, m, inBook: true, skip: 'китобда бор' };
+  return { ...R0, m, pages: pg };
+}
+let GENM = null;
+function genMasdar() {   // normAr(масдар) → [{ e, f, m }]
+  if (GENM) return GENM; GENM = new Map();
+  DATA.forEach(e => (e.derivatives || []).forEach(f => { let r = null; try { r = masdarGen(f); } catch (z) {} if (!r || !r.m || r.skip) return;
+    const k = normAr(r.m); if (!GENM.has(k)) GENM.set(k, []); GENM.get(k).push({ e, f, m: r.m }); }));
+  return GENM;
+}
+// 1-иш: «Шу ўзакдан» — 13-бет жадвалидаги вазнлар (мозий, музореъ, масдар; ҳамза ва ҳаракатсиз ёзувда), 14-бет (ифтиъол: ت → ط, د)
+const ROOT_TPL = ['افعل', 'يفعل', 'افعال', 'فعل', 'تفعيل', 'فاعل', 'يفاعل', 'مفاعله', 'انفعل', 'ينفعل', 'انفعال', 'افتعل', 'يفتعل', 'افتعال',
+  'تفعل', 'يتفعل', 'تفاعل', 'يتفاعل', 'افعلال', 'يفعال', 'افعيلال', 'استفعل', 'يستفعل', 'استفعال'];
+let ROOTIX = null;
+function rootIndex() { if (ROOTIX) return ROOTIX; ROOTIX = new Map(); DATA.forEach(e => { const r = normAr(e.root_search || ''); if (!r || r.length < 2 || String(e.id).startsWith('letter_')) return; if (!ROOTIX.has(r)) ROOTIX.set(r, []); ROOTIX.get(r).push(e); }); return ROOTIX; }
+function rootCands(q) {
+  const I = rootIndex(), out = new Set(); let n = normAr(q); if (!n || /[^ء-ي]/.test(n)) return [];
+  const qs = [n]; if (n.length >= 5 && n.startsWith('ال')) qs.push(n.slice(2));
+  const has = (r) => I.has(r) ? r : (r.length === 3 && r[1] === r[2] && I.has(r.slice(0, 2))) ? r.slice(0, 2) : null;
+  qs.forEach(x => {
+    const tpls = []; ROOT_TPL.forEach(t => { tpls.push([t, null]); if (/فت/.test(t)) { tpls.push([t.replace('فت', 'فط'), /[صضطظ]/]); tpls.push([t.replace('فت', 'فد'), /[دذز]/]); } });
+    tpls.forEach(([t, need]) => { if (t.length !== x.length) return; const m = {}; for (let i = 0; i < t.length; i++) { const c = t[i]; if ('فعل'.includes(c)) m[c] = x[i]; else if (c !== x[i]) return; }
+      const r = (m['ف'] || '') + (m['ع'] || '') + (m['ل'] || ''); if (r.length !== 3 || (need && !need.test(m['ف']))) return; const k = has(r); if (k) out.add(k); });
+  });
+  return [...out];
+}
+function rootExtra(body, q) {
+  const roots = rootCands(q); if (!roots.length) return;
+  const nq = normAr(q), lcs = (a, b) => { const d = Array(b.length + 1).fill(0); for (let i = 1; i <= a.length; i++) { let pv = 0; for (let j = 1; j <= b.length; j++) { const t = d[j]; d[j] = a[i - 1] === b[j - 1] ? pv + 1 : Math.max(d[j], d[j - 1]); pv = t; } } return d[b.length]; };
+  roots.forEach(r => { const es = rootIndex().get(r) || []; const seen = new Set(); const ws = [];
+    es.forEach(e => (e.derivatives || []).forEach(f => { const k = f.arabic_word; if (!k || seen.has(k + f.form_id)) return; seen.add(k + f.form_id); ws.push({ e, f, sc: lcs(nq, normAr(k)), via: '' }); }));
+    if (!ws.length) return; ws.sort((a, b) => b.sc - a.sc);
+    const disp = (es[0] && es[0].root_display) || r.split('').join(' ');
+    body.append(h('div', { class: 'rootsec', 'data-sec': 'w' }, h('div', { class: 'lbl' }, `Шу ўзакдан (${ws.length}): `, h('span', { lang: 'ar' }, disp)), limList(ws, wordCard, 10, 'w'))); });
+}
+// bet (2026-11-23): сўзнинг ўзи турган бет (build_app.py: f._p); бўлмаса мақола бети
+const pgOf = (e, f) => (f && ((f._of || f)._p || f._p)) || e.source_page;
 function exCard(h0) {
   return h('button', { class: 'card', style: 'grid-template-columns:1fr', onclick: () => openAt(h0.e, h0.f) },
     h('span', { lang: 'ar', style: 'font-family:var(--font-ar);font-size:calc(26px * var(--ars, 1));line-height:1.7;direction:rtl;text-align:right;color:var(--accent)' }, ((h0.sc === 3 || h0.sc === 1.5) && !/~[\u064B-\u0652\u0640]/.test(h0.x.phrase)) ? ((t) => /\s/.test(String(query).trim()) ? t : t.replace(/\s+/g, ''))(h0.x.phrase.replace(/~/g, String(h0.f.arabic_word).split(/[,،]|ёки/)[0])) : h0.x.phrase),
-    h('span', { class: 'gloss' }, (h0.x.tag ? h0.x.tag + ' ' : '') + h0.x.translation), h('span', { class: 'meta' }, `${h0.f.arabic_word} сўзи мисоли · ${rootOf(h0.e)} · бет ${h0.e.source_page}`));
+    h('span', { class: 'gloss' }, (h0.x.tag ? h0.x.tag + ' ' : '') + h0.x.translation), h('span', { class: 'meta' }, `${h0.f.arabic_word} сўзи мисоли · ${rootOf(h0.e)} · бет ${pgOf(h0.e, h0.f)}`));
 }
 function search(text) {
   let t = text.trim(); if (!t || !hasL(t)) return [];
@@ -2082,14 +2149,15 @@ function wordCardToza(x) {
   const lb = h('span', {}, on() ? 'Сақланди' : 'Сақлаш');
   const sv = h('button', { class: 'sv2', 'aria-label': 'Сўзни сақлаш', 'aria-pressed': String(on()), onclick: (ev) => { ev.stopPropagation();
     S.saved = on() ? S.saved.filter(v => v !== k) : [k, ...S.saved]; save(); sv.setAttribute('aria-pressed', String(on())); lb.textContent = on() ? 'Сақланди' : 'Сақлаш'; } }, svg(ICON.mark, 16), lb);
-  const rest = trs.length > 3 ? trs.length - 3 : 0;
+  // ozak-6: ҳамма маънолар рақами билан (китобдаги рақам), матн json даги каби; биринчи маъно кесилмайди
   const box = h('div', { class: 'wc wt', 'data-g': g, onclick: () => openAt(x.e, f) },
     h('div', { class: 'tp' }, h('span', { class: 'tg2' }, { v: 'Феъл', n: 'Исм', adj: 'Сифат' }[g] || 'Сўз'), h('span', { class: 'w', lang: 'ar' }, f.arabic_word),
-      h('div', { class: trs.length > 1 ? 'm1 cl2' : 'm1' }, sum), fb ? h('div', { class: 'fb' }, fb) : ''),
+      trs.length > 1 ? '' : h('div', { class: 'm1' }, sum), fb ? h('div', { class: 'fb' }, fb) : ''),   // bet-а: маъно биттадан кўп бўлса фақат рақамли рўйхат
+    x.gm ? h('div', { class: 'gm' }, h('span', { lang: 'ar' }, x.gm), ' — масдар · қоида бўйича, китобда босилмаган') : '',
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
     cells.length ? h('div', { class: 'cells' }, cells.map(([l, v]) => h('div', { class: 'cl' }, h('b', { lang: 'ar' }, v), h('i', {}, l)))) : '',
-    trs.length > 1 ? h('ol', { 'data-bk': true }, trs.slice(0, 3).map(t => h('li', { value: /^\d+$/.test(String(t.index)) ? t.index : null }, (t.label ? t.label + ' ' : '') + t.meaning))) : '',
-    h('div', { class: 'ft2' }, h('span', { class: 'meta' }, (rest ? `яна ${rest} та маъно · ` : '') + `бет ${x.e.source_page}`), sv));
+    trs.length > 1 ? h('ol', { class: 'mn', 'data-bk': true }, trs.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning)))) : '',
+    h('div', { class: 'ft2' }, h('span', { class: 'meta' }, `бет ${pgOf(x.e, x.f)}`), sv));
   return box;
 }
 function wordCard(x, idx) { return wordCardToza(x, idx); }
@@ -2097,7 +2165,7 @@ function wordCardOld(x) {
   const m = (x.f.translations || []).map(t => t.meaning).filter(Boolean).slice(0, 6).join('; ') || (x.f.equivalent_to ? '= ' + x.f.equivalent_to.join(', ') : '—');
   return h('button', { class: 'card', onclick: () => openAt(x.e, x.f) },
     h('span', { class: 'gloss' }, (x.via ? `${x.f.arabic_word} сўзининг ${x.via} · ` : '') + m), h('span', { class: 'root', lang: 'ar' }, x.f.arabic_word),
-    h('span', { class: 'meta' }, `${x.f.form_type === 'verb' && x.f.sarf_form ? x.f.sarf_form + ' шакл · ' : ''}${rootOf(x.e)} · бет ${x.e.source_page}`));
+    h('span', { class: 'meta' }, `${x.f.form_type === 'verb' && x.f.sarf_form ? x.f.sarf_form + ' шакл · ' : ''}${rootOf(x.e)} · бет ${pgOf(x.e, x.f)}`));
 }
 let pendingAt = null;
 function openAt(e, f) { pendingAt = f; if (location.hash === '#' + hashOf(e)) route(); else go(hashOf(e)); }
@@ -2273,9 +2341,7 @@ function renderTabs(active) {
   if (active === 'alif') active = 'more';   // Фиҳрист «Қўшимча» ичида
   const t = (id, href, icon, text) => h('a', { href, class: active === id ? 'on' : '', 'aria-current': active === id ? 'page' : null }, svg(ICON[icon]), text);
   const homeT = Object.assign(t('home', '#home', 'home', 'Бош'), { onclick: () => { query = ''; letter = ''; if (location.hash === '#home' || location.hash === '') route(); } });
-  // Бош — Қўшимча (кўтарилган думалоқ) — Профил
-  const fab = h('a', { href: '#more', class: 'fab' + (active === 'more' ? ' on' : ''), 'aria-current': active === 'more' ? 'page' : null }, h('span', { class: 'fabc', 'aria-hidden': 'true' }, svg(ICON.grid, 26)), 'Қўшимча');
-  tabs.replaceChildren(homeT, fab, t('profile', '#profile', 'user', 'Профил'));
+  tabs.replaceChildren(homeT, t('more', '#more', 'grid', 'Қўшимча'), t('profile', '#profile', 'user', 'Профил'));   // ozak-5: Бош / Қўшимча / Профил — бир хил тугмалар
 }
 const goBack = () => { if (!sheet.hidden) return closeSheet(); const hsh = location.hash.replace(/^#/, '');
   if (hsh === '' || hsh === 'home') { if (query || letter) { query = ''; letter = ''; route(); } return; }
@@ -2391,6 +2457,12 @@ function renderHome() {
           const wh0 = (!letter && HAS_AR.test(query)) ? wordHits(effQ(query.trim())) : [];
           const whx = (!letter && HAS_AR.test(query)) ? hamzaAlts(query.trim()).flatMap(w => wordHits(w).filter(x => x.sc >= 4)) : [];
           const wh = wh0.concat(whx.filter(x => !wh0.some(y => y.f === x.f)));
+          // ozak-3: ҳаракатсиз ёзилган сўз охиридаги алиф насб танвини алифи бўлиши мумкин — алифсиз шакл исмлар орасидан ҳам
+          const rq = query.trim(), nq0 = (!letter && HAS_AR.test(rq)) ? normAr(rq) : '';
+          const whA = (nq0.length >= 3 && /ا$/.test(nq0) && !/[\u064B-\u0652]/.test(rq) && !/\s/.test(rq)) ? wordHits(nq0.slice(0, -1)).filter(x => x.f.form_type !== 'verb' && wordG(x.f) !== 'v' && !wh.some(y => y.f === x.f)) : [];
+          whA.forEach(x => wh.push(x));
+          // ozak-2: китобда йўқ, қоида бўйича ясалган масдар → феъл карточкаси
+          if (!wh.length && nq0) (genMasdar().get(nq0) || []).forEach(x => wh.push({ e: x.e, f: x.f, sc: 4.5, via: '', gm: x.m }));
           const qv = isLat(query) ? latCyr(query) : query;
           const vh = (!letter && !HAS_AR.test(query)) ? verbHits(qv) : [];
           if (!letter && !HAS_AR.test(query)) { const U = uzView(qv, vh, items); if (U) return U; }
@@ -2403,7 +2475,7 @@ function renderHome() {
           if (!ah.length && !letter && nqa && !exactW) { ah = arFormHitsX(query.trim()); viaX = ah.length > 0; }
           const xb = (viaX && !arAlt(query.trim())) ? h('div', { class: 'count', 'data-vx': '1', style: 'color:var(--gold)' }, `«${query.trim()}» — «${XST.get(nqa) || ''}» бўйича кўрсатилмоқда`) : '';
           const ahSec = ah.length ? [h('div', { class: 'lbl', 'data-sec': 'vf' }, `Феъл шакллари (${ah.length})`), limList(ah, arFormCard, 20, 'vf', { 'data-vf': true })] : [];
-          if (ah.length && !exactW && !(viaX && wh.length) && !whx.length) return [xb, ...ahSec,
+          if (ah.length && !exactW && !(viaX && wh.length) && !whx.length && !whA.length) return [xb, ...ahSec,
             wh.length ? h('details', { class: 'more', 'data-sec': 'w' }, h('summary', {}, `Сўзлар (${wh.length})`), limList(wh, wordCard, 30, 'w')) : '',
             items.length ? h('details', { class: 'more' }, h('summary', {}, `Мақолалар (${items.length})`), h('div', { class: 'list' }, cards(items))) : ''];
           if (ah.length) return [xb, h('div', { class: 'count', 'data-wn': true, 'data-sec': 'w' }, `${wh.length} та сўз`), limList(wh, wordCard, 30, 'w'), ...ahSec,
@@ -2423,6 +2495,7 @@ function renderHome() {
       if (!letter && !HAS_AR.test(query) && hasL(query)) { try { uzExtra(body, isLat(query) ? latCyr(query) : query); } catch (z) { console.warn('uzExtra', z); } }   // uzx9
       if (!letter && HAS_AR.test(query)) { const vx = !!body.querySelector('[data-vx]'); let xh = exHits(query.trim()); if (!xh.length && !vx) xh = exHits(effQ(query.trim())); if (xh.length) { const sec = [h('div', { class: 'lbl', 'data-ex': true, 'data-sec': 'ex' }, `Мисолларда (${xh.length})`, h('span', { class: 'srcb' }, 'китобдан')), limList(xh, exCard, 12, 'ex', { 'data-ex': true, style: 'margin-bottom:14px' })];
         const firstList = body.querySelector('.list'); const exact = ALLW.has(normAr(effQ(query.trim()))); const vfList = body.querySelector('.list[data-vf]'); if (vx) body.append(...sec); else if (vfList && !vfList.closest('details')) vfList.after(...sec); else if (exact && firstList) firstList.after(...sec); else { const c0 = body.querySelector('.count, .lbl'); if (c0 && /кўрсатилмоқда/.test(c0.textContent)) c0.after(...sec); else body.prepend(...sec); } } }
+      if (!letter && HAS_AR.test(query) && !body.querySelector('.wc, .card')) { try { rootExtra(body, query.trim()); } catch (z) { console.warn('rootExtra', z); } }   // ozak-1: «Шу ўзакдан» (мисоллардан кейин)
       return;
     }
     const hist = (S.hist || []);
@@ -2564,7 +2637,7 @@ function renderQuiz() {
     h('div', { class: 'qz-q' }, h('div', { class: 't' }, q.kind === 'v' ? 'Бу феълнинг музореъси қайси?' : 'Бу сўзнинг маъноси қайси?'), h('div', { class: 'w', lang: 'ar' }, q.it.f.arabic_word), q.kind === 'v' ? h('div', { class: 'g' }, q.it.m) : ''),
     q.opts.map(opt),
     done ? h('div', { style: 'display:grid;gap:10px;margin-top:8px' },
-      h('p', { style: 'margin:0;font-size:14px;color:var(--muted)' }, `Луғатда: ${rootOf(q.it.e)} мақоласи, бет ${q.it.e.source_page}`),
+      h('p', { style: 'margin:0;font-size:14px;color:var(--muted)' }, `Луғатда: ${rootOf(q.it.e)} мақоласи, бет ${pgOf(q.it.e, q.it.f)}`),
       h('button', { class: 'btn', onclick: () => { QZ.i++; QZ.pick = null; renderQuiz(); } }, QZ.i + 1 < QZ.qs.length ? 'Кейингиси' : 'Натижа'),
       h('button', { class: 'btn line', onclick: () => openAt(q.it.e, q.it.f) }, 'Луғатда очиш')) : '');
 }
@@ -2712,7 +2785,7 @@ function sformCount() { if (SFC) return SFC; SFC = {}; DATA.forEach(e => e.deriv
 function verbItem(e, f, onclick) {
   const m = ((f.translations || [])[0] || {}).meaning || (f.equivalent_to ? '= ' + f.equivalent_to.join(', ') : '—');
   return h('button', { class: 'card', onclick }, h('span', { class: 'gloss' }, m), h('span', { class: 'root', lang: 'ar' }, f.arabic_word),
-    h('span', { class: 'meta' }, `${f.sarf_form ? f.sarf_form + ' шакл · ' : ''}${rootOf(e)} · бет ${e.source_page}`));
+    h('span', { class: 'meta' }, `${f.sarf_form ? f.sarf_form + ' шакл · ' : ''}${rootOf(e)} · бет ${pgOf(e, f)}`));
 }
 function openTasrif(e, f) { openSheet(f, e); requestAnimationFrame(() => {
   const ds = [...document.querySelectorAll('#sheet details.tsr-box')].filter(d => /^(Тусланиши|Етти феъл|Фақат мажҳул)/.test((d.querySelector('summary') || {}).textContent || ''));
