@@ -1,6 +1,6 @@
 // ANNAIM service worker: луғатни телефонга сақлайди, интернетсиз ҳам очилади.
 // Версия make_web.py томонидан ҳар йиғишда алмаштирилади.
-const VERSION = '20261124-d66';
+const VERSION = '20261125-d67';
 const CACHE = 'annaim-' + VERSION;
 // Луғат маълумоти (23 МБ) алоҳида кэшда: фақат маълумот ўзгарганда (DATAV) қайта юкланади,
 // шунда илова янгиланиши енгил ва тез бўлади.
@@ -9,11 +9,16 @@ const DCACHE = 'annaim-data-' + DATAV;
 const DATA = ['./data1.js', './data2.js', './extra.js'];
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo-kanz-sm.png', './icons/kanz-cover.jpg', './icons/kanz-mark-ink.png', './icons/kanz-mark-gold.png'];
 
+// Серверда янгиланган-янгиланмаганини текшириб олади (браузернинг 10 дақиқалик кэшидаги эски файл янги версия кэшига тушмасин).
+const fresh = (u) => new Request(u, { cache: 'no-cache' });
+
+// skipWaiting ЙЎҚ: янги версия орқада ўрнатилиб кутади, ҳамма очиқ саҳифа ёпилгач, кейинги очишда ишга тушади.
+// Шунинг учун очиқ саҳифа иш ўртасида алмашмайди, эски кэш ҳам саҳифа очиқ турганда ўчмайди.
 self.addEventListener('install', (e) => {
   e.waitUntil(Promise.all([
-    caches.open(CACHE).then((c) => c.addAll(CORE)),
-    caches.open(DCACHE).then((c) => c.match('./data1.js').then((hit) => hit ? null : c.addAll(DATA)))
-  ]).then(() => self.skipWaiting()));
+    caches.open(CACHE).then((c) => c.addAll(CORE.map(fresh))),
+    caches.open(DCACHE).then((c) => c.match('./data1.js').then((hit) => hit ? null : c.addAll(DATA.map(fresh))))
+  ]));
 });
 
 self.addEventListener('activate', (e) => {
@@ -35,21 +40,17 @@ self.addEventListener('fetch', (e) => {
   // видеолар кэшланмайди (катта, Range сўровлари)
   if (url.pathname.includes('/videos/')) return;
   // Саҳифа ва файллар: аввал кэшдан (тез, интернетсиз), кэшда бўлмаса тармоқдан.
-  // Янги версия sw.js ўзгарганда ўрнатилади ва кейинги очишда кўринади.
-  // Саҳифанинг ўзи (index.html): интернет бўлса аввал тармоқдан (янги версия дарров кўринади),
-  // интернет бўлмаса ёки 4 сонияда жавоб келмаса кэшдан.
-  if (req.mode === 'navigate') {
-    const net = fetch('./index.html', { cache: 'no-store' }).then((res) => { if (!res.ok) throw new Error('bad');
-      const cp = res.clone(); caches.open(CACHE).then((c) => c.put('./index.html', cp)); return res; });
-    const slow = new Promise((ok) => setTimeout(ok, 4000)).then(() => caches.match('./index.html'));
-    e.respondWith(Promise.race([net, slow.then((hit) => hit || net)]).catch(() => caches.match('./index.html')));
-    return;
-  }
-  const key = req;
+  // Саҳифа ҳам, луғат ҳам фақат ШУ версиянинг кэшидан: янги index.html эски маълумот билан аралашмайди.
   // Китоб бетлари (books/): биринчи очилганда юкланади ва телефонда сақланиб қолади.
   if (url.pathname.includes('/books/')) {
     e.respondWith(caches.open('annaim-books').then((c) => c.match(req).then((hit) => hit || fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }))));
     return;
   }
-  e.respondWith(caches.match(key, { ignoreSearch: true }).then((hit) => hit || fetch(req)));
+  const scope = new URL(self.registration.scope).pathname;
+  const home = req.mode === 'navigate' && (url.pathname === scope || url.pathname === scope + 'index.html');
+  e.respondWith((async () => {
+    const c = await caches.open(CACHE);
+    const hit = home ? await c.match('./index.html') : (await c.match(req, { ignoreSearch: true })) || (await caches.open(DCACHE).then((d) => d.match(req, { ignoreSearch: true })));
+    return hit || fetch(req);
+  })());
 });

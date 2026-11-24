@@ -3057,8 +3057,7 @@ setTimeout(() => { let i = 0; const step = () => { const t = performance.now(); 
 
 <script>
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-  const had = !!navigator.serviceWorker.controller; let rl = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !rl) { rl = true; location.reload(); } });   // янги версия ўрнатилиши билан саҳифа ўзи янгиланади
+  // Саҳифа ўзи ҳеч қачон қайта юкланмайди: янги версия орқада ўрнатилади, кейинги очишда қўлланади (sw.js).
   window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then((r) => { try { r.update(); } catch (x) {} }).catch(() => {}); });
 }
 </script>
