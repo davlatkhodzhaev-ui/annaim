@@ -131,6 +131,18 @@ ol.bm li { margin: 4px 0; }
 .tsr th, .tsr td { border: 1px solid var(--line); padding: 4px 5px; text-align: center; font-weight: 500; }
 .tsr td { font-family: var(--font-ar); font-size: calc(19px * var(--ars, 1)); line-height: 1.6; white-space: nowrap; }
 .tsr thead th { color: var(--muted); }
+/* fix3: тор экранда (телефон) тусланиш жадвали ёнга сурмасдан сиғсин */
+@media (max-width: 440px) {
+  .tsr-box { padding: 8px 6px; }
+  .tsr th, .tsr td { padding: 3px 1px; }
+  .tsr td { font-size: calc(17px * var(--ars, 1)); }
+  .tsr thead th, .tsr tbody th, .tsr td .uz { font-size: 9.5px; }
+  .tsr td .uz { hyphens: manual; -webkit-hyphens: manual; }   /* узун изоҳ бўғин чегарасида «-» билан бўлинади (uzSyl) */
+}
+@media (max-width: 380px) { .tsr-box { padding: 8px 3px; } }   /* 360px: كتب жадваллари ҳам сиғсин */
+/* fix3: барибир сиғмаса — аниқ белги */
+.tsr-wrap[data-more] { box-shadow: inset -16px 0 12px -12px rgba(0, 0, 0, .28); border-radius: 4px; }
+.tsr-wrap[data-more]::before { content: attr(data-more); display: block; position: sticky; left: 0; width: max-content; margin: 0 0 4px; font-size: 12px; font-weight: 600; color: var(--accent); }
 .sheet .head { display: flex; align-items: center; gap: 10px; }
 .sheet .head .w { font-family: var(--font-ar); font-size: calc(38px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); }
 .sheet .head .f { font-size: 13px; color: var(--muted); }
@@ -1434,10 +1446,19 @@ function tasrifList(f) {
   return out;
 }
 const tasrifOf = (f) => tasrifList(f)[0] || null;
+// fix3: ундош+унли олдидан бўлиш мумкин (олдинда унли бўлса); ц олдидан эмас (cyrLat нинг ts/s қоидаси бузилмасин)
+function uzSyl(t) {
+  const V = /[аеёиоуўэюяaeiou]/i, C = /[бвгджзйклмнпрстфхчшқғҳbdfghjklmnpqrstvxyz]/i;
+  return String(t).replace(/[^\s()]+/g, w => { let o = '', seenV = false;
+    for (let i = 0; i < w.length; i++) { const ch = w[i];
+      if (seenV && i > 1 && C.test(ch) && V.test(w[i + 1] || '') && !/[ъь’‘]/.test(w[i - 1])) o += '\u00AD';
+      o += ch; if (V.test(ch)) seenV = true; }
+    return o; });
+}
 function tasrifTable(rows, cols, names, uz) {
   return h('div', { class: 'tsr-wrap' }, h('table', { class: 'tsr' },
     h('thead', {}, h('tr', {}, h('th', {}, ''), cols.map(c => h('th', {}, c)))),
-    h('tbody', {}, rows.map((r, i) => h('tr', {}, h('th', {}, names[i]), r.map((c, j) => h('td', { lang: 'ar' }, c, c && uz && uz[i] && uz[i][j] ? h('span', { class: 'uz', lang: 'uz' }, uz[i][j]) : '')))))));
+    h('tbody', {}, rows.map((r, i) => h('tr', {}, h('th', {}, names[i]), r.map((c, j) => h('td', { lang: 'ar' }, c, c && uz && uz[i] && uz[i][j] ? h('span', { class: 'uz', lang: 'uz' }, uzSyl(uz[i][j])) : '')))))));
 }
 function tasrifBlock(f) {
   const list = tasrifList(f); if (!list.length) return '';
@@ -2941,7 +2962,8 @@ function cyrLat(s) {
     const wb = i === 0 || !/[а-яёўқғҳa-z]/i.test(s[i - 1]);   // сўз боши
     let t = lo === 'е' ? ((wb || CYR_V.test(s[i - 1])) ? 'ye' : 'e') : lo === 'ц' ? ((!wb && /[аеёиоуўэюя]/i.test(s[i - 1])) ? 'ts' : 's') : C2L[lo];   // qulayB: ц — унлидан кейин ts, бошқа ҳолда s
     if (t === undefined) { out += ch; continue; }
-    if (up && t) { const nx = s[i + 1] || '', allUp = nx && nx !== nx.toLowerCase(); t = allUp ? t.toUpperCase() : t[0].toUpperCase() + t.slice(1); }
+    if (up && t) { const nx = s[i + 1] || '', pv = s[i - 1] || '', isL = (c) => c !== c.toLowerCase() || c !== c.toUpperCase();   // fix3: «ФОЙДАЛАНИШ» → FOYDALANISH
+      const allUp = isL(nx) ? nx !== nx.toLowerCase() : (isL(pv) && pv !== pv.toLowerCase()); t = allUp ? t.toUpperCase() : t[0].toUpperCase() + t.slice(1); }
     out += t; }
   return out.replace(/(sen|ok)tyab/g, '$1tab').replace(/(Sen|Ok)tyab/g, '$1tab').replace(/(SEN|OK)TYAB/g, '$1TAB');   // ой номлари: sentabr, oktabr (расмий имло)
 }
@@ -3021,6 +3043,14 @@ document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeShe
 // сўз ойнасидан ташқарига босилса ёпилади
 document.addEventListener('click', (ev) => { if (sheet.hidden) return; const t = ev.target; if (sheet.contains(t) || !document.contains(t) || (t.closest && t.closest('.aw'))) return; closeSheet(); });
 window.addEventListener('hashchange', route);
+// fix3: тусланиш жадвали экранга сиғмаса «↔ ёнга суриб кўринг» белгиси
+function tsrHint() {
+  const t = '↔ ёнга суриб кўринг', lbl = S.lang === 'lat' ? cyrLat(t) : t;
+  document.querySelectorAll('.tsr-wrap').forEach(w => { if (!w.offsetParent) return;
+    const more = w.scrollWidth > w.clientWidth + 1; if (more) { if (w.dataset.more !== lbl) w.dataset.more = lbl; } else if ('more' in w.dataset) delete w.dataset.more; });
+}
+document.addEventListener('toggle', () => requestAnimationFrame(tsrHint), true);
+window.addEventListener('resize', () => requestAnimationFrame(tsrHint));
 applyPrefs(); route();
 setTimeout(() => { let i = 0; const step = () => { const t = performance.now(); while (i < DATA.length && performance.now() - t < 8) DATA[i++].derivatives.forEach(whKeys); if (i < DATA.length) setTimeout(step, 30); }; step(); }, 1500);
 </script>
