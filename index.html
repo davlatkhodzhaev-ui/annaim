@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Kanz Луғат</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Amiri:wght@400;700&family=Inter:wght@400;500;600&family=Noto+Sans:wght@400;500;600&family=PT+Sans:wght@400;700&family=Roboto:wght@400;500&family=Noto+Sans+Arabic:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Naskh+Arabic:wght@400;600&family=Amiri:wght@400;700&family=Inter:wght@400;500;600&family=Noto+Sans:wght@400;500;600&family=PT+Sans:wght@400;700&family=Roboto:wght@400;500&family=Noto+Sans+Arabic:wght@400;600&family=IBM+Plex+Sans+Arabic:wght@400;600&family=Noto+Kufi+Arabic:wght@400;600&display=swap" media="print" onload="this.media='all'">
 <style>
 /* Layout: one phone-width column. Welcome (3 steps), Home with search, an entry laid out as in the book,
    a bottom sheet for the tapped Arabic word, Saved, Profile. Tab bar fixed to the bottom of the column. */
@@ -378,6 +378,7 @@ body{margin:0}
 :root[data-look="toza"] .hband .search { margin-bottom: 6px; }
 :root[data-look="toza"] .hrec { display: none; }
 :root[data-look="toza"] #view > .bar { padding-top: 0; margin: 0; }
+:root #view > .bar.nbar { padding-top: env(safe-area-inset-top, 0px); }   /* d74: Android/iPhone — юқори панел остида қолмасин */
 :root[data-look="toza"] .hist .lbl { margin-top: 6px; margin-bottom: 4px; }
 :root[data-look="toza"] .flt button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 :root[data-look="toza"] .flt button:disabled { opacity: .4; cursor: default; }
@@ -396,6 +397,8 @@ body{margin:0}
 /* qulayA (2026-11-23) */
 html.typing .hband .top, html.typing #view > .bar, html.typing #tabs, html.typing .fbbar, html.typing .fbsp { display: none !important; }
 html.typing .hband { padding-top: 10px; padding-bottom: 10px; margin-bottom: 8px; }
+.hband { padding-top: calc(4px + env(safe-area-inset-top, 0px)) !important; } html.typing .hband { padding-top: calc(10px + env(safe-area-inset-top, 0px)) !important; }   /* d74: бош саҳифа сарлавҳаси юқори панел остида қолмасин */
+body:has(#view .hband)::before { background: var(--band); }
 html.typing .hband .search { margin: 0; }
 html.typing .flt { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 8px; }
 html.typing .flt::-webkit-scrollbar { display: none; }
@@ -427,6 +430,8 @@ details.more > summary .srcb { margin-left: 8px; }
 .wt ol.mn .n { flex: none; min-width: 1.6em; font-weight: 600; color: var(--accent); }
 .wt ol.mn li > span:not(.n) { font-weight: 500; color: color-mix(in srgb, var(--ink) 75%, var(--muted)); }   /* рақамли маъно матни: бир оз қалин ва тўқроқ (рақам ва йирик маъно ўзгармайди) */
 .wt .gm { margin-top: 8px; font-size: 14px; color: var(--muted); }
+.wt .gim { margin-top: 8px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); } .wt .gim .gimh { font-size: 13px; color: var(--muted); margin-bottom: 4px; } #view .wt .gim .gim1 { font-size: calc(16px * var(--tsz, 1)); font-weight: 500; color: var(--ink); } .wt .gim .mn { margin: 0; }   /* d74 */
+.wt .lkm { margin-top: 10px; } #view .wt .lkm .lk1 { font-size: calc(17px * var(--tsz, 1)); font-weight: 500; }   /* d73-1: «= …» сўзнинг маъноси (тенг сўздан) */
 .wt .gm span { font-family: var(--font-ar); font-size: calc(20px * var(--ars, 1)); color: var(--ink); }
 .wt .w { grid-column: 2; grid-row: 1 / span 3; font-family: var(--font-ar); font-size: calc(36px * var(--ars, 1)); line-height: 1.5; direction: rtl; color: var(--accent); white-space: nowrap; align-self: center; }
 .wt .cells { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -457,18 +462,28 @@ details.more > summary .srcb { margin-left: 8px; }
 .vft .sv3::after { content: ''; position: absolute; inset: -8px -4px; }
 .vft .sv3[aria-pressed="true"] { background: var(--accent-soft); border-color: transparent; color: var(--accent-deep); }
 .vft:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* tez (d68): луғат юкланаётгани */
+.ldg { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 16px; color: var(--ink); font-size: 16px; font-weight: 600; text-align: center; }
+.ldg .ld2 { color: var(--muted); font-size: 14px; font-weight: 400; }
+.ldg .spin { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent); animation: ldgspin 1s linear infinite; will-change: transform; }
+@keyframes ldgspin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ldg .spin { animation: none; } }
 </style>
 
 <div id="app"><div id="view"></div></div>
 <nav id="tabs" hidden aria-label="Асосий меню"></nav>
 <div id="sheet" class="sheet" hidden role="dialog" aria-label="Сўз тафсилоти"></div>
 
-<script src="data1.js"></script>
-<script src="data2.js"></script>
-<script src="extra.js"></script>
 <script>
-const DATA = window.ANNAIM_DATA || [];
-try { DATA.forEach(e => (e.derivatives || []).forEach(f => { if (f.sarf_form && /^[ivx]+$/.test(f.sarf_form)) f.sarf_form = f.sarf_form.toUpperCase(); })); } catch (x) {}
+// tez (d68–d69): луғат (data/dNN.js майда файллари ва extra.js) экран чизилгандан кейин юкланади (файл охиридаги «юклаш»); унгача DATA бўш
+const DATA = [];
+// индекс майда қадамлар билан қурилади (мақола ичида ҳам: cnt(e) та қадам): f() — охиригача қуриб беради, f.tick(вақт) — вақт тугагунча бир бўлагини
+const LZ = (init, step, cnt) => { let st = null, i = 0, j = 0;
+  const go1 = () => { if (!st) st = init(); const e = DATA[i]; if (j < cnt(e)) step(st, e, j++); else { i++; j = 0; } };
+  const f = () => { while (i < DATA.length) go1(); return st || (st = init()); };
+  f.tick = (until) => { while (i < DATA.length && performance.now() < until) go1(); return i >= DATA.length; }; return f; };
+const ONE = () => 1, PERF = (e) => (e.derivatives || []).length;   // қадам = мақола / қадам = шакл
+const CORE_STEPS = [(e) => (e.derivatives || []).forEach(f => { if (f.sarf_form && /^[ivx]+$/.test(f.sarf_form)) f.sarf_form = f.sarf_form.toUpperCase(); })];
 
 // ---------- сақлаш (қурилмада) ----------
 const KEY = 'annaim-v1';
@@ -485,10 +500,36 @@ if ('tsz' in S) { delete S.tsz; try { localStorage.setItem(KEY, JSON.stringify(S
 if (!S.latV) { S.lang = 'lat'; S.latV = 1; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }   // qulayB: ҳамма учун лотин (бир марта); кейин танлов эслаб қолинади
 if ('look' in S || 'pal' in S) { delete S.look; delete S.pal; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+// d71: ёзишнинг қисқа кўриниши (html.typing) босиш тугагандан кейин йиғиштирилади — акс ҳолда тепа қисм қайтиб, босиш бошқа жойга тушади;
+// рўйхат пастга сурилган бўлса, кўриниб турган сўз жойида қолади
+const TYP = { press: false, wait: false, tm: 0, stop: 0,
+  on() { clearTimeout(this.tm); this.wait = false; this.stop++; document.documentElement.classList.add('typing'); },
+  blur() { if (this.press) { this.wait = true; this.tm = setTimeout(() => this.end(), 1500); } else this.end(); },
+  kbOpen() { const V = window.visualViewport; return !!V && document.documentElement.dataset.kb === '1'; },
+  end() {   // рўйхат бошида бўлса дарров; пастга сурилган бўлса клавиатура ёпилгач (талашув ва титраш бўлмасин)
+    clearTimeout(this.tm); this.wait = false; if (!document.documentElement.classList.contains('typing')) return;
+    const V = window.visualViewport, a = V ? V.offsetTop : 0, b = a + (V ? V.height : innerHeight); let el = null;   // экранда боши кўриниб турган биринчи сўз жойида қолади
+    if (window.scrollY > 4) for (const x of view.querySelectorAll('.wc, .card')) { if (x.hidden || x.closest('details:not([open])')) continue; const t = x.getBoundingClientRect(); if (!t.height || t.bottom < a) continue; if (t.top > b - 40) { el = el || x; break; } el = x; if (t.top >= a) break; }
+    if (window.scrollY <= 4 || !this.kbOpen()) return this.off(el);
+    const id = ++this.stop, t0 = performance.now(); let last = V.height + V.offsetTop, still = performance.now();
+    const tick = () => { if (id !== this.stop) return; const n = performance.now(), v = V.height + V.offsetTop; if (v !== last) { last = v; still = n; }
+      if ((!this.kbOpen() && n - still > 80) || n - t0 > 900) this.off(el); else requestAnimationFrame(tick); }; tick();
+  },
+  off(el) {
+    this.stop++; const r = document.documentElement; if (!r.classList.contains('typing')) return;
+    const ok = () => el && el.isConnected && el.offsetParent, top = ok() ? el.getBoundingClientRect().top : 0;
+    r.style.overflowAnchor = 'none'; r.classList.remove('typing');
+    if (ok()) { const d = el.getBoundingClientRect().top - top; if (Math.abs(d) > 1) window.scrollBy(0, d); }
+    requestAnimationFrame(() => { r.style.overflowAnchor = ''; });
+  } };
+window.addEventListener('pointerdown', (ev) => { TYP.press = !(ev.target && ev.target.id === 'q'); }, true);
+window.addEventListener('hashchange', () => { TYP.press = false; TYP.off(); }, true);   // бошқа экранга ўтилса дарров
+window.addEventListener('click', () => { TYP.press = false; if (TYP.wait) TYP.end(); }, true);
+['pointerup', 'pointercancel'].forEach(t => window.addEventListener(t, () => setTimeout(() => { TYP.press = false; if (TYP.wait) TYP.end(); }, 400), true));   // босиш click'сиз тугаса (суриш, узоқ босиш)
 // qulayA-1: клавиатура «Орқага» билан ёпилса (фокус қолса ҳам) — тепа қисм қайтади
 if (window.visualViewport) { const vv = window.visualViewport; let mx = vv.height;
   vv.addEventListener('resize', () => { mx = Math.max(mx, vv.height); const r = document.documentElement, kb = vv.height < mx * 0.8;
-    if (!kb && r.dataset.kb === '1' && r.classList.contains('typing')) { r.classList.remove('typing'); const a = document.activeElement; if (a && a.id === 'q') a.blur(); }
+    if (!kb && r.dataset.kb === '1' && r.classList.contains('typing')) { const a = document.activeElement; if (a && a.id === 'q') a.blur(); else if (!TYP.press) TYP.end(); }
     r.dataset.kb = kb ? '1' : ''; }); }
 // qulayB: «Lotin / Кирилл» танлови (тепада ва Профилда); ёзувлари ўгирилмайди
 function langSeg(cls) {
@@ -508,6 +549,7 @@ function applyPrefs() {
 
 // ---------- қидирув ҳелперлари ----------
 const MARKS = /[ً-ٰٟ]/g;
+const AR_MARK1 = /[\u064B-\u0652\u0670]/;
 const AR_MARKS = /[ً-ٰٟـ]/g;
 const dA = (s) => S.harakat ? s : s.replace(MARKS, '');
 const KB = (s) => String(s || '').replace(/[یےۍ]/g, 'ي').replace(/[کڪ]/g, 'ك').replace(/[ھہەۀ]/g, 'ه').replace(/[،؛؟,.;:!?"'«»()\[\]{}…\u200e\u200f\u200c\u200d]/g, ' ');
@@ -522,7 +564,7 @@ function normUz(s) { return (s || '').toLowerCase().replace(/ў/g, 'у').replace
 const HAS_AR = /[؀-ۿ]/;
 // ўзбекча қидирув: сўз чегараси бўйича (« урмоқ » «бурмоқ» ичидан чиқмайди)
 function uzWords(s) { return ' ' + normUz(s).replace(/[^a-zа-я0-9]+/g, ' ').trim() + ' '; }
-DATA.forEach(e => {
+CORE_STEPS.push(e => {
   const ar = [e.root_search || ''], uz = [], uzTr = [], uzEx = [];
   const arx = [], arxs = [];
   e.derivatives.forEach(f => {
@@ -578,10 +620,7 @@ const VSUF = [
   ['масинлар', 6, 'gmp'], ['манглар', 6, 'mmp'], ['масин', 6, 'gm'], ['манг', 6, 'mm'], ['майлик', 6, 'p1'], ['ма', 6, 'mm'], ['май', 6, 's1']];
 const VCELL = { gm: [0, 0], gf: [0, 1], mm: [0, 2], mf: [0, 3], s1: [0, 4], gm2: [1, 0], gf2: [1, 1], m2: [1, 2], p1: [1, 4], gmp: [2, 0], gfp: [2, 1], mmp: [2, 2], mfp: [2, 3] };
 const VPERS = { gm: 'ғоиб, музаккар, муфрад', mm: 'мухотоб, музаккар, муфрад', s1: 'мутакаллим, муфрад', p1: 'мутакаллим, жамъ', gmp: 'ғоиб, музаккар, жамъ', mmp: 'мухотоб, музаккар, жамъ' };
-let VSTEM = null;
-function vstemIndex() {
-  if (VSTEM) return VSTEM; VSTEM = new Map();
-  DATA.forEach(e => e.derivatives.forEach(f => {
+const vstemIndex = LZ(() => new Map(), (VSTEM, e, fi) => { const f = e.derivatives[fi];
     if (f.form_type !== 'verb') return; let parts = []; try { parts = uzParts(f); } catch (x) {}
     parts.forEach((x, pi) => { const ws = x.p.split(' '); const last = ws.pop(); const st = last.slice(0, -3); if (st.length < 2) return;
       const k = normUz(st); if (!VSTEM.has(k)) VSTEM.set(k, []); VSTEM.get(k).push({ e, f, pre: ws.length ? ws.join(' ') + ' ' : '', s: st, pi }); });
@@ -590,10 +629,8 @@ function vstemIndex() {
       if (st.length < 2 || /н$/.test(st) || st === 'бўл' || (st.length > 3 && /ил$/.test(st))) return; // uzVerb() даги ўтимлилик қоидаси
       const pas = /е$/.test(st) ? st + 'йил' : /ла$/.test(st) ? st + 'н' : UZV.test(st) ? st + 'л' : /л$/.test(st) ? st + 'ин' : st + 'ил';
       const k = normUz(pas); if (!VSTEM.has(k)) VSTEM.set(k, []); VSTEM.get(k).push({ e, f, pre: ws.length ? ws.join(' ') + ' ' : '', s: pas, pi, maj: true, act: st }); });
-  }));
-  return VSTEM;
-}
-const RK = new Map();
+}, PERF);
+const RK = new Map(), VWR = new Map(), VWR0 = new Map();
 function verbHits(text) {
   const idx = vstemIndex(), best = new Map();
   const raws = text.toLowerCase().replace(/[^a-zа-яёўқғҳ]+/g, ' ').trim().split(' ').filter(Boolean);
@@ -616,11 +653,14 @@ function verbHits(text) {
         let uz = ''; try { const U = uzSeven(c.pre, c.s)[ti]; uz = U && U[r] && U[r][col] || ''; } catch (x) {}
         const rkey = c.pre + (c.maj && c.act ? c.act : c.s) + 'моқ'; if (!RK.has(rkey)) { const m = new Map(); search(rkey).forEach((x, i) => m.set(x, i)); RK.set(rkey, m); }
         const rk = RK.get(rkey).has(c.e) ? RK.get(rkey).get(c.e) : 9999;
-        best.set(id, { e: c.e, f: c.f, ar, uz, table: tb[0], pers: VPERS[key] || '', sc, rk, fi: c.e.derivatives.indexOf(c.f) });
+        // d70-4: «-моқ» шакли оддий қидирувда қайси ўринда чиқса (биринчи маъноси шу бўлган сўзлар олдин), тусланган шакл ҳам шу ўринда
+        if (LOAD.done.uz && !VWR.has(rkey)) VWR.set(rkey, new Map(uzWordHits(uzKey(rkey)).map((x, i) => [x.f, { lv: Math.floor(x.sc), i }])));
+        const wr = (VWR.get(rkey) || VWR0).get(c.f) || { lv: 0, i: 9999 };
+        best.set(id, { e: c.e, f: c.f, ar, uz, table: tb[0], pers: VPERS[key] || '', sc, lv: wr.lv, wi: wr.i, rk, fi: c.e.derivatives.indexOf(c.f) });
       }
     } }
-  // тартиб: «-моқ» шакли бўйича оддий қидирувдаги ўрни (масалан, урмоқ → ضرب биринчи)
-  const arr = [...best.values()].sort((a, b) => b.sc - a.sc || a.rk - b.rk || a.fi - b.fi);
+  // тартиб: «-моқ» шакли бўйича оддий қидирувдаги ўрни
+  const arr = [...best.values()].sort((a, b) => b.sc - a.sc || b.lv - a.lv || a.wi - b.wi || a.rk - b.rk || a.fi - b.fi);
   return arr.length && arr[0].sc >= 2500 ? arr.filter(x => x.sc >= 2500) : arr;
 }
 // vfsave (2026-11-21): «Янги (синов)» да феъл шакли карточкаси: шакл номи қалин, кичик «Сақлаш» (луғат сўзи, x.f)
@@ -638,19 +678,15 @@ function vfCardToza(x, pers) {
 }
 function verbCard(x) { return vfCardToza(x, x.pers); }
 // ---------- ўзбекча: аниқ сўз, қўшимчалар, имло ----------
-let UZI = null;
 const uzKey = (t) => normUz(t).replace(/[^a-zа-я0-9]+/g, ' ').trim();
-function uzIndex() {
-  if (UZI) return UZI; const seg = new Map(), k2 = new Map(), bag = new Map(), words = new Map(), disp = new Map();
-  DATA.forEach(e => { if (String(e.id).startsWith('letter_')) return; e.derivatives.forEach((f, fi) => (f.translations || []).forEach((t, ti) => String(t.meaning || '').replace(/\([^)]*\)/g, ' ').split(/[;,]/).forEach((s0, si) => {
+const uzIndex = LZ(() => ({ seg: new Map(), k2: new Map(), bag: new Map(), words: new Map(), disp: new Map() }), ({ seg, k2, bag, words, disp }, e, fi) => {
+  if (String(e.id).startsWith('letter_')) return; const f = e.derivatives[fi]; (f.translations || []).forEach((t, ti) => String(t.meaning || '').replace(/\([^)]*\)/g, ' ').split(/[;,]/).forEach((s0, si) => {
     const k = uzKey(s0); if (!k || k.length > 40) return;
     const sc = (ti === 0 ? (si === 0 ? 3 : 2) : 1) + (fi === 0 ? 0.5 : 0);
     if (!seg.has(k)) { seg.set(k, []); disp.set(k, s0.replace(/\s+/g, ' ').trim().toLowerCase()); } seg.get(k).push({ e, f, sc });
     const o = k.replace(/о/g, 'у'); if (!k2.has(o)) k2.set(o, k);
     if (k.includes(' ')) { const b = k.split(' ').sort().join(' '); if (!bag.has(b)) bag.set(b, k); } else words.set(k, (words.get(k) || 0) + 1);
-  }))); });
-  return UZI = { seg, k2, bag, words, disp };
-}
+  })); }, PERF);
 function uzWordHits(k) {
   const best = new Map(); (uzIndex().seg.get(k) || []).forEach(x => { if (!best.has(x.f) || best.get(x.f).sc < x.sc) best.set(x.f, { e: x.e, f: x.f, sc: x.sc, via: '' }); });
   const rich = (f) => (f.examples || []).length * 2 + (f.translations || []).length;
@@ -871,7 +907,7 @@ const ALTC = new Map();
 function arAlt(text) {
   const n = normAr(text); if (n.length < 3 || /\s/.test(text.trim())) return null; if (ALTC.has(n)) return ALTC.get(n);
   let out = null;
-  if (!ALLW.has(n)) {
+  if (!ALLW.has(n) && !eqIndex().has(n)) {   // d73-4
     let fh = []; try { fh = arFormHits(text); } catch (x) {}
     if (!fh.length) {
       const tails = (w) => [w, w.replace(/[ئؤ]$/, 'ء'), w.replace(/ت$/, 'ه'), w.replace(/ي$/, 'ى')];
@@ -937,13 +973,8 @@ function uzVStem(n) {
   return null;
 }
 // мисоллар таржимаси: сўз → мисоллар
-let UZEX = null;
-function uzExIndex() {
-  if (UZEX) return UZEX; const tok = new Map(), all = [];
-  DATA.forEach(e => (e.derivatives || []).forEach(f => (f.examples || []).forEach(x => { if (!x.translation) return; const w = uzWords(x.translation); const r = { e, f, x, sc: 0, w }; all.push(r);
-    new Set(w.trim().split(' ')).forEach(t => { if (!t) return; if (!tok.has(t)) tok.set(t, []); tok.get(t).push(r); }); })));
-  return UZEX = { tok, all };
-}
+const uzExIndex = LZ(() => ({ tok: new Map(), all: [] }), ({ tok, all }, e, fi) => { const f = e.derivatives[fi]; (f.examples || []).forEach(x => { if (!x.translation) return; const w = uzWords(x.translation); const r = { e, f, x, sc: 0, w }; all.push(r);
+    new Set(w.trim().split(' ')).forEach(t => { if (!t) return; if (!tok.has(t)) tok.set(t, []); tok.get(t).push(r); }); }); }, PERF);
 function uzExHits(n) {
   if (!n || n.length < 2) return []; const I = uzExIndex();
   if (/\s/.test(n)) { const k = ' ' + n + ' '; return I.all.filter(r => r.w.includes(k)); }
@@ -990,6 +1021,20 @@ function masdarGen(f) {
   if (n !== len) return { ...R0, skip: 'китобдаги ёзуви 13-бет вазнига тушмади (ҳарфлар сони)' };
   const R = L.filter((_, i) => !pos.includes(i)).map(l => l[0]);
   if (R.some(c => /[أإءؤئآ]/.test(c))) return { ...R0, skip: 'маҳмуз' };
+  // d73-2: ноқис (фақат охирги ўзак ҳарфи иллатли). «Жаноҳ ут-толиб», 32-бет, қалб 7-қонуни: зоида алифдан бевосита кейин келган و ва ي ҳамзага қалб қилинади (ифъол: اِرْضَاءٌ, ифтиъол: اِخْتِفَاءٌ)
+  if ([1, 4, 5, 10].includes(bob) && /^[ىي]$/.test(R[2]) && L[n - 1].length === 1 && !/[اوىي]/.test(R[0] + R[1]) && R[0] !== R[1]) {
+    const okN = L[0][0] === (bob === 1 ? 'أ' : 'ا') && vOf(L[n - 2]) === FA && !L[n - 2].includes(SH) && !L.slice(0, -1).some(l => l.includes(DA))
+      && (bob === 1 ? L[1].includes(SU)
+        : bob === 4 ? (L[1][0] === 'ن' && L[1].includes(SU) && vOf(L[2]) === FA)
+        : bob === 5 ? (L[1].includes(SU) && /[تطد]/.test(L[2][0]) && vOf(L[2]) === FA)
+        : (L[1][0] === 'س' && L[1].includes(SU) && L[2][0] === 'ت' && vOf(L[2]) === FA && L[3].includes(SU)));
+    if (!okN) return { ...R0, skip: 'китобдаги ёзуви 13-бет вазнига тушмади (ҳаракат ёки зоида ҳарф)' };
+    let pN = pat.replace('ل', '§'), pgN = '13, 32';
+    if (bob === 5 && /[طد]/.test(L[2][0])) { pN = pN.replace('ت', L[2][0]); pgN = '13, 14, 32'; }
+    const mN = pN.replace(/[فع]/g, c => ({ 'ف': R[0], 'ع': R[1] })[c]).replace('§', 'ء');
+    if (ALLW.has(normAr(mN))) return { ...R0, m: mN, inBook: true, skip: 'китобда бор' };
+    return { ...R0, m: mN, pages: pgN, naqis: true };
+  }
   if (R.some(c => /[اوىي]/.test(c))) return { ...R0, skip: 'муътал' };
   if (R[1] === R[2]) return { ...R0, skip: 'музоъаф' };
   const ok = bob === 8 ? (L[0][0] === 'ا' && L[1].includes(SU) && L[3].includes(SH)) : mazidCheck(bob, L);
@@ -1001,18 +1046,30 @@ function masdarGen(f) {
   if (ALLW.has(normAr(m))) return { ...R0, m, inBook: true, skip: 'китобда бор' };
   return { ...R0, m, pages: pg };
 }
-let GENM = null;
-function genMasdar() {   // normAr(масдар) → [{ e, f, m }]
-  if (GENM) return GENM; GENM = new Map();
-  DATA.forEach(e => (e.derivatives || []).forEach(f => { let r = null; try { r = masdarGen(f); } catch (z) {} if (!r || !r.m || r.skip) return;
-    const k = normAr(r.m); if (!GENM.has(k)) GENM.set(k, []); GENM.get(k).push({ e, f, m: r.m }); }));
-  return GENM;
+// d73-3: китобда алоҳида берилмаган исми фоил / исми мафъул (мазид ва рубоъий феъллар) — «Жаноҳ ут-толиб» 22–23-дарс (58–62-бет) қоидаси бўйича (феъл панелида кўрсатиладиган ўша шакллар) → феъл карточкаси
+function ismHits(text) {
+  const nq = normAr(text); if (nq.length < 3 || /\s/.test(String(text).trim())) return [];
+  const out = [];
+  DATA.forEach(e => { if (String(e.id).startsWith('letter_')) return;
+    let rs = RKEYC.get(e); if (rs === undefined) { rs = normAr(e.root_search || '').replace(AR_WEAK, ''); RKEYC.set(e, rs); } const rOk = !!rs && isSubseq(rs, nq);
+    e.derivatives.forEach(f => {
+      if (f.form_type !== 'verb' || f.uncertain || !f.arabic_word) return;
+      if (!rOk) { if (!FKEY.has(f)) FKEY.set(f, normAr(String(f.arabic_word || '').split(/[,،]|ёки/)[0]).replace(AR_WEAK, '')); const fk = FKEY.get(f); if (fk.length < 2 || !isSubseq(fk, nq)) return; }
+      let im = null; try { const sv = sevenCached(f); im = (sv && !/^сулосий мужаррад/.test(sv.type || '')) ? ismOf(f, sv) : null; } catch (z) {} if (!im) return;   // фақат мазид ва рубоъий: вазни битта (58–62-бет)
+      [[im.foil, 'исми фоил'], [im.maful, 'исми мафъул (феъл ўтимли бўлса)']].forEach(([w, lab]) => { if (w && normAr(w) === nq && !out.some(o => o.f === f)) out.push({ e, f, sc: 4.5, via: '', gi: w, gil: lab }); }); }); });
+  return out.slice(0, 12);
 }
+// d73-4: «X = Y» сатридаги Y луғатда бошқа ҳеч қаерда (бош сўз, масдар, кўплик) бўлмаса — Y бўйича ҳам шу сатр топилади. normAr(Y) → [{ e, f, w }]
+const eqIndex = LZ(() => new Map(), (EQX, e, fi) => { const f = e.derivatives[fi];
+  (f.equivalent_to || []).forEach(b => { if (/^\s*[IVX]+/.test(b)) return; String(b).split(/[,،;]|ёки/).forEach(w => { w = w.replace(/\(.*?\)/g, '').replace(/[^\u0621-\u0652\u0670 ]/g, '').trim(); if (!w || /\s/.test(w)) return;
+    const k = normAr(w); if (ALLW.has(k)) return; if (!EQX.has(k)) EQX.set(k, []); if (!EQX.get(k).some(o => o.f === f)) EQX.get(k).push({ e, f, w }); }); }); }, PERF);
+const genMasdar = LZ(() => new Map(), (GENM, e, fi) => {   // normAr(масдар) → [{ e, f, m }]
+  const f = e.derivatives[fi]; let r = null; try { r = masdarGen(f); } catch (z) {} if (!r || !r.m || r.skip) return;
+    const k = normAr(r.m); if (!GENM.has(k)) GENM.set(k, []); GENM.get(k).push({ e, f, m: r.m }); }, PERF);
 // 1-иш: «Шу ўзакдан» — 13-бет жадвалидаги вазнлар (мозий, музореъ, масдар; ҳамза ва ҳаракатсиз ёзувда), 14-бет (ифтиъол: ت → ط, د)
 const ROOT_TPL = ['افعل', 'يفعل', 'افعال', 'فعل', 'تفعيل', 'فاعل', 'يفاعل', 'مفاعله', 'انفعل', 'ينفعل', 'انفعال', 'افتعل', 'يفتعل', 'افتعال',
   'تفعل', 'يتفعل', 'تفاعل', 'يتفاعل', 'افعلال', 'يفعال', 'افعيلال', 'استفعل', 'يستفعل', 'استفعال'];
-let ROOTIX = null;
-function rootIndex() { if (ROOTIX) return ROOTIX; ROOTIX = new Map(); DATA.forEach(e => { const r = normAr(e.root_search || ''); if (!r || r.length < 2 || String(e.id).startsWith('letter_')) return; if (!ROOTIX.has(r)) ROOTIX.set(r, []); ROOTIX.get(r).push(e); }); return ROOTIX; }
+const rootIndex = LZ(() => new Map(), (ROOTIX, e) => { const r = normAr(e.root_search || ''); if (!r || r.length < 2 || String(e.id).startsWith('letter_')) return; if (!ROOTIX.has(r)) ROOTIX.set(r, []); ROOTIX.get(r).push(e); }, ONE);
 function rootCands(q) {
   const I = rootIndex(), out = new Set(); let n = normAr(q); if (!n || /[^ء-ي]/.test(n)) return [];
   const qs = [n]; if (n.length >= 5 && n.startsWith('ال')) qs.push(n.slice(2));
@@ -1119,7 +1176,7 @@ const goRep = (hash) => { location.replace('#' + hash); };   // тарихга �
 // ---------- матн китобдагидек ----------
 const EXACT = new Map(), LOOSE = new Map();
 const reg = (m, k, v) => { if (!m.has(k)) m.set(k, []); m.get(k).push(v); };
-DATA.forEach(e => e.derivatives.forEach(f => {
+CORE_STEPS.push(e => e.derivatives.forEach(f => {
   [f.arabic_word, ...(f.alt_forms || []).map(a => a.arabic_word)].forEach(w => { reg(EXACT, w, { e, f }); reg(LOOSE, normAr(w), { e, f }); });
 }));
 function lookup(word, cur) { const pick = (a) => a && (a.find(x => x.e === cur) || a[0]); return pick(EXACT.get(word)) || pick(LOOSE.get(normAr(word))); }
@@ -1196,6 +1253,9 @@ const BOBNAME = { 1: 'фатҳа–касра', 2: 'фатҳа–замма', 3:
 // мазийд (II–X): дарслик жадвали (ўн икки боб), луғатдаги римча шакл бўйича; XI+ ва рубоъий — кўрсатилмайди
 const MAZID = { II: 2, III: 3, IV: 1, V: 6, VI: 7, VII: 4, VIII: 5, IX: 8, X: 10 };
 const MAZNAME = { 1: 'ифъол', 2: 'тафъил', 3: 'муфоала', 4: 'инфиъол', 5: 'ифтиъол', 6: 'тафаъъул', 7: 'тафоъул', 8: 'ифъилол', 10: 'истифъол' };
+// d73-5 (муаллиф, 2026-11-26): «Жаноҳ ут-толиб» 13-бет жадвали — 9-боб اِفْعَالَّ (масдари اِفْعِيلَالٌ, اِحْمَارَّ) = луғатдаги XI шакл; 11-боб اِفْعَوْعَلَ (масдари اِفْعِيعَالٌ, اِحْدَوْدَبَ) = XII шакл.
+// MAZID га қўшилмайди: бу икки бобнинг туслаш жадваллари алоҳида (mazidXI, stemsXII).
+const MAZID2 = { XI: 9, XII: 11 }, MAZPAT2 = { 9: 'اِفْعِيلَالٌ', 11: 'اِفْعِيعَالٌ' };
 const bobText = (f, b) => b ? `${b}-боб (${f.sarf_form === 'I' ? BOBNAME[b] : MAZNAME[b]})` : null;
 function bobOf(f) {
   if (f.form_type === 'verb' && MAZID[f.sarf_form]) return MAZID[f.sarf_form];
@@ -2134,7 +2194,7 @@ function uzParts(f) {
   }));
   return out;
 }
-const F2E = new Map(); DATA.forEach(e => e.derivatives.forEach(f => F2E.set(f, e)));
+const F2E = new Map(); CORE_STEPS.push(e => e.derivatives.forEach(f => F2E.set(f, e)));
 // «= I», «= أَنِسَ» каби ишора: ўша сўзнинг таржимаси олинади
 function uzRef(f) {
   const e = F2E.get(f); if (!e) return null;
@@ -2160,7 +2220,30 @@ function uzVerb(f) {
   return { pre: A.pre, s: A.s, src: A.src, pas, pasPre: P ? P.pre : '', pasSrc: P ? P.src : null, pasN: P ? P.n : 0, pasOther: !!P && P.src !== A.src,
     via: via ? via.arabic_word : null };
 }
-const uzPart = (s) => /е$/.test(s) ? s + 'ювчи' : /а$/.test(s) ? s.slice(0, -1) + 'овчи' : /и$/.test(s) ? s.slice(0, -1) + 'увчи' : UZV.test(s) ? s + 'вчи' : s + 'увчи';
+const uzPart = (s) => /е$/.test(s) ? s + 'ювчи' : /а$/.test(s) ? s.slice(0, -1) + 'овчи' : /и$/.test(s) ? s.slice(0, -1) + 'увчи' : /й$/.test(s) ? s.slice(0, -1) + 'ювчи' : UZV.test(s) ? s + 'вчи' : s + 'увчи';
+// d74: «-ган» (имло: к+г → кк, қ+г → ққ, г+г → кк, ғ+г → ққ)
+const uzGan = (s) => /к$/.test(s) ? s + 'кан' : /г$/.test(s) ? s.slice(0, -1) + 'ккан' : /қ$/.test(s) ? s + 'қан' : /ғ$/.test(s) ? s.slice(0, -1) + 'ққан' : s + 'ган';
+// d74: исми фоил / исми мафъулнинг ўзбекчаси — феълнинг китобдаги ҳар бир «-моқ» таржимасидан; қавс ичидагилар (изоҳ, «н. дандир», предлог) сақланади (муаллиф, 2026-11-26). [{ n, t }]
+function uzIsmMean(f, kind) {
+  const lozim = (st) => /н$/.test(st) || st === 'бўл' || (st.length > 3 && /ил$/.test(st));
+  const conv = (st) => { if (kind === 'foil') return uzPart(st) + ' (' + uzGan(st) + ')'; if (lozim(st)) return null;
+    const pas = /е$/.test(st) ? st + 'йил' : /ла$/.test(st) ? st + 'н' : UZV.test(st) ? st + 'л' : /л$/.test(st) ? st + 'ин' : st + 'ил'; return uzGan(pas); };
+  const splitTop = (m) => { const out = []; let d = 0, cur = ''; for (const ch of m) { if (ch === '(') d++; if (ch === ')') d = Math.max(0, d - 1); if (d === 0 && (ch === ';' || ch === ',')) { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out; };
+  const by = new Map();
+  (f.translations || []).forEach((tr, i) => splitTop(String(tr.meaning || '')).forEach(x => {
+    x = x.replace(/\s+/g, ' ').trim(); if (!x) return;
+    // қавсдан ташқаридаги охирги «-моқ» сўзи
+    let d = 0, pos = -1; const re = /[а-яёўқғҳ-]+моқ(?![а-яёўқғҳ])/gi; let m; const depth = []; for (let k = 0, q = 0; k < x.length; k++) { if (x[k] === '(') q++; depth[k] = q; if (x[k] === ')') q = Math.max(0, q - 1); }
+    while ((m = re.exec(x))) if (!depth[m.index]) pos = m.index;
+    if (pos < 0) return; const w = x.slice(pos).match(/^[а-яёўқғҳ-]+моқ/i)[0]; const st = w.slice(0, -3); if (!st) return;
+    const c = conv(st); if (!c) return;
+    let pre = x.slice(0, pos), post = x.slice(pos + w.length);
+    if (kind !== 'foil') pre = pre.replace(/([а-яёўқғҳ]{3,})ни(?= )/gi, '$1');   // «қаддини букмоқ» → «қадди букилган»
+    post = post.replace(/\(([а-яёўқғҳ-]+)моқ\)/gi, (z, s2) => { const c2 = conv(s2); return c2 ? '(' + c2 + ')' : z; });   // «(тикмоқ)» → «(тикувчи (тиккан))»
+    const t = (pre + c + post).replace(/\s+/g, ' ').trim();
+    if (!by.has(i + 1)) by.set(i + 1, []); if (!by.get(i + 1).includes(t)) by.get(i + 1).push(t); }));
+  return [...by.entries()].map(([n, a]) => ({ n, t: a.join(', ') }));
+}
 const uzPres = (s) => s + (UZV.test(s) ? 'йдиган' : 'адиган');
 function uzSeven(pre, s) {
   const v = UZV.test(s), A = v ? 'й' : 'а', D = ' (икки)';
@@ -2205,6 +2288,13 @@ function wordHits(t) {
   if (!out.length) muzGuess(n).forEach(x => out.push(x));
   return out.sort((a, b) => b.sc - a.sc);
 }
+// d70-3: ҳаракатсиз ёзилган сўз бир нечта шаклга бир хил мос келса (баҳоси тенг): ҳамза/ة си айнан ёзилгандек шакл > китобда мисоли кўпроқ > шаддаси камроқ > китоб тартиби
+function arRank(hits, q) {
+  if (AR_MARK1.test(q)) return hits;
+  const let0 = (w) => KB(w).replace(AR_MARKS, '').replace(/[~\s]/g, ''), q0 = let0(q), hz = /[أإآٱؤئءة]/.test(q0);
+  const K = (x) => { const w = String(x.f.arabic_word || ''), m = x.sc >= 4 && !x.via; return { x, l: hz && m && !w.split(/[,،;=]|ёки/).some(y => let0(y) === q0) ? 1 : 0, n: m ? ((x.f._of || x.f).examples || []).length : 0, s: m ? (w.match(/\u0651/g) || []).length : 0 }; };
+  return hits.map(K).sort((a, b) => b.x.sc - a.x.sc || a.l - b.l || b.n - a.n || a.s - b.s).map(k => k.x);
+}
 // музореъ шаклидан феълни тахминан топиш (жадвали йўқ феъллар учун)
 let VSK = null;
 function muzGuess(n) {
@@ -2228,12 +2318,15 @@ function wordCardToza(x) {
       else { const tl = tasrifList(f); muz = [...new Set(tl.map(t => t.muzore[0][0]))].slice(0, 3); bobs = [...new Set(tl.map(t => t.bob).filter(Boolean))]; if (tl[0]) amr = (tl[0].amr.flat().filter(Boolean)[0]) || ''; } } catch (z) {}
     // toza4 (2026-11-21): «N-боб» фақат I шакл учун; мазидда (II–X) бобнинг номи
     if (MAZID[f.sarf_form]) fb = verbKind(f) + ' · ' + MAZNAME[MAZID[f.sarf_form]] + ' боби';
-    else { let bob = null; if (f.sarf_form === 'I') { try { bob = bobOf(f) || (tasrifOf(f) || {}).bob || null; } catch (z) {} } fb = verbKind(f) + (bob ? ` · ${bob}-боб` : ''); }
+    else { let bob = null; if (f.sarf_form === 'I') { try { bob = bobOf(f) || (tasrifOf(f) || {}).bob || null; } catch (z) {} } if (!bob && MAZID2[f.sarf_form]) bob = MAZID2[f.sarf_form]; fb = verbKind(f) + (bob ? ` · ${bob}-боб` : ''); }
     if (muz.length) cells.push(['музореъ', muz.join('، ')]);
     if (amr) cells.push(['амр', amr]);
   } else if (f.plural_form) cells.push(['кўплиги', String(f.plural_form).split(/[,،]/).slice(0, 2).join('، ')]);
   const trs = (f.translations || []).filter(t => t.meaning);
   const sum = trs.length ? (trs[0].label ? trs[0].label + ' ' : '') + trs[0].meaning : (base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—');
+  // d73-1: «= …» деб босилган сўз (ўз маъноси босилмаган): тенг сўзнинг маъноси карточканинг ўзида (очилганда кўринадиган маъно — linkedOf).
+  let giM = []; if (x.gi) { try { giM = uzIsmMean(base, /мафъул/.test(x.gil) ? 'maful' : 'foil'); } catch (z) {} }   // d74
+  let lk = null; if (!trs.length) { try { lk = linkedOf(base, x.e); } catch (z) {} } const ltr = lk ? (lk.translations || []).filter(t => t.meaning) : [];
   const k = savedKeyOf(x.e, f), on = () => S.saved.includes(k);
   const lb = h('span', {}, on() ? 'Сақланди' : 'Сақлаш');
   const sv0 = h('button', { class: 'ib', 'aria-label': on() ? 'Сақланди (олиб ташлаш)' : 'Сақлаш', title: on() ? 'Сақланди' : 'Сақлаш', 'aria-pressed': String(on()), onclick: (ev) => { ev.stopPropagation();
@@ -2244,11 +2337,20 @@ function wordCardToza(x) {
   // ozak-6: ҳамма маънолар рақами билан (китобдаги рақам), матн json даги каби; биринчи маъно кесилмайди
   const box = h('div', { class: 'wc wt', 'data-g': g, onclick: () => openAt(x.e, f) },
     h('div', { class: 'tp' }, h('span', { class: 'tg2' }, { v: 'Феъл', n: 'Исм', adj: 'Сифат' }[g] || 'Сўз'), h('span', { class: 'w', lang: 'ar' }, f.arabic_word),
-      trs.length > 1 ? '' : h('div', { class: 'm1' }, sum), fb ? h('div', { class: 'fb' }, fb) : ''),   // bet-а: маъно биттадан кўп бўлса фақат рақамли рўйхат
+      (trs.length > 1 || (sum === '—' && ltr.length) || giM.length) ? '' : h('div', { class: 'm1' }, sum), fb ? h('div', { class: 'fb' }, fb) : ''),   // bet-а: маъно биттадан кўп бўлса фақат рақамли рўйхат
     x.gm ? h('div', { class: 'gm' }, h('span', { lang: 'ar' }, x.gm), ' — масдар · қоида бўйича, китобда босилмаган') : '',
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
+    x.gi ? h('div', { class: 'gm' }, h('span', { lang: 'ar' }, x.gi), ` — ${x.gil} · қоида бўйича, китобда босилмаган`) : '',
+    ...(() => { if (!x.gi) return []; let M = []; try { M = uzIsmMean(base, /мафъул/.test(x.gil) ? 'maful' : 'foil'); } catch (z) {} if (!M.length) return [];   // d74
+      const multi = (base.translations || []).filter(t => t.meaning).length > 1;
+      return [h('div', { class: 'gim' }, h('div', { class: 'gimh' }, 'маъноси (феъл таржимасидан ясалди):'),
+        multi ? h('ol', { class: 'mn' }, M.map(m => h('li', {}, h('span', { class: 'n' }, m.n + ')'), h('span', {}, m.t)))) : h('div', { class: 'gim1' }, M.map(m => m.t).join('; ')))]; })(),
+    (x.ge && trs.length) ? h('div', { class: 'gm' }, h('span', { lang: 'ar' }, `${x.ge} = ${f.arabic_word}`), ' — китобда «=» билан берилган, маъноси бир') : '',
+    ltr.length ? h('div', { class: 'lkm' }, ltr.length > 1
+        ? h('ol', { class: 'mn', 'data-bk': true }, ltr.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning))))
+        : h('div', { class: 'm1 lk1' }, (ltr[0].label ? ltr[0].label + ' ' : '') + ltr[0].meaning)) : '',
     cells.length ? h('div', { class: 'cells' }, cells.map(([l, v]) => h('div', { class: 'cl' }, h('b', { lang: 'ar' }, v), h('i', {}, l)))) : '',
-    trs.length > 1 ? h('ol', { class: 'mn', 'data-bk': true }, trs.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning)))) : '',
+    (trs.length > 1 && !giM.length) ? h('ol', { class: 'mn', 'data-bk': true }, trs.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning)))) : '',
     h('div', { class: 'ft2' }, h('span', { class: 'meta' }, `бет ${pgOf(x.e, x.f)}`), sv));
   return box;
 }
@@ -2367,13 +2469,13 @@ function openSheet(f, e, btn) {
   document.querySelectorAll('.aw.on').forEach(c => c.classList.remove('on')); if (btn) btn.classList.add('on');
   const kv = [];
   const add = (k, v, ar) => v && kv.push(h('span', {}, k + ': ', ar ? h('span', {}, ...textToNodes(v, f, e)) : h('b', {}, v)));
-  add('Музореъ ҳарфи', f.vocaliz); const bob = bobOf(f) || (tasrifOf(f) || {}).bob || null; add('Боб', bobText(f, bob)); if (f.form_type === 'verb' && !f.sarf_form) { const sv0 = sevenCached(f); if (sv0 && sv0.type && !/^сулосий мужаррад/.test(sv0.type)) add('Тури', sv0.type + (sv0.pages ? ` («Жаноҳ ут-толиб», ${sv0.pages.split(',')[0]}-бет)` : '')); } add('Масдар', f.verbal_noun, true); add('Кўплик', f.plural_form, true); add('Жамловчи', f.collective_form, true); add('Белги', f.tag);
+  add('Музореъ ҳарфи', f.vocaliz); const bob = bobOf(f) || (tasrifOf(f) || {}).bob || null; add('Боб', bobText(f, bob)); const bob2 = (f.form_type === 'verb' && !bob && MAZID2[f.sarf_form]) || null; if (bob2) kv.push(h('span', {}, 'Боб: ', h('b', {}, `${bob2}-боб`), ' (масдари ', h('span', { lang: 'ar', class: 'arw' }, MAZPAT2[bob2]), ' вазнида; «Жаноҳ ут-толиб», 13-бет)')); if (f.form_type === 'verb' && !f.sarf_form) { const sv0 = sevenCached(f); if (sv0 && sv0.type && !/^сулосий мужаррад/.test(sv0.type)) add('Тури', sv0.type + (sv0.pages ? ` («Жаноҳ ут-толиб», ${sv0.pages.split(',')[0]}-бет)` : '')); } add('Масдар', f.verbal_noun, true); add('Кўплик', f.plural_form, true); add('Жамловчи', f.collective_form, true); add('Белги', f.tag);
   const exs = f.examples || [], others = e.derivatives.filter(x => x !== f);
   const lab = (x) => x.form_type === 'verb' ? x.sarf_form : (x.form_type === 'derived' ? '–' : '·');
   sheet.replaceChildren(h('div', { class: 'in' },
     h('div', { class: 'head' },
       h('div', { class: 'w', lang: 'ar' }, dA(f.arabic_word)),
-      h('div', { class: 'f' }, f.form_type === 'verb' ? (verbKind(f) + (MAZID[f.sarf_form] ? ' · ' + MAZNAME[MAZID[f.sarf_form]] + ' боби' : (bob ? ` · ${bob}-боб` : '')))   /* panelbob (2026-11-21) */ : (f.form_type === 'derived' ? 'ҳосила сўз' : 'сўз'))),
+      h('div', { class: 'f' }, f.form_type === 'verb' ? (verbKind(f) + (MAZID[f.sarf_form] ? ' · ' + MAZNAME[MAZID[f.sarf_form]] + ' боби' : (bob ? ` · ${bob}-боб` : (bob2 ? ` · ${bob2}-боб` : ''))))   /* panelbob (2026-11-21) */ : (f.form_type === 'derived' ? 'ҳосила сўз' : 'сўз'))),
     kv.length ? h('div', { class: 'kv' }, kv) : '',
     tasrifBlock(f),
     sevenBlock(f),
@@ -2381,8 +2483,9 @@ function openSheet(f, e, btn) {
     derivedBlock(f, e),
     tasghirBlock(f, e),
     (f.translations || []).length ? h('ol', { class: 'mean' }, f.translations.map(t => h('li', {}, t.meaning)))
-      : linkedOf(f, e) ? h('div', {}, h('ol', { class: 'mean' }, linkedOf(f, e).translations.map(t => h('li', {}, t.meaning))),
-          h('p', { class: 'linknote' }, 'маъноси: ', h('span', { class: 'w', lang: 'ar', dir: 'rtl' }, dA(linkedOf(f, e).arabic_word)), ' билан бир'))
+      : linkedOf(f, e) ? h('div', {}, (f.equivalent_to && linkedOf(f, e).arabic_word === f.arabic_word) ? h('p', {}, '= ' + f.equivalent_to.join(', ')) : '',   /* d73-4 */
+          h('ol', { class: 'mean' }, linkedOf(f, e).translations.map(t => h('li', {}, t.meaning))),
+          (f.equivalent_to && linkedOf(f, e).arabic_word === f.arabic_word) ? '' : h('p', { class: 'linknote' }, 'маъноси: ', h('span', { class: 'w', lang: 'ar', dir: 'rtl' }, dA(linkedOf(f, e).arabic_word)), ' билан бир'))
       : (f.equivalent_to ? h('p', {}, '= ' + f.equivalent_to.join(', ') + (f.equivalent_to.every(r => /^[IVX]+/.test(String(r).trim())) ? ' боб билан бир хил' : '')) : ''),
     refsBlock(f, e),
     exs.length ? h('h3', {}, 'Мисоллар', h('span', { class: 'srcb' }, 'китобдан')) : '',
@@ -2496,6 +2599,8 @@ function welcome(n) {
 
 // ---------- бош экран ----------
 let query = '', letter = '';
+// d70: клавиатурадаги Enter / «→» / «Қидириш»: дарров қидиради (run), клавиатура ёпилади, рўйхат бошидан кўринади
+function onEnter(input, run) { input.addEventListener('keydown', (ev) => { if (ev.key !== 'Enter' || ev.isComposing) return; ev.preventDefault(); run(); TYP.press = false; window.scrollTo(0, 0); input.blur(); window.scrollTo(0, 0); requestAnimationFrame(() => window.scrollTo(0, 0)); }); }
 const LETTERS = 'ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي'.split(' ');
 function wordOfDay() {
   const pool = []; DATA.forEach(e => e.derivatives.forEach(f => { if ((f.translations || []).length) pool.push({ e, f }); }));
@@ -2515,8 +2620,14 @@ function results() {
     return [...L.filter(e => String(e.id).startsWith('letter_')), ...L.filter(e => !String(e.id).startsWith('letter_'))]; }
   return search(query);
 }
+let homeFill = null;
+const homeKind = () => letter && !query.trim() ? 'core' : !query.trim() ? 'day' : HAS_AR.test(query) ? 'ar' : 'uz';
+function loadBox() {
+  if (LOAD.err) return h('div', { class: 'ldg', role: 'alert' }, h('div', {}, 'Луғат юкланмади. Интернетни текширинг.'), h('button', { class: 'btn line', onclick: loadDict }, 'Қайта уриниш'));
+  return h('div', { class: 'ldg', role: 'status' }, h('span', { class: 'spin', 'aria-hidden': 'true' }), h('div', {}, 'Луғат юкланяпти…'), query.trim() && /^#?(home)?$/.test(location.hash) ? h('div', { class: 'ld2' }, 'Тайёр бўлгач сўзингиз ўзи қидирилади') : '');
+}
 function renderHome() {
-  const input = h('input', { id: 'q', type: 'search', inputmode: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Арабча ёки ўзбекча сўз', value: query, 'aria-label': 'Қидириш' });
+  const input = h('input', { id: 'q', type: 'search', inputmode: 'search', enterkeyhint: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Арабча ёки ўзбекча сўз', value: query, 'aria-label': 'Қидириш' });
   const body = h('div', {});
   const recEl = h('div', { class: 'hrec' });
   const paintRec = () => { const hs = (S.hist || []).slice(0, 10); recEl.hidden = !hs.length || !(query.trim() || letter); recEl.replaceChildren(h('span', {}, 'Яқинда:'), ...hs.map(x => h('button', { class: 'chip' + (HAS_AR.test(x) ? ' ar' : ''), onclick: () => { query = x; letter = ''; fillAll(); } }, x))); };
@@ -2533,12 +2644,14 @@ function renderHome() {
   body.addEventListener('lgrow', () => applyF());
   const paintFlt = () => { const c = { all: 0, v: 0, n: 0, adj: 0, ex: 0 };   // flt8: ҳақиқий умумий сон (кўрсатилган қисми эмас)
     body.querySelectorAll('.list[data-sec]').forEach(L => (L._all || []).forEach(x => { const g = secG(L._sec, x); c.all++; if (c[g] !== undefined) c[g]++; }));
-    if (!c.all) { fltEl.hidden = true; return; }
+    if (!c.all) { fltEl.hidden = true; fltEl.replaceChildren(); return; }   // d70-5б: эски рақамлар қолмайди
     fltEl.hidden = false;
     fltEl.replaceChildren(...[['all', 'Ҳаммаси'], ['v', 'Феъл'], ['n', 'Исм'], ['adj', 'Сифат'], ['ex', 'Мисол']].map(([k, l]) => h('button', { class: fk === k ? 'on' : '', disabled: k !== 'all' && !c[k] ? true : null, onclick: () => { fk = k; applyF(); paintFlt(); } }, l + '\u2009·\u2009' + c[k]))); };
   const fill = () => { LFK = 'all'; fk = 'all'; fill0(); paintFlt(); paintRec(); };
   const fill0 = () => {
     const active = query.trim() || letter;
+    const wait = !LOAD.done[homeKind()];   // луғат ҳали тайёр эмас: ёзилган сўз туради, тайёр бўлгач ўзи қидирилади (homeFill)
+    if (active && wait) { body.replaceChildren(loadBox()); return; }
     if (active) {
       if (!letter && !hasL(query)) { body.replaceChildren(notFound(query.trim())); return; }
       const items = results();
@@ -2546,15 +2659,18 @@ function renderHome() {
         letter ? h('div', { class: 'lbl' }, `«${letter}» ҳарфи`) : ((HAS_AR.test(query) && arAlt(query.trim())) ? h('div', { class: 'count', style: 'color:var(--gold)' }, `«${query.trim()}» топилмади — «${arAlt(query.trim())}» бўйича кўрсатилмоқда`) : ''),
         ...(() => {
           // аниқ мос сўзлар тепада, қолганлари ёпиқ бўлимда
-          const wh0 = (!letter && HAS_AR.test(query)) ? wordHits(effQ(query.trim())) : [];
+          const wh0 = (!letter && HAS_AR.test(query)) ? arRank(wordHits(effQ(query.trim())), effQ(query.trim())) : [];
           const whx = (!letter && HAS_AR.test(query)) ? hamzaAlts(query.trim()).flatMap(w => wordHits(w).filter(x => x.sc >= 4)) : [];
           const wh = wh0.concat(whx.filter(x => !wh0.some(y => y.f === x.f)));
           // ozak-3: ҳаракатсиз ёзилган сўз охиридаги алиф насб танвини алифи бўлиши мумкин — алифсиз шакл исмлар орасидан ҳам
           const rq = query.trim(), nq0 = (!letter && HAS_AR.test(rq)) ? normAr(rq) : '';
-          const whA = (nq0.length >= 3 && /ا$/.test(nq0) && !/[\u064B-\u0652]/.test(rq) && !/\s/.test(rq)) ? wordHits(nq0.slice(0, -1)).filter(x => x.f.form_type !== 'verb' && wordG(x.f) !== 'v' && !wh.some(y => y.f === x.f)) : [];
+          const whA = (nq0.length >= 3 && /ا$/.test(nq0) && !/[\u064B-\u0652]/.test(rq) && !/\s/.test(rq)) ? arRank(wordHits(nq0.slice(0, -1)), nq0.slice(0, -1)).filter(x => x.f.form_type !== 'verb' && wordG(x.f) !== 'v' && !wh.some(y => y.f === x.f)) : [];
           whA.forEach(x => wh.push(x));
           // ozak-2: китобда йўқ, қоида бўйича ясалган масдар → феъл карточкаси
-          if (!wh.length && nq0) (genMasdar().get(nq0) || []).forEach(x => wh.push({ e: x.e, f: x.f, sc: 4.5, via: '', gm: x.m }));
+          if (!wh.length && nq0) (eqIndex().get(nq0) || []).forEach(x => wh.push({ e: x.e, f: x.f, sc: 4.5, via: '', ge: x.w }));   // d73-4: китобнинг ўз сатри («X = Y») биринчи
+          const onlyEq = wh.length > 0 && wh.every(x => x.ge);
+          if ((!wh.length || onlyEq) && nq0) (genMasdar().get(nq0) || []).forEach(x => wh.push({ e: x.e, f: x.f, sc: 4.5, via: '', gm: x.m }));
+          if ((!wh.length || onlyEq) && nq0) { try { ismHits(effQ(rq)).forEach(x => wh.push(x)); } catch (z) {} }   // d73-3
           const qv = isLat(query) ? latCyr(query) : query;
           const vh = (!letter && !HAS_AR.test(query)) ? verbHits(qv) : [];
           if (!letter && !HAS_AR.test(query)) { const U = uzView(qv, vh, items); if (U) return U; }
@@ -2591,24 +2707,26 @@ function renderHome() {
         const art = [...body.children].find(el => (el.matches('details.more') && /^(Мақолалар|Бошқа)/.test((el.querySelector('summary') || {}).textContent || '')) || (el.matches('.count') && /та мақола$/.test(el.textContent)));
         if (art) art.before(sec); else body.append(sec); } }
       if (!letter && HAS_AR.test(query) && !body.querySelector('.wc, .card')) { try { rootExtra(body, query.trim()); } catch (z) { console.warn('rootExtra', z); } }   // ozak-1: «Шу ўзакдан» (мисоллардан кейин)
+      if (body.querySelector('.wc, .card')) body.querySelectorAll(':scope > .empty').forEach(x => x.remove());   // d70-5а: натижа бор — «топилмади» ёзуви йўқ
       return;
     }
     const hist = (S.hist || []);
     body.replaceChildren(
       hist.length ? h('div', { class: 'hist' }, h('div', { class: 'lbl' }, 'Охирги қидирганларингиз', h('button', { class: 'link hclr', onclick: () => { S.hist = []; save(); fill(); } }, 'Тарихни тозалаш')),
         h('div', { class: 'chips' }, hist.slice(0, 8).map(x => h('button', { class: 'chip' + (HAS_AR.test(x) ? ' ar' : ''), onclick: () => { query = x; letter = ''; fillAll(); } }, x)))) : '',
-      dayCard());
+      wait ? loadBox() : dayCard());
   };
   const fillAll = () => { input.value = query; clearBtn.hidden = backBar.hidden = !(query || letter); fill(); };
   const backBar = h('div', { class: 'bar', hidden: true }, h('button', { class: 'link', onclick: () => { query = ''; letter = ''; fillAll(); window.scrollTo(0, 0); } }, '← Орқага'));
   const clearBtn = h('button', { class: 'link', style: 'padding:0;min-height:44px', hidden: true, onclick: () => { query = ''; letter = ''; fillAll(); input.focus(); } }, 'Тозалаш');
   let ht = null;
-  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); clearTimeout(fillTimer); fillTimer = setTimeout(fill, query.trim() ? 260 : 0);
+  input.addEventListener('input', () => { query = input.value; letter = ''; clearBtn.hidden = backBar.hidden = !(query || letter); clearTimeout(fillTimer); fillTimer = setTimeout(fill, hasL(query) ? 260 : 0);   // d70-5б: ҳарфсиз сўров («12») кутмайди
     clearTimeout(ht); ht = setTimeout(() => { if (query.trim() && body.querySelector('.card, .wc')) pushHist(query); }, 1800); });
   input.addEventListener('change', () => { if (query.trim() && body.querySelector('.card, .wc')) pushHist(query); });
+  onEnter(input, () => { clearTimeout(fillTimer); clearTimeout(ht); query = input.value; if (query.trim()) { letter = ''; fill(); if (body.querySelector('.card, .wc')) pushHist(query); } });
   // qulayA-1: ёзаётганда тепа қисм йиғилади
-  input.addEventListener('focus', () => { document.documentElement.classList.add('typing'); });
-  input.addEventListener('blur', () => { document.documentElement.classList.remove('typing'); });
+  input.addEventListener('focus', () => TYP.on());
+  input.addEventListener('blur', () => TYP.blur());
   page('home', h('div', { class: 'hband' },
     h('div', { class: 'top' }, h('div', { class: 'brand' }, h('img', { class: 'logo2', src: 'icons/kanz-mark-ink.png', alt: 'كنز' })),
       h('div', { class: 'acts' },
@@ -2624,6 +2742,7 @@ function renderHome() {
     h('div', { class: 'search' }, svg(ICON.find, 20), input, clearBtn), recEl), backBar, fltEl, body, h('div', { class: 'fbsp' }),
     h('button', { class: 'fbbar', onclick: openFb }, h('span', { class: 'dotg' }), h('span', {}, 'Эътибор қилинг!'), h('span', { class: 'sub' }, 'Илова тест режимида')));
   clearBtn.hidden = backBar.hidden = !(query || letter); fill();
+  homeFill = () => { if (!input.isConnected) return; clearTimeout(fillTimer); fill(); const q = query; if (q.trim()) setTimeout(() => { if (query === q && input.isConnected && body.querySelector('.card, .wc')) pushHist(q); }, 1800); };
 }
 
 // ---------- мақола ----------
@@ -2661,13 +2780,13 @@ function seg(options, current, onPick) {
 // тўлиқ ҳаракатли: ҳар бир ҳарфда белги бор (ا ى آ ٱ, узун у/и даги و/ي ва «ال» даги ل дан ташқари)
 function fullV(w) { const s = String(w).trim(); if (/\s/.test(s)) return false; const L = []; for (const ch of s) { if (/[\u064B-\u0652\u0670]/.test(ch)) { if (L.length) L[L.length - 1].m.push(ch); } else if (/[\u0621-\u064A\u0671]/.test(ch)) L.push({ c: ch, m: [] }); else return false; }
   if (L.length < 2) return false; return L.every((x, i) => x.m.length || 'اىآٱ'.includes(x.c) || (x.c === 'و' && i && L[i - 1].m.includes('\u064F')) || (x.c === 'ي' && i && L[i - 1].m.includes('\u0650')) || (x.c === 'ل' && i === 1 && /[اٱ]/.test(L[0].c))); }
-let DAYPOOL = null;
-function dayPick() {
-  if (!DAYPOOL) { DAYPOOL = []; DATA.forEach(e => e.derivatives.forEach(f => {
+const dayPool = LZ(() => [], (DAYPOOL, e, fi) => { const f = e.derivatives[fi];
     if (f.uncertain || !f.arabic_word || /[,،\ufffd]|ёки/.test(f.arabic_word) || !fullV(f.arabic_word)) return;
     const m = String(((f.translations || [])[0] || {}).meaning || '').trim(); if (m.length < 3 || /^=|\ufffd/.test(m) || /^(шунингдек|қар\.)/i.test(m) || !/[а-яёўқғҳ]{2}/i.test(m.replace(/[А-Яа-яЁёЎўҚқҒғҲҳ]+\./g, ''))) return;   // toza2 (2026-11-21): белги ёки ишора эмас, маъно бўлсин
     const x = (f.examples || []).find(z => z.translation && /[\u0600-\u06FF]/.test(z.phrase || '') && !/\ufffd/.test(z.phrase + z.translation) && !/~[\u064B-\u0652\u0640]|\u0640|\.\.\./.test(z.phrase)); if (!x) return;
-    DAYPOOL.push({ e, f, m, x }); })); }
+    DAYPOOL.push({ e, f, m, x }); }, PERF);
+function dayPick() {
+  const DAYPOOL = dayPool();
   if (!DAYPOOL.length) return null;
   const d = new Date(); const day = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) + d.getFullYear() * 366;
   return DAYPOOL[(day * 7919) % DAYPOOL.length];
@@ -2770,7 +2889,7 @@ function renderProfile() {
 const PRIVACY_URL = 'https://davlatkhodzhaev-ui.github.io/annaim/privacy.html';
 
 // ---------- Қўлланма, иловалар, географик номлар (китоб матни) ----------
-const EX = window.ANNAIM_EXTRA || { geo: [], rules: [], abbr: [], lists: [] };
+const EX = { geo: [], rules: [], abbr: [], lists: [] };   // extra.js юклангач тўлдирилади
 const arText = (a, sep) => Array.isArray(a) ? a.join(sep || '، ') : (a || '');
 function exRow(uz, ar, note) {
   const ref = note === '=';
@@ -2796,16 +2915,17 @@ function renderExtra(i) {
     h('div', { class: 'count' }, `${rows.length} та`), h('div', { class: 'group' }, rows.map(r => exRow(r.uz, r.ar, r.note))));
 }
 function renderGeo() {
-  const q = h('input', { id: 'gq', type: 'search', inputmode: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Ном ёки арабча ёзилиши', 'aria-label': 'Қидириш' });
+  const q = h('input', { id: 'gq', type: 'search', inputmode: 'search', enterkeyhint: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Ном ёки арабча ёзилиши', 'aria-label': 'Қидириш' });
   const list = h('div', { class: 'group' }), count = h('div', { class: 'count' });
   const idx = EX.geo.map(r => ({ r, u: normUz(r.uz), a: normAr(arText(r.ar, ' ')) }));
   const fill = () => {
-    const t = q.value.trim(), ar = HAS_AR.test(t), key = ar ? normAr(t) : normUz(t);
+    const t = q.value.trim(), ar = HAS_AR.test(t), key = ar ? normAr(t) : normUz(isLat(t) ? latCyr(t) : t);   // d71: лотинча ёзилса ҳам
     const rows = !key ? idx : idx.filter(x => (ar ? x.a : x.u).includes(key));
     count.textContent = `${rows.length} та`;
     list.replaceChildren(...rows.map(x => exRow(x.r.uz, x.r.ar, x.r.note)));
   };
   q.addEventListener('input', fill);
+  onEnter(q, () => { fill(); if (q.value.trim() && list.firstChild) pushHist(q.value); });
   page('more', backTo('more', 'Қўшимча'), h('h1', { style: 'margin:4px 0 8px;font-size:22px' }, 'Географик номлар'),
     h('div', { class: 'search' }, svg(ICON.find, 20), q), count, list);
   fill();
@@ -2906,7 +3026,7 @@ function renderBob(k) {
 }
 let tq = '';
 function renderTasrif() {
-  const input = h('input', { id: 'tq', type: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Феъл: كَتَبَ, ёзмоқ, yozmoq', value: tq, 'aria-label': 'Феъл' });
+  const input = h('input', { id: 'tq', type: 'search', enterkeyhint: 'search', autocomplete: 'off', spellcheck: 'false', placeholder: 'Феъл: كَتَبَ, ёзмоқ, yozmoq', value: tq, 'aria-label': 'Феъл' });
   const out = h('div', {});
   const fill = () => {
     const t = tq.trim(); if (!t) { out.replaceChildren(h('p', { class: 'count' }, 'Арабча феълни ёки ўзбекча «-моқ» шаклини ёзинг. Топилган феълни боссангиз, етти феъл жадвали очилади.')); return; }
@@ -2925,6 +3045,7 @@ function renderTasrif() {
     out.replaceChildren(h('div', { class: 'count' }, hits.length ? `${hits.length} та феъл` : 'Топилмади'), h('div', { class: 'list' }, hits.slice(0, 50).map(x => verbItem(x.e, x.f, () => openTasrif(x.e, x.f)))));
   };
   input.addEventListener('input', () => { tq = input.value; fill(); });
+  onEnter(input, () => { tq = input.value; fill(); if (tq.trim() && out.querySelector('.list > *')) pushHist(tq); });
   page('home', h('div', { class: 'bar' }, h('button', { class: 'link', onclick: () => go('home') }, '← Бош саҳифа')),
     h('div', { class: 'top' }, h('h1', { style: 'margin:0;font-size:24px' }, 'Феълни туслаш')),
     h('div', { class: 'search' }, svg(ICON.find, 20), input), out);
@@ -3024,6 +3145,7 @@ function route() {
   const hsh = location.hash.replace(/^#/, '');
   if (!S.seen && !/^w[1234]$/.test(hsh)) return goRep('w1');
   if (/^w[1234]$/.test(hsh)) return welcome(+hsh[1]);
+  if (!LOAD.done.core && hsh !== '' && hsh !== 'home') return page('home', loadBox());   // бошқа саҳифалар луғат тайёр бўлгач очилади
   const m = hsh.match(/^e-(.+)$/); const e = m && DATA.find(x => hashOf(x) === 'e-' + m[1]);
   if (e) return renderEntry(e);
   const gm = hsh.match(/^(guide|extra)-(\d+)$/);
@@ -3054,8 +3176,55 @@ function tsrHint() {
 }
 document.addEventListener('toggle', () => requestAnimationFrame(tsrHint), true);
 window.addEventListener('resize', () => requestAnimationFrame(tsrHint));
+// ---------- юклаш (tez, d69): экран → луғат майда файллари бирин-кетин → индекслар кичик бўлакларда ----------
+const CHUNKS = 64;   // data/d00.js … d63.js (scripts/make_web.py ва sw.js даги сон билан бир хил бўлиши шарт)
+const LOAD = { err: false, done: {}, all: false, n: 0 };
+const coreTick = LZ(() => 0, (_, e, k) => CORE_STEPS[k](e), () => CORE_STEPS.length);
+const whTick = LZ(() => 0, (_, e, fi) => whKeys(e.derivatives[fi]), PERF);
+const KINDS = { core: [coreTick], uz: [uzIndex, vstemIndex, uzExIndex], ar: [whTick, genMasdar, rootIndex, eqIndex], day: [dayPool] };
+const onHome = () => homeFill && document.getElementById('q') && /^#?(home)?$/.test(location.hash);
+const mc = new MessageChannel();
+let building = false;
+function buildStep() {
+  // аввал асосий индекс (файллар келгани сари), кейин экранда кутилаётгани, сўнг қолганлари
+  building = false;
+  const left = Object.keys(KINDS).filter(k => !LOAD.done[k]); if (!left.length) return;
+  const want = onHome() ? homeKind() : ''; const waiting = left[0] === 'core' || (want && !LOAD.done[want]);
+  const k = left[0] === 'core' ? 'core' : waiting ? want : left[0];
+  const until = performance.now() + (waiting ? 12 : 10);
+  if (KINDS[k].every(t => t.tick(until))) {
+    if (!LOAD.all) return;   // навбатдаги файл келганда kick() давом эттиради
+    LOAD.done[k] = true;
+    if (k === 'core' && !onHome()) { if (!/^#w[1234]$/.test(location.hash)) route(); }
+    else if (onHome() && homeKind() === k) homeFill();
+  }
+  building = true; if (waiting) mc.port2.postMessage(0); else setTimeout(buildStep, 4);
+}
+mc.port1.onmessage = buildStep;
+const kick = () => { if (!building) { building = true; mc.port2.postMessage(0); } };
+const nextFrame = () => new Promise(ok => { requestAnimationFrame(() => setTimeout(ok, 0)); setTimeout(ok, 80); });   // орқа фонда rAF ишламайди
+const addScript = (src) => new Promise((ok, no) => { const x = document.createElement('script'); x.src = src; x.onload = () => { x.remove(); ok(); }; x.onerror = () => { x.remove(); no(new Error(src)); }; document.head.append(x); });
+const chunkSrc = (i) => 'data/d' + String(i).padStart(2, '0') + '.js';
+async function loadDict() {
+  const was = LOAD.err; LOAD.err = false; if (was) { if (onHome()) homeFill(); else route(); }
+  // файллар параллел юкланади, лекин бирин-кетин ўқилади, орасида экранга навбат берилади. Хато бўлса, келган жойидан давом этади (LOAD.n)
+  for (let i = LOAD.n; i < CHUNKS; i++) { const l = document.createElement('link'); l.rel = 'preload'; l.as = 'script'; l.href = chunkSrc(i); document.head.append(l); }
+  let t0 = performance.now();
+  try {
+    for (; LOAD.n < CHUNKS; LOAD.n++) {
+      await addScript(chunkSrc(LOAD.n));
+      const C = window.ANNAIM_CHUNK; window.ANNAIM_CHUNK = null;
+      if (!C || C.i !== LOAD.n || C.n !== CHUNKS) throw new Error('chunk ' + LOAD.n);
+      for (const e of C.d) DATA.push(e);
+      kick(); if (performance.now() - t0 > 8) { await nextFrame(); t0 = performance.now(); }   // кадр вақти тугаса, экранга навбат
+    }
+    await addScript('extra.js'); Object.assign(EX, window.ANNAIM_EXTRA);
+    LOAD.all = true; kick();
+  } catch (z) { console.warn('луғат юкланмади', z); LOAD.err = true; if (onHome()) homeFill(); else route(); }
+}
 applyPrefs(); route();
-setTimeout(() => { let i = 0; const step = () => { const t = performance.now(); while (i < DATA.length && performance.now() - t < 8) DATA[i++].derivatives.forEach(whKeys); if (i < DATA.length) setTimeout(step, 30); }; step(); }, 1500);
+let ldOn = false; const ldStart = () => { if (!ldOn) { ldOn = true; loadDict(); } };
+requestAnimationFrame(() => setTimeout(ldStart, 0)); setTimeout(ldStart, 600);   // орқа фонда очилса rAF ишламайди
 </script>
 
 <script>

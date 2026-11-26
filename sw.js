@@ -1,12 +1,12 @@
 // ANNAIM service worker: луғатни телефонга сақлайди, интернетсиз ҳам очилади.
 // Версия make_web.py томонидан ҳар йиғишда алмаштирилади.
-const VERSION = '20261125-d67b';
+const VERSION = '20261127-d74';
 const CACHE = 'annaim-' + VERSION;
 // Луғат маълумоти (23 МБ) алоҳида кэшда: фақат маълумот ўзгарганда (DATAV) қайта юкланади,
 // шунда илова янгиланиши енгил ва тез бўлади.
-const DATAV = 'd97dda2d701bc';
-const DCACHE = 'annaim-data-' + DATAV;
-const DATA = ['./data1.js', './data2.js', './extra.js'];
+const DATAV = 'd4f0743d72b59';
+const DCACHE = 'annaim-data64-' + DATAV;   // 64: луғат майда файлларда (data/d00.js … d63.js)
+const DATA = [...Array.from({ length: 64 }, (_, i) => './data/d' + String(i).padStart(2, '0') + '.js'), './extra.js'];
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png', './icons/logo-kanz-sm.png', './icons/kanz-cover.jpg', './icons/kanz-mark-ink.png', './icons/kanz-mark-gold.png'];
 
 // Серверда янгиланган-янгиланмаганини текшириб олади (браузернинг 10 дақиқалик кэшидаги эски файл янги версия кэшига тушмасин).
@@ -17,7 +17,7 @@ const fresh = (u) => new Request(u, { cache: 'no-cache' });
 self.addEventListener('install', (e) => {
   e.waitUntil(Promise.all([
     caches.open(CACHE).then((c) => c.addAll(CORE.map(fresh))),
-    caches.open(DCACHE).then((c) => c.match('./data1.js').then((hit) => hit ? null : c.addAll(DATA.map(fresh))))
+    caches.open(DCACHE).then((c) => c.match('./data/d63.js').then((hit) => hit ? null : c.addAll(DATA.map(fresh))))
   ]));
 });
 
