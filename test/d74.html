@@ -2322,6 +2322,7 @@ function wordCardToza(x) {
   const trs = (f.translations || []).filter(t => t.meaning);
   const sum = trs.length ? (trs[0].label ? trs[0].label + ' ' : '') + trs[0].meaning : (base.equivalent_to ? '= ' + base.equivalent_to.join(', ') : '—');
   // d73-1: «= …» деб босилган сўз (ўз маъноси босилмаган): тенг сўзнинг маъноси карточканинг ўзида (очилганда кўринадиган маъно — linkedOf).
+  let giM = []; if (x.gi) { try { giM = uzIsmMean(base, /мафъул/.test(x.gil) ? 'maful' : 'foil'); } catch (z) {} }   // d74
   let lk = null; if (!trs.length) { try { lk = linkedOf(base, x.e); } catch (z) {} } const ltr = lk ? (lk.translations || []).filter(t => t.meaning) : [];
   const k = savedKeyOf(x.e, f), on = () => S.saved.includes(k);
   const lb = h('span', {}, on() ? 'Сақланди' : 'Сақлаш');
@@ -2333,7 +2334,7 @@ function wordCardToza(x) {
   // ozak-6: ҳамма маънолар рақами билан (китобдаги рақам), матн json даги каби; биринчи маъно кесилмайди
   const box = h('div', { class: 'wc wt', 'data-g': g, onclick: () => openAt(x.e, f) },
     h('div', { class: 'tp' }, h('span', { class: 'tg2' }, { v: 'Феъл', n: 'Исм', adj: 'Сифат' }[g] || 'Сўз'), h('span', { class: 'w', lang: 'ar' }, f.arabic_word),
-      (trs.length > 1 || (sum === '—' && ltr.length)) ? '' : h('div', { class: 'm1' }, sum), fb ? h('div', { class: 'fb' }, fb) : ''),   // bet-а: маъно биттадан кўп бўлса фақат рақамли рўйхат
+      (trs.length > 1 || (sum === '—' && ltr.length) || giM.length) ? '' : h('div', { class: 'm1' }, sum), fb ? h('div', { class: 'fb' }, fb) : ''),   // bet-а: маъно биттадан кўп бўлса фақат рақамли рўйхат
     x.gm ? h('div', { class: 'gm' }, h('span', { lang: 'ar' }, x.gm), ' — масдар · қоида бўйича, китобда босилмаган') : '',
     x.via ? h('div', { class: 'via' }, `${f.arabic_word} сўзининг ${x.via}`) : '',
     x.gi ? h('div', { class: 'gm' }, h('span', { lang: 'ar' }, x.gi), ` — ${x.gil} · қоида бўйича, китобда босилмаган`) : '',
@@ -2346,7 +2347,7 @@ function wordCardToza(x) {
         ? h('ol', { class: 'mn', 'data-bk': true }, ltr.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning))))
         : h('div', { class: 'm1 lk1' }, (ltr[0].label ? ltr[0].label + ' ' : '') + ltr[0].meaning)) : '',
     cells.length ? h('div', { class: 'cells' }, cells.map(([l, v]) => h('div', { class: 'cl' }, h('b', { lang: 'ar' }, v), h('i', {}, l)))) : '',
-    trs.length > 1 ? h('ol', { class: 'mn', 'data-bk': true }, trs.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning)))) : '',
+    (trs.length > 1 && !giM.length) ? h('ol', { class: 'mn', 'data-bk': true }, trs.map((t, i) => h('li', {}, h('span', { class: 'n' }, (String(t.index || '').replace(/[.)\s]+$/, '') || String(i + 1)) + ')'), h('span', {}, (t.label ? t.label + ' ' : '') + t.meaning)))) : '',
     h('div', { class: 'ft2' }, h('span', { class: 'meta' }, `бет ${pgOf(x.e, x.f)}`), sv));
   return box;
 }
