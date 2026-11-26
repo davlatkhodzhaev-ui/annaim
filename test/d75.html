@@ -950,7 +950,8 @@ function exHits(text) {
 // sec: 'w' сўзлар, 'vf' феъл шакллари, 'ex' мисоллар. «Ҳозирги»да олдингидек (фақат n таси).
 let LFK = 'all';
 const wordG = (f) => f.grammar_tag || { verb: 'v', noun: 'n', adjective: 'adj' }[f.form_type] || 'o';
-const secG = (sec, x) => sec === 'w' ? wordG(x.f) : sec === 'vf' ? 'v' : 'ex';
+const fgOf = (g) => g === 'adj' ? 'n' : (g === 'v' || g === 'n') ? g : 'h';   // d75: фильтрда сифат — исм ичида, қолганлари «Ҳарф»
+const secG = (sec, x) => sec === 'w' ? fgOf(wordG(x.f)) : sec === 'vf' ? 'v' : 'ex';
 function limList(arr, fn, n, sec, attrs) {
   const L = h('div', Object.assign({ class: 'list', 'data-sec': sec }, attrs || {}));
   L._all = arr; L._fn = fn; L._r = 0; L._sec = sec;
@@ -2651,18 +2652,18 @@ function renderHome() {
   // flt8: «Янги»да фильтр бўлимлар бўйича: Феъл = феъл сўзлари + «Феъл шакллари», Исм/Сифат = шу сўзлар, Мисол = мисоллар; мақолалар фақат «Ҳаммаси»да
   const secOn = (el) => { const sc = el.dataset.sec;
     if (!sc) return el.matches('.count') && /gold/.test(el.getAttribute('style') || '');
-    if (sc === 'w') { const L = el.matches('.list') ? el : el.querySelector('.list[data-sec="w"]'); return !!L && !!L._all && L._all.some(x => wordG(x.f) === fk); }
+    if (sc === 'w') { const L = el.matches('.list') ? el : el.querySelector('.list[data-sec="w"]'); return !!L && !!L._all && L._all.some(x => fgOf(wordG(x.f)) === fk); }
     return sc === 'vf' ? fk === 'v' : sc === 'ex' ? fk === 'ex' : false; };
   const applyF = () => { LFK = fk; [...body.children].forEach(el => el.classList.toggle('fx-off', fk !== 'all' && !secOn(el)));
     body.querySelectorAll('details[data-sec]').forEach(d => { if (fk !== 'all' && !d.classList.contains('fx-off')) d.open = true; });
     body.querySelectorAll('.list[data-sec]').forEach(limLabel);
-    body.querySelectorAll('.wc').forEach(e => { e.hidden = !(fk === 'all' || e.dataset.g === fk); }); };
+    body.querySelectorAll('.wc').forEach(e => { e.hidden = !(fk === 'all' || fgOf(e.dataset.g) === fk); }); };
   body.addEventListener('lgrow', () => applyF());
-  const paintFlt = () => { const c = { all: 0, v: 0, n: 0, adj: 0, ex: 0 };   // flt8: ҳақиқий умумий сон (кўрсатилган қисми эмас)
+  const paintFlt = () => { const c = { all: 0, v: 0, n: 0, h: 0, ex: 0 };   // flt8: ҳақиқий умумий сон (кўрсатилган қисми эмас)
     body.querySelectorAll('.list[data-sec]').forEach(L => (L._all || []).forEach(x => { const g = secG(L._sec, x); c.all++; if (c[g] !== undefined) c[g]++; }));
     if (!c.all) { fltEl.hidden = true; fltEl.replaceChildren(); return; }   // d70-5б: эски рақамлар қолмайди
     fltEl.hidden = false;
-    fltEl.replaceChildren(...[['all', 'Ҳаммаси'], ['v', 'Феъл'], ['n', 'Исм'], ['adj', 'Сифат'], ['ex', 'Мисол']].map(([k, l]) => h('button', { class: fk === k ? 'on' : '', disabled: k !== 'all' && !c[k] ? true : null, onclick: () => { fk = k; applyF(); paintFlt(); } }, l + '\u2009·\u2009' + c[k]))); };
+    fltEl.replaceChildren(...[['all', 'Ҳаммаси'], ['v', 'Феъл'], ['n', 'Исм'], ['h', 'Ҳарф'], ['ex', 'Мисол']].map(([k, l]) => h('button', { class: fk === k ? 'on' : '', disabled: k !== 'all' && !c[k] ? true : null, onclick: () => { fk = k; applyF(); paintFlt(); } }, l + '\u2009·\u2009' + c[k]))); };
   const fill = () => { LFK = 'all'; fk = 'all'; fill0(); paintFlt(); paintRec(); };
   const fill0 = () => {
     const active = query.trim() || letter;
