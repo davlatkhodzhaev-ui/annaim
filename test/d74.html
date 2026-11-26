@@ -378,6 +378,7 @@ body{margin:0}
 :root[data-look="toza"] .hband .search { margin-bottom: 6px; }
 :root[data-look="toza"] .hrec { display: none; }
 :root[data-look="toza"] #view > .bar { padding-top: 0; margin: 0; }
+:root #view > .bar.nbar { padding-top: env(safe-area-inset-top, 0px); }   /* d74: Android/iPhone — юқори панел остида қолмасин */
 :root[data-look="toza"] .hist .lbl { margin-top: 6px; margin-bottom: 4px; }
 :root[data-look="toza"] .flt button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 :root[data-look="toza"] .flt button:disabled { opacity: .4; cursor: default; }
@@ -396,6 +397,8 @@ body{margin:0}
 /* qulayA (2026-11-23) */
 html.typing .hband .top, html.typing #view > .bar, html.typing #tabs, html.typing .fbbar, html.typing .fbsp { display: none !important; }
 html.typing .hband { padding-top: 10px; padding-bottom: 10px; margin-bottom: 8px; }
+.hband { padding-top: calc(4px + env(safe-area-inset-top, 0px)) !important; } html.typing .hband { padding-top: calc(10px + env(safe-area-inset-top, 0px)) !important; }   /* d74: бош саҳифа сарлавҳаси юқори панел остида қолмасин */
+body:has(#view .hband)::before { background: var(--band); }
 html.typing .hband .search { margin: 0; }
 html.typing .flt { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 8px; }
 html.typing .flt::-webkit-scrollbar { display: none; }
